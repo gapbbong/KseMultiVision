@@ -11,6 +11,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
   <!-- Icons (FontAwesome) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Identity Services SDK (OAuth) -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 
   <style>
     /* ==========================================
@@ -490,6 +492,12 @@
     <div class="view-info-banner">
       4사분면 파손 우회 레이아웃 및 13:20 식단 타임 시프트가 가동 중입니다.
     </div>
+    <div style="border-top: 1px solid rgba(0,245,212,0.15); padding-top: 10px; margin-top: 4px; display: flex; flex-direction: column; gap: 6px;">
+      <div style="font-size: 0.7rem; font-weight: 800; color: var(--color-zone-a); text-transform: uppercase; letter-spacing: 1px;">🔐 Google API 인증</div>
+      <button class="btn-toggle" id="btn-google-login" onclick="requestGoogleAuth()">
+        <i class="fa-solid fa-lock"></i> 구글 계정 인증 필요
+      </button>
+    </div>
     <div style="border-top: 1px solid rgba(255,0,127,0.15); padding-top: 10px; margin-top: 4px; display: flex; flex-direction: column; gap: 6px;">
       <div style="font-size: 0.7rem; font-weight: 800; color: var(--color-zone-c); text-transform: uppercase; letter-spacing: 1px;">📻 BGM 일과 시뮬레이터</div>
       <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px;">
@@ -509,6 +517,7 @@
     // [설정 변수]
     // ========================================================
     const CONFIG = {
+      GOOGLE_CLIENT_ID: '476208201237-9cvftec2m6g60r07jfe88akitbkb7869.apps.googleusercontent.com',
       GOOGLE_API_KEY: '',
       WORKSPACE_DRIVE_FOLDER_ID: '14ThjsFnG5tjFM_cp3wrOv2sIHhArdVkb',
       NOTICE_DRIVE_FOLDER_ID: '1rpumueOBAPqU4TKZyOdjBBoUyCDNuurj',
@@ -820,6 +829,65 @@
         }
         box.appendChild(item);
       });
+    }
+
+    // ========================================================
+    // Google OAuth 2.0 인증 엔진 (Identity Services)
+    // ========================================================
+    let tokenClient;
+    let googleAccessToken = localStorage.getItem('google_access_token');
+    let googleTokenExpiry = localStorage.getItem('google_token_expiry');
+
+    function initGoogleAuth() {
+      if (typeof google === 'undefined' || !google.accounts) {
+        setTimeout(initGoogleAuth, 500);
+        return;
+      }
+      tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: CONFIG.GOOGLE_CLIENT_ID,
+        scope: 'https://www.googleapis.com/auth/drive.readonly',
+        callback: (tokenResponse) => {
+          if (tokenResponse && tokenResponse.access_token) {
+            googleAccessToken = tokenResponse.access_token;
+            googleTokenExpiry = Date.now() + (tokenResponse.expires_in * 1000);
+            localStorage.setItem('google_access_token', googleAccessToken);
+            localStorage.setItem('google_token_expiry', googleTokenExpiry);
+            
+            updateAuthStatusUI(true);
+            
+            // 데이터 재호출
+            fetchWorkspaceMedia();
+            loadNoticeBoard();
+          }
+        },
+      });
+      
+      const isTokenValid = googleAccessToken && googleTokenExpiry && Date.now() < parseInt(googleTokenExpiry);
+      updateAuthStatusUI(isTokenValid);
+    }
+
+    function updateAuthStatusUI(isLoggedIn) {
+      const btn = document.getElementById('btn-google-login');
+      if (!btn) return;
+      if (isLoggedIn) {
+        btn.innerHTML = '<i class="fa-solid fa-lock-open"></i> 구글 인증 완료';
+        btn.style.borderColor = '#4ade80';
+        btn.style.color = '#4ade80';
+        btn.style.background = 'rgba(74, 222, 128, 0.1)';
+      } else {
+        btn.innerHTML = '<i class="fa-solid fa-lock"></i> 구글 계정 인증 필요';
+        btn.style.borderColor = '#f43f5e';
+        btn.style.color = '#f43f5e';
+        btn.style.background = 'rgba(244, 63, 94, 0.1)';
+      }
+    }
+
+    function requestGoogleAuth() {
+      if (tokenClient) {
+        tokenClient.requestAccessToken({ prompt: 'consent' });
+      } else {
+        alert('구글 인증 라이브러리가 로드 중입니다. 잠시 후 다시 시도해 주세요.');
+      }
     }
 
     // ========================================================
@@ -1391,12 +1459,24 @@
     async function loadNoticeBoard() {
       const apiKey = CONFIG.GOOGLE_API_KEY;
       const folderId = CONFIG.NOTICE_DRIVE_FOLDER_ID;
-      if (!apiKey || !folderId) { initTicker(); return; }
+      const isTokenValid = googleAccessToken && googleTokenExpiry && Date.now() < parseInt(googleTokenExpiry);
+      
+      if (!apiKey && !isTokenValid) { initTicker(); return; }
+      if (!folderId) { initTicker(); return; }
+
       const now = new Date();
       const yy = String(now.getFullYear()).substring(2);
       const mm = now.getMonth()+1;
       try {
-        const res = await fetch(`https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+mimeType='application/vnd.google-apps.spreadsheet'&orderBy=createdTime+desc&fields=files(id,name,createdTime)&key=${apiKey}`);
+        let url = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+mimeType='application/vnd.google-apps.spreadsheet'&orderBy=createdTime+desc&fields=files(id,name,createdTime)`;
+        let options = {};
+        if (isTokenValid) {
+          options.headers = { 'Authorization': `Bearer ${googleAccessToken}` };
+        } else {
+          url += `&key=${apiKey}`;
+        }
+
+        const res = await fetch(url, options);
         if (!res.ok) throw new Error();
         const data = await res.json();
         if (data.files && data.files.length > 0) {
@@ -1405,7 +1485,13 @@
             const found = data.files.find(f => f.name.includes(term));
             if (found) { target = found; break; }
           }
-          const csvRes = await fetch(`https://docs.google.com/spreadsheets/d/${target.id}/export?format=csv`);
+          
+          let csvUrl = `https://docs.google.com/spreadsheets/d/${target.id}/export?format=csv`;
+          let csvOptions = {};
+          if (isTokenValid) {
+            csvOptions.headers = { 'Authorization': `Bearer ${googleAccessToken}` };
+          }
+          const csvRes = await fetch(csvUrl, csvOptions);
           if (!csvRes.ok) throw new Error();
           const rows = parseCSV(await csvRes.text());
           if (rows && rows.length > 0) {
@@ -1650,6 +1736,7 @@
     async function initSystem() {
       updateClock();
       setInterval(updateClock, 1000);
+      initGoogleAuth();
       await refreshAllData();
       await fetchWorkspaceMedia();
       setInterval(refreshAllData, CONFIG.DATA_REFRESH_INTERVAL);
