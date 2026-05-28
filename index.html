@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="no-referrer">
   <title>경성전자고등학교 실시간 데이터 연동형 학교 안내 멀티비전 시스템</title>
   <!-- Modern Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -890,11 +891,13 @@
 
         if (item.type === 'video') {
           const v = document.createElement('video');
+          v.referrerPolicy = 'no-referrer';
           v.src = finalUrl;
           v.addEventListener('loadedmetadata', () => { if (!completed) { item.isVertical = v.videoHeight > v.videoWidth; sortItem(item); } });
           v.addEventListener('error', () => { if (!completed) { loadedCount++; checkComplete(); } });
         } else {
           const img = new Image();
+          img.referrerPolicy = 'no-referrer';
           img.src = finalUrl;
           img.onload  = () => { if (!completed) { item.isVertical = img.naturalHeight > img.naturalWidth; sortItem(item); } };
           img.onerror = () => { if (!completed) { loadedCount++; checkComplete(); } };
@@ -959,6 +962,7 @@
 
         if (item.type === 'video') {
           el = document.createElement('video');
+          el.referrerPolicy = 'no-referrer';
           el.src = finalUrl; 
           el.autoplay = (index === 0); // 초기 0번째 요소만 자동 재생
           el.muted = true; el.loop = true; el.playsInline = true;
@@ -971,6 +975,7 @@
           };
         } else {
           el = document.createElement('img');
+          el.referrerPolicy = 'no-referrer';
           el.src = finalUrl;
           el.onerror = () => {
             console.error(`[로딩 실패] ${finalUrl}`);
