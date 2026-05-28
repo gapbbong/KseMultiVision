@@ -13,6 +13,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Google Identity Services SDK (OAuth) -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <!-- YouTube IFrame Player API -->
+  <script src="https://www.youtube.com/iframe_api"></script>
 
   <style>
     /* ==========================================
@@ -211,9 +213,60 @@
     #label-horizontal { left: 10px; top: calc(50vh - 20px); }
     #label-vertical { left: calc(50vw + 10px); top: 10px; }
 
-    .control-panel { position: fixed; bottom: 24px; right: 24px; background: rgba(13,27,42,0.95); backdrop-filter: blur(12px); border: 1px solid rgba(0,245,212,0.3); border-radius: 14px; padding: 16px; z-index: 999; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 10px 30px rgba(0,245,212,0.1); }
+    .control-panel {
+      position: fixed;
+      bottom: 84px; /* 토글 버튼 위로 배치 */
+      right: 24px;
+      background: rgba(13, 27, 42, 0.95);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(0, 245, 212, 0.3);
+      border-radius: 14px;
+      padding: 16px;
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: 0 10px 30px rgba(0, 245, 212, 0.1);
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      transform: translateY(30px) scale(0.95);
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+    }
+    .control-panel.show {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+      pointer-events: auto;
+      visibility: visible;
+    }
+    .btn-panel-toggle {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(13, 27, 42, 0.95);
+      border: 1px solid rgba(0, 245, 212, 0.3);
+      color: var(--color-zone-a);
+      font-size: 1.15rem;
+      cursor: pointer;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(0, 245, 212, 0.2);
+      transition: all 0.25s ease;
+      outline: none;
+    }
+    .btn-panel-toggle:hover {
+      background: var(--color-zone-a);
+      color: #000000;
+      box-shadow: 0 0 15px var(--color-zone-a);
+      transform: rotate(30deg);
+    }
     .panel-title { font-size: 0.8rem; font-weight: 800; color: var(--color-zone-a); letter-spacing: 1px; text-transform: uppercase; display: flex; align-items: center; gap: 6px; margin-bottom: 2px; }
-    .btn-toggle { background: rgba(0,245,212,0.1); border: 1px solid var(--color-zone-a); color: var(--color-zone-a); padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s; }
+    .btn-toggle { background: rgba(0, 245, 212, 0.1); border: 1px solid var(--color-zone-a); color: var(--color-zone-a); padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s; }
     .btn-toggle:hover { background: var(--color-zone-a); color: #000000; }
     .btn-toggle.active { background: #ea580c; border-color: #ea580c; color: #ffffff; }
     .view-info-banner { font-size: 0.7rem; color: var(--color-text-secondary); line-height: 1.4; max-width: 200px; }
@@ -304,14 +357,7 @@
 </head>
 <body>
 
-  <!-- 브라우저 사운드 차단 우회용 오버레이 -->
-  <div id="sound-activation-overlay" onclick="activateSoundSystem()" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; cursor: pointer; transition: opacity 0.5s ease;">
-    <div class="sound-glow-wrap" style="position: relative; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; background: rgba(255,0,127,0.1); border: 2px solid var(--color-zone-c); border-radius: 50%; box-shadow: 0 0 30px rgba(255,0,127,0.3); animation: pulseSound 2s infinite;">
-      <i class="fa-solid fa-music" style="font-size: 3rem; color: var(--color-zone-c); text-shadow: 0 0 10px rgba(255,0,127,0.5);"></i>
-    </div>
-    <span style="font-family: var(--font-noto); font-size: 1.4rem; font-weight: 800; color: #ffffff; letter-spacing: -0.5px;">경성전자고등학교 등교 맞이 BGM 및 쉬는시간 사운드 활성화</span>
-    <span style="font-family: var(--font-noto); font-size: 0.95rem; color: var(--color-text-secondary);">화면 아무 곳이나 클릭하시면 시스템과 음악이 가동됩니다.</span>
-  </div>
+  <!-- Sound system will activate silently via document level click listener -->
 
   <div class="viewport-canvas">
 
@@ -508,6 +554,14 @@
       </div>
     </div>
   </div>
+
+  <!-- 제어 패널 접기/펼치기 토글 버튼 -->
+  <button class="btn-panel-toggle" id="btn-panel-toggle" onclick="toggleControlPanel()" title="제어 패널 토글">
+    <i class="fa-solid fa-gear" id="panel-toggle-icon"></i>
+  </button>
+
+  <!-- 숨겨진 유튜브 플레이어 IFrame 영역 -->
+  <div id="yt-player" style="position: absolute; width: 1px; height: 1px; left: -9999px; top: -9999px; pointer-events: none; opacity: 0;"></div>
 
   <!-- ========================================================
        JAVASCRIPT DYNAMICS
@@ -729,6 +783,7 @@
     // 1. 디지털 시계 (초단위 갱신)
     // ========================================================
     let bgmMockTime = null; // { hour, min }
+    let current_weather_code = 0; // 날씨 BGM 연동을 위한 전역 날씨 코드
     function updateClock() {
       const now = new Date();
       const hVal = bgmMockTime ? bgmMockTime.hour : now.getHours();
@@ -1272,6 +1327,7 @@
           const rainProb = daily.precipitation_probability_max[1];
           const windMax = daily.wind_speed_10m_max[1];
           const code = daily.weather_code[1];
+          current_weather_code = code; // 날씨 코드 전역 변수에 저장
 
           if (tempEl)     tempEl.textContent     = `${tempMin.toFixed(1)}°C / ${tempMax.toFixed(1)}°C`;
           if (apparentEl) apparentEl.textContent = `${apparentMax.toFixed(1)}°C`;
@@ -1373,22 +1429,18 @@
         for (let i = 1; i < lines.length; i++) {
           const line = lines[i];
           if (!line.trim()) continue;
-          // 날짜 파싱 ("2026년 MM DD일 요일" 형태)
           const dm = line.match(/(\d{4})년\s+(\d{1,2})\s+(\d{1,2})일/);
           if (!dm) continue;
           const evDate = new Date(parseInt(dm[1]), parseInt(dm[2])-1, parseInt(dm[3]));
           evDate.setHours(0, 0, 0, 0);
           if (evDate < today) continue;
 
-          // CSV 간단 분리: 따옴표 셀 내 개행 포함하므로 다음 줄도 흡수
-          // 이미 날짜 줄 자체에서 콤마 기준 분리
           const cols = line.split(',');
           const grade1 = (cols[1] || '').replace(/"/g,'').trim();
           let title6   = (cols[4] || '').replace(/"/g,'').trim();
           let title7   = (cols[5] || '').replace(/"/g,'').trim();
           const dept6  = (cols[6] || '').replace(/"/g,'').trim();
 
-          // 여러 줄 셀 처리: 제목이 비어있으면 다음 행 흡수 시도
           if (!title6 && i+1 < lines.length) title6 = (lines[i+1].split(',')[0] || '').replace(/"/g,'').trim();
 
           if (!isStudentRelevant(title6, title7)) continue;
@@ -1396,14 +1448,12 @@
           const dday = Math.round((evDate - today) / 86400000);
           const dateLabel = `${parseInt(dm[2])}월 ${parseInt(dm[3])}일 (${DAYS_KO[evDate.getDay()]})`;
 
-          // 활동 유형 분류
           const combinedTitle = title6 + title7;
           const type = combinedTitle.includes('문화예술') ? '문화예술'
             : combinedTitle.includes('방학') || combinedTitle.includes('종업') ? '방학'
             : combinedTitle.includes('체험') ? '체험'
             : combinedTitle.includes('동아리') ? '동아리' : '교육';
 
-          // 활동 태그 (1학년 시수 기반 간단 표기)
           const tag = grade1.includes('동아리') ? '동아리' 
             : grade1.includes('봉사') ? '봉사활동'
             : grade1.includes('자율') ? '자율활동' : '창체';
@@ -1423,13 +1473,9 @@
         console.warn('창체 시트 파싱 실패, 하드코딩 폴백 사용:', e);
       }
 
-      // 하드코딩 폴백 — 실제 2026학년도 일정 기반
       buildEventCards(FALLBACK_EVENTS);
     }
 
-    // ========================================================
-    // 6. CSV 파서
-    // ========================================================
     function parseCSV(csvText) {
       const lines = []; let row = ['']; let inQ = false;
       for (let i = 0; i < csvText.length; i++) {
@@ -1453,188 +1499,166 @@
       return result;
     }
 
-    // ========================================================
-    // 7. 부서 전달사항 (티커)
-    // ========================================================
-    async function loadNoticeBoard() {
-      const apiKey = CONFIG.GOOGLE_API_KEY;
-      const folderId = CONFIG.NOTICE_DRIVE_FOLDER_ID;
-      const isTokenValid = googleAccessToken && googleTokenExpiry && Date.now() < parseInt(googleTokenExpiry);
-      
-      if (!apiKey && !isTokenValid) { initTicker(); return; }
-      if (!folderId) { initTicker(); return; }
-
-      const now = new Date();
-      const yy = String(now.getFullYear()).substring(2);
-      const mm = now.getMonth()+1;
-      try {
-        let url = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+mimeType='application/vnd.google-apps.spreadsheet'&orderBy=createdTime+desc&fields=files(id,name,createdTime)`;
-        let options = {};
-        if (isTokenValid) {
-          options.headers = { 'Authorization': `Bearer ${googleAccessToken}` };
-        } else {
-          url += `&key=${apiKey}`;
-        }
-
-        const res = await fetch(url, options);
-        if (!res.ok) throw new Error();
-        const data = await res.json();
-        if (data.files && data.files.length > 0) {
-          let target = data.files[0];
-          for (let term of [`${yy}.${mm}`,`${yy}년 ${mm}월`,`${yy}년 ${String(mm).padStart(2,'0')}월`,`${mm}월`]) {
-            const found = data.files.find(f => f.name.includes(term));
-            if (found) { target = found; break; }
-          }
-          
-          let csvUrl = `https://docs.google.com/spreadsheets/d/${target.id}/export?format=csv`;
-          let csvOptions = {};
-          if (isTokenValid) {
-            csvOptions.headers = { 'Authorization': `Bearer ${googleAccessToken}` };
-          }
-          const csvRes = await fetch(csvUrl, csvOptions);
-          if (!csvRes.ok) throw new Error();
-          const rows = parseCSV(await csvRes.text());
-          if (rows && rows.length > 0) {
-            const sample = rows[0];
-            const deptK = Object.keys(sample).find(k => k.includes('부서')||k.includes('부')) || Object.keys(sample)[0];
-            const contK = Object.keys(sample).find(k => k.includes('전달')||k.includes('협의')||k.includes('내용')) || Object.keys(sample)[2];
-            const newAnn = [];
-            rows.forEach(row => { if (row[contK]) newAnn.push({ text: `[${row[deptK]||'기타'}] ${row[contK]}`, critical: (row[deptK]||'').includes('기획')||(row[deptK]||'').includes('생활')||(row[deptK]||'').includes('안전') }); });
-            if (newAnn.length > 0) { ANNOUNCEMENTS.length = 0; newAnn.forEach(a => ANNOUNCEMENTS.push(a)); }
-          }
-        }
-      } catch(e) { console.warn('부서 전달사항 연동 실패'); }
-      initTicker();
-    }
-
-    // ========================================================
-    // 8. 시뮬레이터 제어
-    // ========================================================
-    let isGridActive = false, isBlackoutDebugActive = false;
-
-    function togglePhysicalGrid() {
-      const btn = document.getElementById('btn-grid-toggle');
-      isGridActive = !isGridActive;
-      ['guide-x','guide-y','label-horizontal','label-vertical'].forEach(id => {
-        document.getElementById(id).style.display = isGridActive ? 'block' : 'none';
-      });
-      btn.classList.toggle('active', isGridActive);
-    }
-
-    function toggleBlackoutVisual() {
-      const btn = document.getElementById('btn-blackout-toggle');
-      const zone = document.getElementById('blackout-zone');
-      isBlackoutDebugActive = !isBlackoutDebugActive;
-      if (isBlackoutDebugActive) {
-        btn.classList.add('active');
-        zone.style.backgroundColor = 'rgba(255,0,127,0.2)';
-        zone.style.border = '2px dashed var(--color-zone-c)';
-      } else {
-        btn.classList.remove('active');
-        zone.style.backgroundColor = '#000000';
-        zone.style.border = 'none';
-      }
-    }
-
-    // ========================================================
-    // 9. 종합 구동 컨트롤러
-    // ========================================================
-    async function refreshAllData() {
-      const now = new Date();
-      const tv  = now.getHours()*100 + now.getMinutes();
-      const mH = document.getElementById('meal-card-header');
-      const mC = document.getElementById('meal-card-content');
-      const wH = document.getElementById('weather-card-header');
-      const wC = document.getElementById('weather-card-content');
-
-      if (tv < 1320) {
-        if (mH) mH.style.display = 'flex';
-        if (mC) mC.style.display = 'flex';
-        if (wH) wH.style.display = 'none';
-        if (wC) wC.style.display = 'none';
-        loadInfographicMeal();
-      } else {
-        if (mH) mH.style.display = 'none';
-        if (mC) mC.style.display = 'none';
-        if (wH) wH.style.display = 'flex';
-        if (wC) wC.style.display = 'flex';
-        loadInfographicWeather();
-      }
-      loadInfographicCreative();
-      loadNoticeBoard();
-    }
-
-    // ========================================================
-    // BGM (배경음악) 플레이어 시스템
-    // ========================================================
+    // 날씨에 맞게 세분화된 유튜브 BGM 플레이리스트
+    // 당신은 사랑받기 위해 태어난 사람(CCM Piano): RDDVFM4yvUg
+    // 혼자 걷지 않을게요(CCM Piano): R79PpyO_q14
     const BGM_PLAYLIST = {
-      welcome: [ // 등교 맞이 클래식 (로컬 긴 MP3 파일로 직접 교체 권장)
-        { title: 'Vivaldi - Spring (Allegro)', url: 'welcome1.mp3' },
-        { title: 'Mozart - Eine kleine Nachtmusik', url: 'welcome2.mp3' },
-        { title: 'Beethoven - Symphony No. 6 (Pastoral)', url: 'welcome3.mp3' }
-      ],
-      break: [ // 쉬는 시간 힐링 피아노 (로컬 긴 MP3 파일로 직접 교체 권장)
-        { title: 'Debussy - Clair de lune', url: 'break1.mp3' },
-        { title: 'Erik Satie - Gymnopédie No. 1', url: 'break2.mp3' },
-        { title: 'Chopin - Nocturne in E-flat Major', url: 'break3.mp3' }
-      ]
+      // 맑음 / 구름 조금
+      sunny: {
+        welcome: [
+          { title: '당신은 사랑받기 위해 태어난 사람 (CCM Piano)', youtubeId: 'RDDVFM4yvUg' },
+          { title: 'Vivaldi - Spring (Allegro)', youtubeId: 'gT8Z07YV_oA' },
+          { title: 'Mozart - Eine kleine Nachtmusik', youtubeId: 'H4H85jP_5yQ' },
+          { title: 'Beethoven - Symphony No. 6 (Pastoral)', youtubeId: 'YyZlD8gP4sA' }
+        ],
+        break: [
+          { title: 'Lofi Hip Hop - Chill Study Beats', youtubeId: '5qap5aO4i9A' },
+          { title: 'Erik Satie - Gymnopédie No. 1', youtubeId: '021wT1g4T5g' },
+          { title: 'Chopin - Nocturne in E-flat Major', youtubeId: 'FCPdIvXo2rU' }
+        ]
+      },
+      // 비 / 흐림 / 안개 / 소나기 / 뇌우
+      rainy: {
+        welcome: [
+          { title: '혼자 걷지 않을게요 (CCM Piano)', youtubeId: 'R79PpyO_q14' },
+          { title: 'Chopin - Raindrop Prelude', youtubeId: '6gV9-fn9a98' }
+        ],
+        break: [
+          { title: '비 오는 날 듣기 좋은 Lofi Cafe', youtubeId: '5qap5aO4i9A' },
+          { title: 'Debussy - Clair de Lune (달빛)', youtubeId: '97_VJve7UVc' },
+          { title: 'Chopin - Nocturne in E-flat Major', youtubeId: 'FCPdIvXo2rU' }
+        ]
+      },
+      // 눈
+      snowy: {
+        welcome: [
+          { title: '당신은 사랑받기 위해 태어난 사람 (CCM Piano)', youtubeId: 'RDDVFM4yvUg' },
+          { title: 'Tchaikovsky - Waltz of the Flowers', youtubeId: 'QxHkBeG1l6M' }
+        ],
+        break: [
+          { title: '따뜻한 겨울 캐롤 Lofi Cafe', youtubeId: '5qap5aO4i9A' },
+          { title: 'Erik Satie - Gymnopédie No. 1', youtubeId: '021wT1g4T5g' },
+          { title: 'Chopin - Nocturne in E-flat Major', youtubeId: 'FCPdIvXo2rU' }
+        ]
+      }
     };
 
-    let bgmAudio = new Audio();
-    bgmAudio.crossOrigin = 'anonymous';
-    bgmAudio.volume = 0.4;
-    bgmAudio.muted = true; // 최초 상태는 브라우저 차단에 대비해 음소거
-
+    let ytPlayer = null;
+    let isYtPlayerReady = false;
     let isSoundActivated = false;
     let currentBgmType = null;
     let currentBgmIndex = 0;
+    let currentTrack = null;
+
+    // 유튜브 API가 로드되면 자동 호출
+    window.onYouTubeIframeAPIReady = function() {
+      ytPlayer = new YT.Player('yt-player', {
+        height: '1',
+        width: '1',
+        videoId: '',
+        playerVars: {
+          autoplay: 0,
+          controls: 0,
+          disablekb: 1,
+          fs: 0,
+          rel: 0,
+          showinfo: 0,
+          iv_load_policy: 3
+        },
+        events: {
+          onReady: onPlayerReady,
+          onStateChange: onPlayerStateChange,
+          onError: onPlayerError
+        }
+      });
+    };
+
+    function onPlayerReady(event) {
+      isYtPlayerReady = true;
+      if (isSoundActivated) {
+        checkBgmSchedule();
+      }
+    }
+
+    function onPlayerStateChange(event) {
+      // 재생 종료(YT.PlayerState.ENDED === 0) 시 다음 트랙
+      if (event.data === 0) {
+        playNextTrack();
+      }
+    }
+
+    function onPlayerError(event) {
+      console.warn('유튜브 플레이어 에러:', event.data);
+      setTimeout(playNextTrack, 2000);
+    }
+
+    function getWeatherCategory(code) {
+      // 0,1,2,3: 맑음/흐림 -> sunny
+      // 71,73,75,77,85,86: 눈 -> snowy
+      // 그 외: 비/안개 -> rainy
+      if ([0, 1, 2, 3].includes(code)) {
+        return 'sunny';
+      } else if ([71, 73, 75, 77, 85, 86].includes(code)) {
+        return 'snowy';
+      } else {
+        return 'rainy';
+      }
+    }
 
     function activateSoundSystem() {
+      if (isSoundActivated) return;
       isSoundActivated = true;
-      const overlay = document.getElementById('sound-activation-overlay');
-      if (overlay) {
-        overlay.style.opacity = '0';
-        setTimeout(() => overlay.remove(), 500);
-      }
       
-      // 뮤트 풀기
-      bgmAudio.muted = false;
+      // 전역 리스너 제거
+      document.removeEventListener('click', activateSoundSystem);
+      document.removeEventListener('touchstart', activateSoundSystem);
+      
       const btn = document.getElementById('bgm-ctrl-btn');
       const icon = document.getElementById('bgm-ctrl-icon');
       const visualizer = document.getElementById('bgm-visualizer');
       
-      icon.className = 'fa-solid fa-volume-high';
-      btn.style.background = 'rgba(255,0,127,0.3)';
-      visualizer.classList.add('playing');
+      if (icon) icon.className = 'fa-solid fa-volume-high';
+      if (btn) btn.style.background = 'rgba(255,0,127,0.3)';
+      if (visualizer) visualizer.classList.add('playing');
 
+      if (ytPlayer && typeof ytPlayer.unMute === 'function') {
+        ytPlayer.unMute();
+        ytPlayer.setVolume(40);
+      }
+      
       checkBgmSchedule();
     }
 
     function toggleBgmPlay() {
-      if (!isSoundActivated) return;
+      if (!isSoundActivated) {
+        activateSoundSystem();
+        return;
+      }
+      
       const btn = document.getElementById('bgm-ctrl-btn');
       const icon = document.getElementById('bgm-ctrl-icon');
       const visualizer = document.getElementById('bgm-visualizer');
 
-      if (bgmAudio.muted) {
-        bgmAudio.muted = false;
-        if (bgmAudio.paused && currentBgmType) {
-          bgmAudio.play().catch(()=>{});
+      if (ytPlayer && typeof ytPlayer.isMuted === 'function') {
+        if (ytPlayer.isMuted()) {
+          ytPlayer.unMute();
+          ytPlayer.setVolume(40);
+          if (ytPlayer.getPlayerState() !== 1) { // 1 = YT.PlayerState.PLAYING
+            ytPlayer.playVideo();
+          }
+          if (icon) icon.className = 'fa-solid fa-volume-high';
+          if (btn) btn.style.background = 'rgba(255,0,127,0.3)';
+          if (visualizer) visualizer.classList.add('playing');
+        } else {
+          ytPlayer.mute();
+          if (icon) icon.className = 'fa-solid fa-volume-xmark';
+          if (btn) btn.style.background = 'rgba(255,0,127,0.15)';
+          if (visualizer) visualizer.classList.remove('playing');
         }
-        icon.className = 'fa-solid fa-volume-high';
-        btn.style.background = 'rgba(255,0,127,0.3)';
-        visualizer.classList.add('playing');
-      } else {
-        bgmAudio.muted = true;
-        icon.className = 'fa-solid fa-volume-xmark';
-        btn.style.background = 'rgba(255,0,127,0.15)';
-        visualizer.classList.remove('playing');
       }
     }
 
     function checkBgmSchedule() {
-      if (!isSoundActivated) return;
-
       const now = new Date();
       const currentHour = bgmMockTime ? bgmMockTime.hour : now.getHours();
       const currentMin = bgmMockTime ? bgmMockTime.min : now.getMinutes();
@@ -1659,61 +1683,111 @@
       const visualizer = document.getElementById('bgm-visualizer');
 
       if (matchedSchedule) {
-        tagEl.textContent = matchedSchedule.name;
-        tagEl.style.color = 'var(--color-zone-c)';
+        if (tagEl) {
+          tagEl.textContent = matchedSchedule.name;
+          tagEl.style.color = 'var(--color-zone-c)';
+        }
         
         if (currentBgmType !== matchedSchedule.type) {
           currentBgmType = matchedSchedule.type;
-          const playlist = BGM_PLAYLIST[currentBgmType];
+          const weatherCat = getWeatherCategory(current_weather_code);
+          const playlist = BGM_PLAYLIST[weatherCat][currentBgmType];
           currentBgmIndex = Math.floor(Math.random() * playlist.length);
           playBgmTrack(playlist[currentBgmIndex]);
         }
       } else {
-        tagEl.textContent = '사운드 대기';
-        tagEl.style.color = 'var(--color-text-muted)';
-        titleEl.textContent = '일과 정규 수업 중';
-        visualizer.classList.remove('playing');
+        if (tagEl) {
+          tagEl.textContent = '사운드 대기';
+          tagEl.style.color = 'var(--color-text-muted)';
+        }
+        if (titleEl) {
+          titleEl.textContent = '일과 정규 수업 중';
+        }
+        if (visualizer) {
+          visualizer.classList.remove('playing');
+        }
         if (currentBgmType !== null) {
-          bgmAudio.pause();
+          if (ytPlayer && typeof ytPlayer.stopVideo === 'function') {
+            ytPlayer.stopVideo();
+          }
           currentBgmType = null;
         }
       }
     }
 
     function playBgmTrack(track) {
+      currentTrack = track;
       const titleEl = document.getElementById('bgm-title');
       const visualizer = document.getElementById('bgm-visualizer');
-      titleEl.textContent = track.title;
+      if (titleEl) titleEl.textContent = track.title;
       
-      bgmAudio.src = track.url;
-      bgmAudio.load();
-      
-      if (!bgmAudio.muted) {
-        bgmAudio.play().then(() => {
+      if (ytPlayer && isYtPlayerReady && typeof ytPlayer.loadVideoById === 'function') {
+        if (isSoundActivated) {
+          ytPlayer.unMute();
+          ytPlayer.setVolume(40);
+        } else {
+          ytPlayer.mute();
+        }
+        ytPlayer.loadVideoById(track.youtubeId);
+        if (visualizer && isSoundActivated) {
           visualizer.classList.add('playing');
-        }).catch(err => {
-          console.warn('재생 차단 또는 지연:', err);
-        });
+        }
       }
     }
 
-    bgmAudio.onended = () => {
+    function playNextTrack() {
       if (currentBgmType) {
-        const playlist = BGM_PLAYLIST[currentBgmType];
+        const weatherCat = getWeatherCategory(current_weather_code);
+        const playlist = BGM_PLAYLIST[weatherCat][currentBgmType];
         currentBgmIndex = (currentBgmIndex + 1) % playlist.length;
         playBgmTrack(playlist[currentBgmIndex]);
       }
-    };
+    }
+
+    // 제어패널 토글 함수 (새로고침 상태 보존)
+    function toggleControlPanel() {
+      const panel = document.querySelector('.control-panel');
+      const toggleIcon = document.getElementById('panel-toggle-icon');
+      if (!panel) return;
+
+      if (panel.classList.contains('show')) {
+        panel.classList.remove('show');
+        localStorage.setItem('controlPanelShow', 'false');
+        if (toggleIcon) {
+          toggleIcon.className = 'fa-solid fa-gear';
+        }
+      } else {
+        panel.classList.add('show');
+        localStorage.setItem('controlPanelShow', 'true');
+        if (toggleIcon) {
+          toggleIcon.className = 'fa-solid fa-xmark';
+        }
+      }
+    }
+
+    function initControlPanelState() {
+      const panel = document.querySelector('.control-panel');
+      const toggleIcon = document.getElementById('panel-toggle-icon');
+      const savedState = localStorage.getItem('controlPanelShow');
+      
+      if (panel) {
+        if (savedState === 'true') {
+          panel.classList.add('show');
+          if (toggleIcon) toggleIcon.className = 'fa-solid fa-xmark';
+        } else {
+          panel.classList.remove('show');
+          if (toggleIcon) toggleIcon.className = 'fa-solid fa-gear';
+        }
+      }
+    }
 
     // 가상 시뮬레이터 시간 제어 함수
     function setBgmSimTime(hour, min, btnElement) {
       bgmMockTime = { hour, min };
       
-      // 버튼 액티브 클래스 제어
       document.querySelectorAll('.btn-sim-class').forEach(btn => btn.classList.remove('active'));
       btnElement.classList.add('active');
       
-      // 13:20 타임 시프트 식단/날씨 연동을 위해 가상 시간 적용하여 갱신
       updateClock();
       refreshAllData();
       checkBgmSchedule();
@@ -1737,6 +1811,12 @@
       updateClock();
       setInterval(updateClock, 1000);
       initGoogleAuth();
+      initControlPanelState(); // 제어패널 로컬상태 초기화
+      
+      // 첫 클릭/터치 시 사운드 활성화 리스너 등록
+      document.addEventListener('click', activateSoundSystem);
+      document.addEventListener('touchstart', activateSoundSystem);
+      
       await refreshAllData();
       await fetchWorkspaceMedia();
       setInterval(refreshAllData, CONFIG.DATA_REFRESH_INTERVAL);
