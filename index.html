@@ -881,9 +881,14 @@
 
       mediaList.forEach(item => {
         let finalUrl = item.url;
-        if (!finalUrl.startsWith('/proxy') && (finalUrl.includes('drive.google.com') || finalUrl.includes('docs.google.com'))) {
+        if (finalUrl.includes('drive.google.com') || finalUrl.includes('docs.google.com')) {
           const id = extractGoogleDriveFileId(finalUrl);
-          if (id) { finalUrl = `/proxy?id=${id}&type=${item.type === 'video' ? 'video' : 'image'}`; item.url = finalUrl; }
+          if (id) {
+            finalUrl = item.type === 'video' 
+              ? `https://docs.google.com/uc?export=download&id=${id}`
+              : `https://drive.google.com/thumbnail?sz=w1280&id=${id}`;
+            item.url = finalUrl;
+          }
         }
 
         // isVertical이 이미 정의된 경우 즉시 분류
@@ -925,8 +930,12 @@
 
     function toProxyUrl(item) {
       const id   = extractGoogleDriveFileId(item.url);
-      const type = item.type === 'video' ? 'video' : 'image';
-      return id ? `/proxy?id=${id}&type=${type}` : item.url;
+      if (id) {
+        return item.type === 'video' 
+          ? `https://docs.google.com/uc?export=download&id=${id}`
+          : `https://drive.google.com/thumbnail?sz=w1280&id=${id}`;
+      }
+      return item.url;
     }
 
     function shuffleArray(array) {
