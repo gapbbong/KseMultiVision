@@ -580,7 +580,7 @@
       NEIS_API_KEY: '31ca8d4d17274275b155ae2e5cabba40',
       CREATIVE_SHEET_EXPORT_URL: 'https://docs.google.com/spreadsheets/d/1iqMpHw9VW7Xz6hwTFr7WUC36v4ibtZRuUHfsKVpexr8/export?format=csv',
       MEDIA_CYCLE_INTERVAL_V: 6000,
-      MEDIA_CYCLE_INTERVAL_H: 10000,
+      MEDIA_CYCLE_INTERVAL_H: 2000,
       DATA_REFRESH_INTERVAL: 1800000
     };
 
@@ -1111,6 +1111,16 @@
       const container = document.getElementById(containerId);
       if (!container || !list || list.length === 0) return;
 
+      // 기존 타이머 및 딜레이용 타임아웃이 존재하면 안전하게 해제하여 중복 실행 방지
+      if (container.dataset.timerId) {
+        clearInterval(parseInt(container.dataset.timerId));
+        container.dataset.timerId = '';
+      }
+      if (container.dataset.delayTimeoutId) {
+        clearTimeout(parseInt(container.dataset.delayTimeoutId));
+        container.dataset.delayTimeoutId = '';
+      }
+
       container.innerHTML = '';
       list.forEach((item, index) => {
         let el;
@@ -1156,7 +1166,6 @@
       container.appendChild(overlay);
 
       let idx = 0;
-      let timerId;
 
       function triggerNextSlide() {
         const items = container.querySelectorAll(`.${typeClass}-item`);
@@ -1184,9 +1193,14 @@
       }
 
       if (delay > 0) {
-        setTimeout(() => { timerId = setInterval(triggerNextSlide, interval); }, delay);
+        const timeoutId = setTimeout(() => {
+          const tId = setInterval(triggerNextSlide, interval);
+          container.dataset.timerId = tId;
+        }, delay);
+        container.dataset.delayTimeoutId = timeoutId;
       } else {
-        timerId = setInterval(triggerNextSlide, interval);
+        const tId = setInterval(triggerNextSlide, interval);
+        container.dataset.timerId = tId;
       }
     }
 
