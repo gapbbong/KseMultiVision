@@ -1514,6 +1514,117 @@
       return result;
     }
 
+    // ========================================================
+    // 7. 부서 전달사항 (티커)
+    // ========================================================
+    async function loadNoticeBoard() {
+      const apiKey = CONFIG.GOOGLE_API_KEY;
+      const folderId = CONFIG.NOTICE_DRIVE_FOLDER_ID;
+      const isTokenValid = googleAccessToken && googleTokenExpiry && Date.now() < parseInt(googleTokenExpiry);
+      
+      if (!apiKey && !isTokenValid) { initTicker(); return; }
+      if (!folderId) { initTicker(); return; }
+
+      const now = new Date();
+      const yy = String(now.getFullYear()).substring(2);
+      const mm = now.getMonth()+1;
+      try {
+        let url = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+mimeType='application/vnd.google-apps.spreadsheet'&orderBy=createdTime+desc&fields=files(id,name,createdTime)`;
+        let options = {};
+        if (isTokenValid) {
+          options.headers = { 'Authorization': `Bearer ${googleAccessToken}` };
+        } else {
+          url += `&key=${apiKey}`;
+        }
+
+        const res = await fetch(url, options);
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        if (data.files && data.files.length > 0) {
+          let target = data.files[0];
+          for (let term of [`${yy}.${mm}`,`${yy}년${mm}월`,`${yy}년${String(mm).padStart(2,'0')}월`,`${mm}월`]) {
+            const found = data.files.find(f => f.name.includes(term));
+            if (found) { target = found; break; }
+          }
+          
+          let csvUrl = `https://docs.google.com/spreadsheets/d/${target.id}/export?format=csv`;
+          let csvOptions = {};
+          if (isTokenValid) {
+            csvOptions.headers = { 'Authorization': `Bearer ${googleAccessToken}` };
+          }
+          const csvRes = await fetch(csvUrl, csvOptions);
+          if (!csvRes.ok) throw new Error();
+          const rows = parseCSV(await csvRes.text());
+          if (rows && rows.length > 0) {
+            const sample = rows[0];
+            const deptK = Object.keys(sample).find(k => k.includes('부서')||k.includes('부')) || Object.keys(sample)[0];
+            const contK = Object.keys(sample).find(k => k.includes('전달')||k.includes('결의')||k.includes('내용')) || Object.keys(sample)[2];
+            const newAnn = [];
+            rows.forEach(row => { if (row[contK]) newAnn.push({ text: `[${row[deptK]||'기타'}] ${row[contK]}`, critical: (row[deptK]||'').includes('기획')||(row[deptK]||'').includes('생활')||(row[deptK]||'').includes('안전') }); });
+            if (newAnn.length > 0) { ANNOUNCEMENTS.length = 0; newAnn.forEach(a => ANNOUNCEMENTS.push(a)); }
+          }
+        }
+      } catch(e) { console.warn('부서 전달사항 연동 실패'); }
+      initTicker();
+    }
+
+    // ========================================================
+    // 8. 디버그 레이어 제어
+    // ========================================================
+    let isGridActive = false, isBlackoutDebugActive = false;
+
+    function togglePhysicalGrid() {
+      const btn = document.getElementById('btn-grid-toggle');
+      isGridActive = !isGridActive;
+      ['guide-x','guide-y','label-horizontal','label-vertical'].forEach(id => {
+        document.getElementById(id).style.display = isGridActive ? 'block' : 'none';
+      });
+      btn.classList.toggle('active', isGridActive);
+    }
+
+    function toggleBlackoutVisual() {
+      const btn = document.getElementById('btn-blackout-toggle');
+      const zone = document.getElementById('blackout-zone');
+      isBlackoutDebugActive = !isBlackoutDebugActive;
+      if (isBlackoutDebugActive) {
+        btn.classList.add('active');
+        zone.style.backgroundColor = 'rgba(255,0,127,0.2)';
+        zone.style.border = '2px dashed var(--color-zone-c)';
+      } else {
+        btn.classList.remove('active');
+        zone.style.backgroundColor = '#000000';
+        zone.style.border = 'none';
+      }
+    }
+
+    // ========================================================
+    // 9. 종합 구동 컨트롤러
+    // ========================================================
+    async function refreshAllData() {
+      const now = new Date();
+      const tv  = now.getHours()*100 + now.getMinutes();
+      const mH = document.getElementById('meal-card-header');
+      const mC = document.getElementById('meal-card-content');
+      const wH = document.getElementById('weather-card-header');
+      const wC = document.getElementById('weather-card-content');
+
+      if (tv < 1320) {
+        if (mH) mH.style.display = 'flex';
+        if (mC) mC.style.display = 'flex';
+        if (wH) wH.style.display = 'none';
+        if (wC) wC.style.display = 'none';
+        loadInfographicMeal();
+      } else {
+        if (mH) mH.style.display = 'none';
+        if (mC) mC.style.display = 'none';
+        if (wH) wH.style.display = 'flex';
+        if (wC) wC.style.display = 'flex';
+        loadInfographicWeather();
+      }
+      loadInfographicCreative();
+      loadNoticeBoard();
+    }
+
     // 날씨에 맞게 세분화된 유튜브 BGM 플레이리스트
     // 당신은 사랑받기 위해 태어난 사람(CCM Piano): RDDVFM4yvUg
     // 혼자 걷지 않을게요(CCM Piano): R79PpyO_q14
