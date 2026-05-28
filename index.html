@@ -1,0 +1,1624 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>경성전자고등학교 실시간 데이터 연동형 학교 안내 멀티비전 시스템</title>
+  <!-- Modern Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <!-- Icons (FontAwesome) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* ==========================================
+       1. Core Styling Tokens (Midnight Tech)
+       ========================================== */
+    :root {
+      --bg-dark: #000000;
+      --color-zone-a: #00f5d4;
+      --color-zone-b: #00bbf9;
+      --color-zone-c: #ff007f;
+      --color-zone-e: #fee440;
+      --card-bg-gradient: linear-gradient(135deg, rgba(13, 27, 42, 0.8) 0%, rgba(27, 38, 59, 0.8) 100%);
+      --card-border: 1px solid rgba(0, 245, 212, 0.15);
+      --color-text-primary: #f8fafc;
+      --color-text-secondary: #94a3b8;
+      --color-text-muted: #64748b;
+      --font-outfit: 'Outfit', sans-serif;
+      --font-noto: 'Noto Sans KR', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--color-text-primary);
+      font-family: var(--font-noto);
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+      background-image:
+        radial-gradient(circle at 10% 20%, rgba(0, 245, 212, 0.03) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(0, 187, 249, 0.03) 0%, transparent 40%),
+        linear-gradient(rgba(255,255,255,0.003) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.003) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+    }
+
+    /* ==========================================
+       2. Precise Spatial Layout (Absolute Grid)
+       ========================================== */
+    .viewport-canvas { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+
+    /* 구역 A: 1,3사분면 세로 숏폼 (9:16 고정) */
+    .zone-a {
+      position: absolute; left: 0; top: 0;
+      height: 100vh; width: 56.25vh;
+      border-right: 2px solid rgba(0, 245, 212, 0.3);
+      background: #020617; z-index: 5; overflow: hidden;
+    }
+
+    /* 구역 B: 1사분면 우측 + 2사분면 통합 와이드 */
+    .zone-b {
+      position: absolute; left: 56.25vh; top: 0;
+      width: calc(100vw - 56.25vh); height: 50vh;
+      border-bottom: 2px solid rgba(0, 187, 249, 0.3);
+      background: #020617; z-index: 4; overflow: hidden;
+    }
+
+    /* 구역 C: 4사분면 상단 (시계 + 티커) */
+    .zone-c {
+      position: absolute; left: 50vw; top: 50vh;
+      width: 50vw; height: 20vh;
+      border-bottom: 2px solid rgba(255, 0, 127, 0.3);
+      border-left: 2px solid rgba(255, 0, 127, 0.2);
+      background: linear-gradient(135deg, rgba(13,27,42,0.95) 0%, rgba(2,6,23,0.95) 100%);
+      z-index: 6; display: flex; align-items: center;
+      padding: 0 24px; overflow: hidden;
+    }
+
+    /* 구역 D: 4사분면 하단 파손 블랙아웃 */
+    .zone-d {
+      position: absolute; left: 50vw; top: 70vh;
+      width: 50vw; height: 30vh;
+      background-color: #000000; z-index: 10; pointer-events: none;
+    }
+
+    /* 구역 E: 3사분면 하단 인포그래픽 */
+    .zone-e {
+      position: absolute; left: 56.25vh; top: 50vh;
+      width: calc(50vw - 56.25vh); height: 50vh;
+      background: linear-gradient(135deg, rgba(13,27,42,0.95) 0%, rgba(2,6,23,0.95) 100%);
+      border-right: 2px solid rgba(254, 228, 64, 0.2);
+      padding: 24px; z-index: 4;
+      display: flex; flex-direction: column; gap: 14px; overflow: hidden;
+    }
+
+    /* ==========================================
+       3. Media Viewer Components (구역 A, B)
+       ========================================== */
+    .media-container { position: relative; width: 100%; height: 100%; }
+
+    .media-content {
+      position: absolute; top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; opacity: 0;
+      transition: opacity 0.8s ease-in-out; z-index: 1;
+    }
+    .media-content.active { opacity: 1; z-index: 2; }
+
+    .event-overlay {
+      position: absolute; bottom: 24px; left: 20px; right: 20px;
+      background: rgba(13,27,42,0.75); backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 12px; padding: 10px 16px; z-index: 10;
+      display: flex; align-items: center; gap: 12px;
+      box-shadow: 0 8px 32px 0 rgba(0,0,0,0.3); transition: transform 0.5s;
+    }
+    .zone-a .event-overlay { border: 1px solid rgba(0,245,212,0.25); box-shadow: 0 0 15px 0 rgba(0,245,212,0.15); }
+    .zone-b .event-overlay { border: 1px solid rgba(0,187,249,0.25); box-shadow: 0 0 15px 0 rgba(0,187,249,0.15); width: auto; max-width: 500px; }
+
+    .event-icon { font-size: 1.1rem; animation: pulseEvent 2.5s infinite ease-in-out; }
+    .zone-a .event-icon { color: var(--color-zone-a); }
+    .zone-b .event-icon { color: var(--color-zone-b); }
+
+    .event-details { display: flex; flex-direction: column; gap: 2px; }
+    .event-label { font-family: var(--font-outfit); font-size: 0.65rem; font-weight: 800; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 2px; }
+    .event-title { font-size: 0.95rem; font-weight: 700; color: var(--color-text-primary); letter-spacing: -0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 400px; }
+
+    /* ==========================================
+       4. Visual Info Cards (구역 E)
+       ========================================== */
+    .section-title {
+      font-size: 1.05rem; font-weight: 800; color: var(--color-zone-e);
+      display: flex; align-items: center; gap: 8px;
+      border-bottom: 1px solid rgba(254,228,64,0.15);
+      padding-bottom: 8px; margin-bottom: 2px;
+    }
+    .section-title i { text-shadow: 0 0 10px rgba(254,228,64,0.4); }
+
+    /* 급식 인포그래픽 */
+    .infographic-meal { display: flex; flex-direction: column; gap: 10px; flex-grow: 1; justify-content: center; }
+
+    .meal-meta-row { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; padding: 10px 14px; }
+    .calories-radial-box { display: flex; align-items: center; gap: 10px; }
+    .calories-icon-wrap { width: 38px; height: 38px; border-radius: 50%; background: rgba(254,228,64,0.1); border: 1px solid rgba(254,228,64,0.25); display: flex; align-items: center; justify-content: center; color: var(--color-zone-e); font-size: 1rem; }
+    .calories-data { display: flex; flex-direction: column; }
+    .calories-title { font-size: 0.7rem; color: var(--color-text-secondary); font-weight: 600; }
+    .calories-value { font-family: var(--font-outfit); font-size: 1.1rem; font-weight: 800; color: #ffffff; }
+    .meal-date-badge { background: rgba(254,228,64,0.15); border: 1px solid rgba(254,228,64,0.25); padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 800; color: var(--color-zone-e); }
+
+    .meal-grid, .weather-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+    .meal-grid-item, .weather-grid-item { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 8px 10px; display: flex; align-items: center; gap: 8px; font-size: 0.85rem; font-weight: 600; transition: background 0.2s; }
+    .meal-grid-item:hover { background: rgba(254,228,64,0.05); border-color: rgba(254,228,64,0.2); }
+    .weather-grid-item:hover { background: rgba(0,187,249,0.05); border-color: rgba(0,187,249,0.2); }
+    .meal-grid-item i { font-size: 0.85rem; }
+
+    .meal-rice i { color: #f8fafc; }
+    .meal-soup i { color: #38bdf8; }
+    .meal-meat i { color: #f43f5e; }
+    .meal-veg  i { color: #4ade80; }
+    .meal-dessert i { color: #fbbf24; }
+
+    /* 창체 이벤트 멀티카드 */
+    .creative-events-list { display: flex; flex-direction: column; gap: 6px; margin-top: 2px; }
+    .creative-event-card { background: rgba(254,228,64,0.04); border: 1px solid rgba(254,228,64,0.12); border-radius: 10px; padding: 8px 12px; display: flex; flex-direction: column; gap: 4px; transition: border-color 0.2s, background 0.2s; }
+    .creative-event-card:first-child { background: rgba(254,228,64,0.08); border-color: rgba(254,228,64,0.28); }
+    .creative-event-card:hover { background: rgba(254,228,64,0.09); border-color: rgba(254,228,64,0.3); }
+    .creative-event-header { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+    .creative-event-tag { font-size: 0.62rem; font-weight: 800; background: rgba(254,228,64,0.14); color: var(--color-zone-e); padding: 2px 7px; border-radius: 4px; white-space: nowrap; }
+    .creative-event-card:first-child .creative-event-tag { background: rgba(254,228,64,0.22); }
+    .creative-event-dday { font-family: var(--font-outfit); font-size: 0.62rem; font-weight: 800; color: var(--color-zone-c); white-space: nowrap; }
+    .creative-event-date { font-family: var(--font-outfit); font-size: 0.65rem; font-weight: 700; color: var(--color-text-secondary); }
+    .creative-event-title { font-size: 0.82rem; font-weight: 700; color: #ffffff; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .creative-event-dept { font-size: 0.7rem; color: var(--color-text-secondary); display: flex; align-items: center; gap: 5px; }
+    .creative-event-dept i { color: var(--color-zone-e); font-size: 0.65rem; }
+
+    /* ==========================================
+       5. Cybernetic Clock & Ticker (구역 C)
+       ========================================== */
+    .clock-widget { display: flex; align-items: center; gap: 16px; flex-shrink: 0; border-right: 1px solid rgba(255,0,127,0.2); padding-right: 20px; }
+    .clock-digital { font-family: var(--font-outfit); font-size: 2.2rem; font-weight: 900; color: #ffffff; line-height: 1; text-shadow: 0 0 15px rgba(255,0,127,0.4); display: flex; align-items: baseline; }
+    .clock-sec { font-size: 1.2rem; font-weight: 400; color: var(--color-zone-c); margin-left: 2px; min-width: 22px; }
+    .clock-cal { display: flex; flex-direction: column; gap: 2px; }
+    .clock-cal-date { font-family: var(--font-outfit); font-size: 0.85rem; font-weight: 800; color: #ffffff; }
+    .clock-cal-day { font-size: 0.75rem; color: var(--color-zone-c); font-weight: 700; }
+
+    .ticker-container { flex-grow: 1; height: 100%; display: flex; align-items: center; overflow: hidden; position: relative; padding-left: 20px; }
+    .ticker-track { display: flex; align-items: center; gap: 40px; white-space: nowrap; position: absolute; will-change: transform; }
+    .ticker-item { display: flex; align-items: center; gap: 10px; font-size: 0.95rem; font-weight: 600; color: var(--color-text-primary); }
+    .ticker-item.alert-critical { color: #fda4af; border: 1px solid rgba(244,63,94,0.4); background: rgba(244,63,94,0.1); padding: 4px 12px; border-radius: 6px; }
+    .ticker-item.alert-critical i { color: #f43f5e; animation: alertBlink 1.5s infinite; }
+    .ticker-item.alert-normal i { color: var(--color-zone-c); }
+
+    /* ==========================================
+       6. Simulator Controls
+       ========================================== */
+    .guide-line-x { position: absolute; left: 0; top: 50vh; width: 100vw; height: 2px; border-top: 2px dashed rgba(234,88,12,0.6); z-index: 100; pointer-events: none; display: none; }
+    .guide-line-y { position: absolute; left: 50vw; top: 0; width: 2px; height: 100vh; border-left: 2px dashed rgba(234,88,12,0.6); z-index: 100; pointer-events: none; display: none; }
+    .guide-line-label { position: absolute; font-family: var(--font-outfit); font-size: 0.75rem; font-weight: 900; background: #ea580c; color: #ffffff; padding: 2px 6px; border-radius: 4px; z-index: 101; pointer-events: none; display: none; }
+    #label-horizontal { left: 10px; top: calc(50vh - 20px); }
+    #label-vertical { left: calc(50vw + 10px); top: 10px; }
+
+    .control-panel { position: fixed; bottom: 24px; right: 24px; background: rgba(13,27,42,0.95); backdrop-filter: blur(12px); border: 1px solid rgba(0,245,212,0.3); border-radius: 14px; padding: 16px; z-index: 999; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 10px 30px rgba(0,245,212,0.1); }
+    .panel-title { font-size: 0.8rem; font-weight: 800; color: var(--color-zone-a); letter-spacing: 1px; text-transform: uppercase; display: flex; align-items: center; gap: 6px; margin-bottom: 2px; }
+    .btn-toggle { background: rgba(0,245,212,0.1); border: 1px solid var(--color-zone-a); color: var(--color-zone-a); padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s; }
+    .btn-toggle:hover { background: var(--color-zone-a); color: #000000; }
+    .btn-toggle.active { background: #ea580c; border-color: #ea580c; color: #ffffff; }
+    .view-info-banner { font-size: 0.7rem; color: var(--color-text-secondary); line-height: 1.4; max-width: 200px; }
+    .fallback-card-msg { grid-column: span 2; background: rgba(244,63,94,0.03); border: 1px dashed rgba(244,63,94,0.25); border-radius: 8px; padding: 8px; font-size: 0.75rem; color: #fca5a5; text-align: center; }
+
+    /* ==========================================
+       7. Animations
+       ========================================== */
+    @keyframes alertBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    @keyframes pulseEvent { 0%, 100% { transform: scale(1); filter: brightness(1); } 50% { transform: scale(1.05); filter: brightness(1.2); } }
+
+    /* ==========================================
+       8. Animated Weather Graphics
+       ========================================== */
+    .weather-graphic-wrap { display: flex; align-items: center; justify-content: center; height: 70px; position: relative; flex-shrink: 0; }
+
+    .wx-sun { width: 42px; height: 42px; border-radius: 50%; background: radial-gradient(circle, #ffe566 40%, #ffb800 100%); box-shadow: 0 0 20px 6px rgba(255,210,0,0.45); animation: wxSunPulse 3s ease-in-out infinite; position: relative; z-index: 2; flex-shrink: 0; }
+    @keyframes wxSunPulse { 0%, 100% { box-shadow: 0 0 18px 5px rgba(255,210,0,0.4); transform: scale(1); } 50% { box-shadow: 0 0 30px 10px rgba(255,210,0,0.65); transform: scale(1.07); } }
+
+    .wx-sun-rays { position: absolute; width: 42px; height: 42px; animation: wxRaysSpin 12s linear infinite; z-index: 1; }
+    .wx-sun-rays::before, .wx-sun-rays::after { content: ''; position: absolute; top: 50%; left: 50%; width: 6px; height: 22px; margin-left: -3px; background: linear-gradient(to top, transparent, rgba(255,220,50,0.7)); border-radius: 3px; transform-origin: center bottom; }
+    .wx-sun-rays::before { transform: translateY(-100%) rotate(0deg) translateY(-26px); }
+    .wx-sun-rays::after  { transform: translateY(-100%) rotate(90deg) translateY(-26px); }
+    @keyframes wxRaysSpin { to { transform: rotate(360deg); } }
+
+    .wx-cloud { position: relative; width: 52px; height: 28px; background: #b0c8e8; border-radius: 20px; box-shadow: inset -4px -3px 0 rgba(0,0,0,0.08); animation: wxCloudFloat 4s ease-in-out infinite; flex-shrink: 0; }
+    .wx-cloud::before { content: ''; position: absolute; width: 28px; height: 28px; background: #b0c8e8; border-radius: 50%; top: -13px; left: 8px; box-shadow: inset -3px -3px 0 rgba(0,0,0,0.08); }
+    .wx-cloud::after  { content: ''; position: absolute; width: 18px; height: 18px; background: #b0c8e8; border-radius: 50%; top: -8px; left: 24px; }
+    @keyframes wxCloudFloat { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-5px); } }
+
+    .wx-cloudsun { position: relative; width: 72px; height: 60px; flex-shrink: 0; }
+    .wx-cloudsun .wx-sun-small { position: absolute; width: 32px; height: 32px; border-radius: 50%; background: radial-gradient(circle, #ffe566 40%, #ffb800 100%); box-shadow: 0 0 14px 4px rgba(255,210,0,0.4); top: 0; left: 0; animation: wxSunPulse 3s ease-in-out infinite; z-index: 1; }
+    .wx-cloudsun .wx-cloud-small { position: absolute; width: 52px; height: 26px; background: #c8d8ee; border-radius: 20px; bottom: 0; right: 0; z-index: 2; animation: wxCloudFloat 4s ease-in-out infinite; }
+    .wx-cloudsun .wx-cloud-small::before { content: ''; position: absolute; width: 24px; height: 24px; background: #c8d8ee; border-radius: 50%; top: -12px; left: 8px; }
+    .wx-cloudsun .wx-cloud-small::after  { content: ''; position: absolute; width: 16px; height: 16px; background: #c8d8ee; border-radius: 50%; top: -7px; left: 22px; }
+
+    .wx-rain-wrap { position: relative; flex-shrink: 0; }
+    .wx-rain-wrap .wx-cloud { margin-bottom: 4px; }
+    .wx-drops { display: flex; gap: 7px; justify-content: center; margin-top: 4px; }
+    .wx-drop { width: 3px; height: 10px; background: linear-gradient(to bottom, #7ec8f8, #3b9ed4); border-radius: 2px; animation: wxDropFall 1.1s ease-in infinite; }
+    .wx-drop:nth-child(1) { animation-delay: 0s; }
+    .wx-drop:nth-child(2) { animation-delay: 0.22s; }
+    .wx-drop:nth-child(3) { animation-delay: 0.44s; }
+    .wx-drop:nth-child(4) { animation-delay: 0.15s; }
+    @keyframes wxDropFall { 0% { transform: translateY(-6px); opacity: 0; } 30% { opacity: 1; } 100% { transform: translateY(10px); opacity: 0; } }
+
+    .wx-snow-wrap { position: relative; flex-shrink: 0; }
+    .wx-flakes { display: flex; gap: 8px; justify-content: center; margin-top: 4px; }
+    .wx-flake { font-size: 0.85rem; animation: wxSnowFall 1.8s ease-in infinite; color: #e0eeff; }
+    .wx-flake:nth-child(1) { animation-delay: 0s; }
+    .wx-flake:nth-child(2) { animation-delay: 0.5s; }
+    .wx-flake:nth-child(3) { animation-delay: 1s; }
+    .wx-flake:nth-child(4) { animation-delay: 0.3s; }
+    @keyframes wxSnowFall { 0% { transform: translateY(-8px) rotate(0deg); opacity: 0; } 30% { opacity: 1; } 100% { transform: translateY(12px) rotate(180deg); opacity: 0; } }
+
+    .wx-fog-lines { display: flex; flex-direction: column; gap: 5px; width: 60px; flex-shrink: 0; }
+    .wx-fog-line { height: 5px; border-radius: 3px; background: linear-gradient(90deg, transparent, rgba(180,195,210,0.7), transparent); animation: wxFogPulse 2.5s ease-in-out infinite; }
+    .wx-fog-line:nth-child(2) { width: 80%; margin-left: 10%; animation-delay: 0.5s; }
+    .wx-fog-line:nth-child(3) { width: 60%; margin-left: 15%; animation-delay: 1s; }
+    @keyframes wxFogPulse { 0%, 100% { opacity: 0.4; transform: scaleX(0.95); } 50% { opacity: 0.9; transform: scaleX(1); } }
+
+    .wx-thunder-wrap { position: relative; flex-shrink: 0; }
+    .wx-lightning { position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); font-size: 1.3rem; animation: wxBolt 2s ease-in-out infinite; z-index: 3; filter: drop-shadow(0 0 6px #ffe566); }
+    @keyframes wxBolt { 0%, 70%, 100% { opacity: 0; transform: translateX(-50%) scale(0.8); } 72%, 98% { opacity: 1; transform: translateX(-50%) scale(1.1); } }
+    
+    /* BGM 플레이어 및 사운드 오버레이 스타일 */
+    @keyframes pulseSound {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 30px rgba(255,0,127,0.3); }
+      50% { transform: scale(1.05); box-shadow: 0 0 50px rgba(255,0,127,0.5); }
+    }
+    .bgm-visualizer.playing .bar {
+      animation: bounceBar 1.2s infinite ease-in-out alternate;
+    }
+    .bgm-visualizer.playing .bar:nth-child(1) { animation-duration: 0.8s; }
+    .bgm-visualizer.playing .bar:nth-child(2) { animation-duration: 1.1s; animation-delay: 0.15s; }
+    .bgm-visualizer.playing .bar:nth-child(3) { animation-duration: 0.9s; animation-delay: 0.05s; }
+    .bgm-visualizer.playing .bar:nth-child(4) { animation-duration: 1.0s; animation-delay: 0.2s; }
+    @keyframes bounceBar {
+      0% { height: 20%; }
+      100% { height: 100%; }
+    }
+    .btn-toggle.active-sim {
+      background: #ff007f;
+      border-color: #ff007f;
+      color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 브라우저 사운드 차단 우회용 오버레이 -->
+  <div id="sound-activation-overlay" onclick="activateSoundSystem()" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; cursor: pointer; transition: opacity 0.5s ease;">
+    <div class="sound-glow-wrap" style="position: relative; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; background: rgba(255,0,127,0.1); border: 2px solid var(--color-zone-c); border-radius: 50%; box-shadow: 0 0 30px rgba(255,0,127,0.3); animation: pulseSound 2s infinite;">
+      <i class="fa-solid fa-music" style="font-size: 3rem; color: var(--color-zone-c); text-shadow: 0 0 10px rgba(255,0,127,0.5);"></i>
+    </div>
+    <span style="font-family: var(--font-noto); font-size: 1.4rem; font-weight: 800; color: #ffffff; letter-spacing: -0.5px;">경성전자고등학교 등교 맞이 BGM 및 쉬는시간 사운드 활성화</span>
+    <span style="font-family: var(--font-noto); font-size: 0.95rem; color: var(--color-text-secondary);">화면 아무 곳이나 클릭하시면 시스템과 음악이 가동됩니다.</span>
+  </div>
+
+  <div class="viewport-canvas">
+
+    <!-- 2x2 물리 모니터 경계선 (디버그용) -->
+    <div class="guide-line-x" id="guide-x"></div>
+    <div class="guide-line-y" id="guide-y"></div>
+    <span class="guide-line-label" id="label-horizontal">2x2 모니터 가로 물리 경계선 (50vh)</span>
+    <span class="guide-line-label" id="label-vertical">2x2 모니터 세로 물리 경계선 (50vw)</span>
+
+    <!-- [구역 A: 1,3사분면 세로 숏폼/사진 (9:16 고정)] -->
+    <div class="zone-a">
+      <div class="media-container" id="vertical-container">
+        <!-- JS dynamically inserts vertical 9:16 media contents -->
+      </div>
+    </div>
+
+    <!-- [구역 B: 1사분면 우측 + 2사분면 통합 와이드] -->
+    <div class="zone-b">
+      <div class="media-container" id="horizontal-container">
+        <!-- JS dynamically inserts horizontal media contents -->
+      </div>
+    </div>
+
+    <!-- [구역 C: 4사분면 상단 시계+티커] -->
+    <div class="zone-c">
+      <div class="clock-widget">
+        <div class="clock-digital" id="live-time">
+          00:00<span class="clock-sec" id="live-sec">00</span>
+        </div>
+        <div class="clock-cal">
+          <div class="clock-cal-date" id="live-date">05.26 (MON)</div>
+          <div class="clock-cal-day" id="live-year">2026학년도 | 경성전자고등학교</div>
+        </div>
+      </div>
+      <!-- BGM 위젯 추가 -->
+      <div class="bgm-widget" id="bgm-widget" style="display: flex; align-items: center; gap: 12px; border-right: 1px solid rgba(255,0,127,0.2); padding-right: 20px; flex-shrink: 0;">
+        <div class="bgm-visualizer" id="bgm-visualizer" style="display: flex; align-items: flex-end; gap: 2px; height: 18px; width: 24px;">
+          <div class="bar" style="width: 3px; height: 100%; background: var(--color-zone-c); border-radius: 2px;"></div>
+          <div class="bar" style="width: 3px; height: 60%; background: var(--color-zone-c); border-radius: 2px;"></div>
+          <div class="bar" style="width: 3px; height: 80%; background: var(--color-zone-c); border-radius: 2px;"></div>
+          <div class="bar" style="width: 3px; height: 40%; background: var(--color-zone-c); border-radius: 2px;"></div>
+        </div>
+        <div class="bgm-info" style="display: flex; flex-direction: column; gap: 2px; max-width: 140px;">
+          <span class="bgm-tag" id="bgm-tag" style="font-family: var(--font-outfit); font-size: 0.6rem; font-weight: 800; color: var(--color-zone-c); text-transform: uppercase; letter-spacing: 1px;">사운드 대기</span>
+          <span class="bgm-title" id="bgm-title" style="font-size: 0.8rem; font-weight: 700; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 110px;">-</span>
+        </div>
+        <button class="bgm-ctrl-btn" id="bgm-ctrl-btn" onclick="toggleBgmPlay()" style="background: rgba(255,0,127,0.15); border: 1px solid rgba(255,0,127,0.3); color: var(--color-zone-c); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; outline: none;">
+          <i class="fa-solid fa-volume-xmark" id="bgm-ctrl-icon"></i>
+        </button>
+      </div>
+      <div class="ticker-container" id="ticker-container">
+        <div class="ticker-track" id="ticker-track">
+          <!-- JS dynamically injects announcements -->
+        </div>
+      </div>
+    </div>
+
+    <!-- [구역 D: 4사분면 하단 파손 블랙아웃] -->
+    <div class="zone-d" id="blackout-zone"></div>
+
+    <!-- [구역 E: 3사분면 하단 실시간 인포그래픽] -->
+    <div class="zone-e">
+
+      <!-- E-1: 오늘의 웰빙 급식 (13:20 이전) -->
+      <div id="meal-card-header" class="section-title">
+        <i class="fa-solid fa-salad"></i> <span id="meal-card-title">오늘의 웰빙 급식</span>
+      </div>
+      <div id="meal-card-content" class="infographic-meal">
+        <div class="meal-meta-row">
+          <div class="calories-radial-box">
+            <div class="calories-icon-wrap">
+              <i class="fa-solid fa-fire-flame-curved"></i>
+            </div>
+            <div class="calories-data">
+              <span class="calories-title">총 열량</span>
+              <span class="calories-value" id="meal-cal">--- kcal</span>
+            </div>
+          </div>
+          <span class="meal-date-badge" id="meal-date">---</span>
+        </div>
+        <div class="meal-grid" id="meal-grid-box">
+          <div style="grid-column: span 2; text-align: center; color: var(--color-text-secondary);">
+            <i class="fa-solid fa-spinner fa-spin"></i> 식단 데이터를 가져오는 중...
+          </div>
+        </div>
+      </div>
+
+      <!-- E-1 대체: 내일 날씨 (13:20 이후) -->
+      <div id="weather-card-header" class="section-title" style="display: none; border-bottom: 1px solid rgba(0,187,249,0.15); color: var(--color-zone-b);">
+        <i class="fa-solid fa-cloud-sun" style="text-shadow: 0 0 10px rgba(0,187,249,0.4);"></i>
+        <span id="weather-card-title">내일의 기상 예보</span>
+      </div>
+      <div id="weather-card-content" class="infographic-weather" style="display: none; flex-direction: column; gap: 8px; flex-grow: 1; justify-content: center;">
+        <!-- 날씨 그래픽 + 기온 메인 행 -->
+        <div style="display: flex; align-items: center; gap: 14px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 10px 14px;">
+          <div class="weather-graphic-wrap" id="weather-graphic">
+            <div class="wx-cloudsun">
+              <div class="wx-sun-small"></div>
+              <div class="wx-cloud-small"></div>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 2px; flex: 1;">
+            <span style="font-size: 0.65rem; color: var(--color-text-secondary); font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">내일 기온 (최저/최고)</span>
+            <span id="weather-temp" style="font-family: var(--font-outfit); font-size: 1.3rem; font-weight: 900; color: #ffffff; line-height: 1;">--.-°C / --.-°C</span>
+            <span id="weather-status" style="font-size: 0.75rem; font-weight: 800; color: var(--color-zone-b); margin-top: 2px;">맑음</span>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px;">
+            <span style="font-size: 0.6rem; color: var(--color-text-muted); font-weight: 600;">체감 최고</span>
+            <span id="weather-apparent" style="font-family: var(--font-outfit); font-size: 0.9rem; font-weight: 800; color: var(--color-text-secondary);">--.-°C</span>
+          </div>
+        </div>
+        <!-- 상세 지표 그리드 -->
+        <div class="weather-grid">
+          <div class="weather-grid-item" style="color: var(--color-text-primary); display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <i class="fa-solid fa-droplet" style="color: #38bdf8; font-size: 0.85rem;"></i>
+              <span>강수 확률</span>
+            </div>
+            <span id="weather-humidity" style="font-family: var(--font-outfit); color: #ffffff;">--%</span>
+          </div>
+          <div class="weather-grid-item" style="color: var(--color-text-primary); display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <i class="fa-solid fa-wind" style="color: #94a3b8; font-size: 0.85rem;"></i>
+              <span>최대 풍속</span>
+            </div>
+            <span id="weather-wind" style="font-family: var(--font-outfit); color: #ffffff;">-- m/s</span>
+          </div>
+          <div class="weather-grid-item" style="color: var(--color-text-primary); display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <i class="fa-solid fa-smog" style="color: #fbbf24; font-size: 0.85rem;"></i>
+              <span>미세먼지</span>
+            </div>
+            <span id="weather-pm10" style="font-family: var(--font-noto); color: #ffffff;">좋음</span>
+          </div>
+          <div class="weather-grid-item" style="color: var(--color-text-primary); display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <i class="fa-solid fa-location-dot" style="color: #00bbf9; font-size: 0.85rem;"></i>
+              <span>위치</span>
+            </div>
+            <span style="font-family: var(--font-noto); color: #ffffff; font-size: 0.78rem;">부산 서구</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- E-2: 다가오는 창체 일정 (멀티카드) -->
+      <div class="section-title" style="border-top: 1px solid rgba(254,228,64,0.15); padding-top: 12px; margin-top: 4px;">
+        <i class="fa-solid fa-calendar-check"></i> 다가오는 창체 일정
+        <span id="creative-subtitle" style="font-size:0.62rem; font-weight:600; color:var(--color-text-secondary); margin-left:auto;">최대 3건 표시</span>
+      </div>
+      <div class="creative-events-list" id="creative-events-list">
+        <div style="grid-column: span 2; text-align: center; color: var(--color-text-secondary); font-size:0.82rem; padding: 8px 0;">
+          <i class="fa-solid fa-spinner fa-spin"></i> 일정을 불러오는 중...
+        </div>
+      </div>
+
+    </div><!-- /zone-e -->
+
+  </div><!-- /viewport-canvas -->
+
+  <!-- 제어 패널 -->
+  <div class="control-panel" style="max-height: 80vh; overflow-y: auto;">
+    <div class="panel-title">
+      <i class="fa-solid fa-circle-nodes"></i> 멀티비전 제어 패널
+    </div>
+    <button class="btn-toggle" id="btn-grid-toggle" onclick="togglePhysicalGrid()">
+      <i class="fa-solid fa-border-none"></i> 물리 2x2 경계선 표시
+    </button>
+    <button class="btn-toggle" id="btn-blackout-toggle" onclick="toggleBlackoutVisual()">
+      <i class="fa-solid fa-eye-slash"></i> 파손구역 음영 제거 (검토용)
+    </button>
+    <div class="view-info-banner">
+      4사분면 파손 우회 레이아웃 및 13:20 식단 타임 시프트가 가동 중입니다.
+    </div>
+    <div style="border-top: 1px solid rgba(255,0,127,0.15); padding-top: 10px; margin-top: 4px; display: flex; flex-direction: column; gap: 6px;">
+      <div style="font-size: 0.7rem; font-weight: 800; color: var(--color-zone-c); text-transform: uppercase; letter-spacing: 1px;">📻 BGM 일과 시뮬레이터</div>
+      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px;">
+        <button class="btn-toggle btn-sim-class" id="btn-sim-welcome" onclick="setBgmSimTime(8, 30, this)">등교(08:30)</button>
+        <button class="btn-toggle btn-sim-class" id="btn-sim-break" onclick="setBgmSimTime(10, 50, this)">쉬는시간(10:50)</button>
+        <button class="btn-toggle btn-sim-class" id="btn-sim-class" onclick="setBgmSimTime(9, 20, this)">수업중(09:20)</button>
+        <button class="btn-toggle btn-sim-class active" id="btn-sim-real" onclick="resetBgmSimTime(this)">실시간 가동</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       JAVASCRIPT DYNAMICS
+       ======================================================== -->
+  <script>
+    // ========================================================
+    // [설정 변수]
+    // ========================================================
+    const CONFIG = {
+      GOOGLE_API_KEY: '',
+      WORKSPACE_DRIVE_FOLDER_ID: '14ThjsFnG5tjFM_cp3wrOv2sIHhArdVkb',
+      NOTICE_DRIVE_FOLDER_ID: '1rpumueOBAPqU4TKZyOdjBBoUyCDNuurj',
+      ATPT_OFCDC_SC_CODE: 'C10',
+      SD_SCH_CODE: '7150429',
+      NEIS_API_KEY: '31ca8d4d17274275b155ae2e5cabba40',
+      CREATIVE_SHEET_EXPORT_URL: 'https://docs.google.com/spreadsheets/d/1iqMpHw9VW7Xz6hwTFr7WUC36v4ibtZRuUHfsKVpexr8/export?format=csv',
+      MEDIA_CYCLE_INTERVAL: 3000,
+      DATA_REFRESH_INTERVAL: 1800000
+    };
+
+    // ========================================================
+    // [모의 미디어 데이터]
+    // ========================================================
+    const MOCK_MEDIA = [
+      // --- 세로 사진 (isVertical: true) ---
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=11foX3WD9GR8ECzBOBo4I9l-ZYa-LDhR1', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=12zIqT1aSQXMbMKkGWNsV41AAh7gzcj85', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1bN0vh97k76zns6TjvIDTh8EGPJhOvxYf', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1dpMRVbvlJ35rN5frSd73RaOM7WFvoZv5', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1EOSJ-Jzx7dl2xe4NB1YB09IolffHb03q', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1MOT8wFc2INxrI83W-aJDV0bm-SsNLFNk', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1nytzbCVGDBpofk5jjQuzRmChScDxMIiF', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1pKJHaiOK5L-ABznQQOJqatwoKGT-UndG', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1xQAFPsx5qSU2I88MLhz-OwEvXhgIsoh4', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1_pcmDIam-8l__sEu8ZKrE5MpMAQTn-tL', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=124gzLxVteEjdXeZuyyO5hCSeuG6catUS', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=12CZFrpb4QZA2o6PZS4g6CXcXJGPWuW0G', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=16ehg9uc_m0odr1ZXHmoINE_oJgJRtfQO', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1a3Ub8wpjLqKUgWS3v6lms1c_DJkjnwLb', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1A9EM1NWZbxeTcwhGKP5yfBCFDBV3GZko', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1d89zSSGaZQsVXCOEAOg1ejwRXsoyRXRn', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1ePhI5xarj6aY9poI1btrQRk5NFTDVd40', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1h9DPd-bp2MwDjdgmJ3vRfeIhLGnSfbcn', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1hIo236PQkI4OW6wiobKlMQlVcfSX_oJG', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1iWMeAkp0U_1j7M2wwik5sAYZRtsZ-7NU', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1NDIdUf28KOJTFxFBKe9JqgHwvHuTCbWW', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1o2Zyg4tFAXZ0NJP59tksP3qiDKO6LccT', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1PoDMxvW4Ih4l2aIBdlHXMan9oaQ_zU9C', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1sMYMIsZnnC8MsmhzClb_5xnrhiU-2zP4', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1wIcLEVIZ50aq4SelGczVvHeXJkOi_GBQ', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1XXlA0YUaniRXGfn5uERDxtjycbWxvgcF', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1ZHYlyOaYmQYFMEfmzfRblO3oPbMJ6-Cg', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1Qe3dz0zyv8MnNVpY4m9aM0ZpTdsAJURI', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1smCHSe47ezcLFMZXYbjNUi2UhFG0WTsv', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1So0pcc7qk1Pwt-jPEZRtCd-g0fv7NjyW', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1TOFownxjff8hyW7N5K-ys0rDewaGbgNe', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1zqKkdjXtRaJi_D2MzSn9PzIovSoUgPnn', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: true },
+      // --- 가로 영상 (이브닝콘서트) ---
+      { url: 'https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-sunlight-529-large.mp4', eventName: '20260429 이브닝콘서트 - 오케스트라 리허설', isVertical: false, type: 'video' },
+      { url: 'https://assets.mixkit.co/videos/preview/mixkit-under-a-clear-sky-with-clouds-running-4886-large.mp4', eventName: '20260429 이브닝콘서트 - 드론 연출 1', isVertical: false, type: 'video' },
+      { url: 'https://assets.mixkit.co/videos/preview/mixkit-waves-in-the-ocean-near-a-cliff-43026-large.mp4', eventName: '20260429 이브닝콘서트 - 백스테이지 현장', isVertical: false, type: 'video' },
+      { url: 'https://assets.mixkit.co/videos/preview/mixkit-drone-shot-of-a-winding-road-in-the-mountains-43034-large.mp4', eventName: '20260429 이브닝콘서트 - 외부 전경 촬영', isVertical: false, type: 'video' },
+      { url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', eventName: '20260429 이브닝콘서트 - 본 공연 실황', isVertical: false, type: 'video' },
+      // --- 가로 사진 (졸업앨범 3-5) ---
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=10Fd7t5l0xQkirE7UXoBg5flEtUZccB4N', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=10JLYaOdQlXoBXUU7T2w-dUhmyLq0qUDt', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=12gmPeOcMUzK0yTqf3nczkMULTm_3nzJ4', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=140B4-U-uG-XpvCHSW0F85Ow3oIHbDDlw', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=158RTO6wnC7MyleOS7It8G67vy7HCpM42', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=16am3wAhCUUGbZbrjktLYdyVpFV4PW4i3', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=18_T9s9eP55sXh5F9B_zICNLS2KqJMNHs', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1c3qKSXGY6bRX3H0Uy3tD8EMsgQDeIdat', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1ERghCCIH-MFP4ch-EUlZIEDAoOrk7KZZ', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1gRkAUSTOCynEl7M7Xp9IR0UhX4C_zFs6', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1GrrUu9pMo-qnPBuL4oT5yLdpDQn0AtRS', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1iuzv9Yzsy3F1On4dFebRx33y0dub1nnn', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1keXNxsdrZM4V5QHUYX30bDEBN_L4NMQ3', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1NPivlPFmitDzL86PqE2_ZTtD-RWgdb5m', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1Oun7ZuH8kHvF2IuIvJPw0N2aZlwJzOUm', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1pSWJmvtuR_ZtUNzlFtQ1nSULXkGI56UT', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1QLBgnnUyNzQc6EgK3o9pIEknKAxpRWHI', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1r1b-eBVA65A7r-GQoIx1xHtCvPERNiPZ', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1uBvBZ9IBm2HHOx6rVUFTq4dlPl8bj0e6', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1vIvMw1Dltugyz1vOHx0rqZBHemFq0D3t', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1w-0QQHenSPy2j8mxYyXnJ4PWJz58IVgG', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1wkzSRSOBvphBj5ewEbhkagC7cwJIEc41', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1wUIEHhFUBdHsqKYBOIuYWMHj6xRoMmk6', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1xr9pLb2SBK1ynuGqo8MiTJgkXYJr-pS5', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
+      // --- 가로 사진+영상 (졸업앨범 3-4) ---
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=16txQfFJPenfawaZhShIo-Gu9wkzWq0D3', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
+      { url: 'https://docs.google.com/uc?export=download&id=16wsJLioab14yjLTDRV1hEZz_j1RE3G9Z', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false, type: 'video' },
+      { url: 'https://docs.google.com/uc?export=download&id=18GdC5zcN06JlQuLm6ARvjtTL7BKCi_d0', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false, type: 'video' },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1A_SBuuDAhqX_pSI05HDWakqGDe06M4_q', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
+      { url: 'https://docs.google.com/uc?export=download&id=1BIfaD0RLiRBJcp56xzb6eYl_yd_OqaEJ', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false, type: 'video' },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1CnogaJZxX5xhD2g57zM8KjTOvMGoQcfc', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1EBEPvS9FdLY52JFJVMl9VBjvPcmjb4uz', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1ED-WIgtrH6BWjKFq5HBQmHjiyAqTsQ_5', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1GM0UBA8PhO8VXz0GFGgYxaYqmfSqvTGa', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1ilIkfhE_05cYGYp0AgR4FqPLyHa3f1Kk', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1j46vDUIALIvaOpELl2WL8H-ALkOp3eE0', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1j7VNQWolNhGMjm96N-Gssv0QDeelHG70', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1JCNsXuxN0_w4pGwZVUeLJSvFJOHIpcQd', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
+      { url: 'https://docs.google.com/uc?export=download&id=1K9z3sHCrbpjyQ0adeJxuHVAZosAAjOtG', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false, type: 'video' },
+      { url: 'https://docs.google.com/uc?export=download&id=1kNNi82-ro216bgjIbp0soX83AUbFOcm-', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false, type: 'video' },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1kpfCwqyQScyvZcz5uAHiLdduIbcxTiwC', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1lB-n8lSkK7rRQQhg5jymtDxfljO-RViM', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1Lt1TFLG52mnLFTGOtEfclLun2X1ucCjI', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
+      { url: 'https://docs.google.com/uc?export=download&id=1RIpzILf26eu7M5rROx4fhoQ1OosIwdlQ', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false, type: 'video' },
+      { url: 'https://docs.google.com/uc?export=download&id=1S1I6NcL2aaXzRpj0BIt1tib4ccYWF-CN', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false, type: 'video' },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1tgTGfo70xorLVll06WPBxog9cFp8WsKm', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1th4ONSuyI09Auknx-giQUAYIghub-bEq', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1VwfzOu093oNAjB27uNJOdQQjv5Ox01XI', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1xp-0aI8qKo173FUgx9HhJ-tcruo6LB1R', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1yFhCbaAQH-XnWlV4B32UYOmqXZbf49mZ', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1Ykvw-l9JdPc22HgB86hwLx9Kfur58yOc', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1ymJALqHZSGjegzO7wGyEK19N5Dl4FXX0', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1Y-Tx5fWehsYPyQKatFnxvHPwh2eo3RNJ', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1Z4e7G4pN_oknO1vEKOcKGJrKzJxXV-FE', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1zKHjXnYRHCL3lQUuAxpKz0k4c5RcnJIR', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
+      { url: 'https://docs.google.com/uc?export=download&id=1ZrHPqUncqycWYM2DbN9A5nebAEhs4rJS', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false, type: 'video' },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1ZTGl0SqOI2zY8_J7ejigSvAQV1IKGNiT', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
+      // --- 가로 사진 (졸업앨범 3-1) ---
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=12MPz5DkLvvlJ5221US6rH1cwA8L7aRCZ', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=14APQ6DuzQYMy5wVvxuBGMAnaEDtLTP3W', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=15A4SVfGzuVaukKCd9sTM_scAEZ31MVDH', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=19jUpGpd9MBRGRFFG-wY0KMsWo9WT54EC', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1AVqPx84jlJryCYkn2be98Pt13yyisY6c', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1DesE7pquvsAaP8AJ1LqbBsJdQXYJ_37I', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1eC0hoZVId69ve9hQbp-WxKmEnJp_z7zo', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1EhBd9miNy59DmnSOpt25SYa2s_2Ttss1', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1fWZaesPkHMvtwl2r55ZrrWhWIZzq6m5F', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1iyT5v2Ve_MTpTDlAltRDgxNdwVfBqqKv', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1juYSis7aC-etOD6Xi8ZFseo-d6jzw0sK', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1pQIGUn2DsX-tZrqKayrazONgphAQ8b0d', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1Psl0sy2oALk8HOB5CBnUSQcIaqxvtAy2', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1r2vd5yxF0X6i9ETnn1Kl8db0H9gtXZuU', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1R6MIpj4iQDDaRcTzdVfIW68kBqmyCm7i', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1ra1Aiphe9FJ2BLUVz98kATK3Zq1aH_p5', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1t8MIOBdhbfNaVJAPWQWUxL6KJvgPsECG', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1vcryqFlo1R7Oa02xwjCyCzuEwU8fDeZ5', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1x_IxqVoCJYZx3ewRHjEAVdvl85_BTvpa', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1Y_sduahA6Fxur_kQORg-GlT7K2-6St0_', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
+      // --- 가로 사진 (졸업앨범 3-2) ---
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1__isd5BIZrYb1_-ALySFreHrQ7Ee4c1M', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1_68VvzklhDcwoITB0OCXFfdYVIt5mgmO', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1_-qYG8i80elbdvgZxBO5N-Z43_sEwSsp', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=158twMr0Bf5UNG4nn0bRtseFFuXBg9QnD', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=15Fa9IJedYQXbKx08XNSp0wAknDp5_hAF', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=17bc0AEvxNVf9rggqhLspzzrEY9kG77L4', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=17XJFZnGwy-yXM5OVOeKUuXvEX5g2Snj7', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1aScxY22SU4g1bSlci7Qmecy9RGZHVmTf', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1AX4l9xfSsXsZq8JxX3-vIrrGEri4YfBq', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1Bmq1katAPWEWHXjxrdtSl9luejNjSFoF', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1CRV5CsGTdbJHOdqLaHAFtB4Dy6R7epa8', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1Cvt_ApB2QXNaUqxlMIRXOjmjrXgm57Kd', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1EsWsKxar1AlN-pybNGKChE_FnAwdfmWZ', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1f_CEqW5YQ7HtSQPLk7rAgX1rxw-okLDy', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1fToBb8zndIx5CqeIF3p7y2lYP9WDCQJ9', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1gDIqlmqgxoC66DCKL1BvfcPbjC55mH2d', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1gH-zGw9PS9m35gCaiKxjLH153xkk19ZG', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1GN-JivJYwyxlxelq8RDA5OXWSE_6PMUR', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1I6S1MvT6z9V1p7zV1saW30__3MXyB4iL', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1INy1x_DzfoxWuznxBMM33G5WRs-SUNnl', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1kP1VCPAjSk3cYg3HDmb6K0o5g2GEPH9-', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1l0rMaOAfNTPu8TB1yvSSCLrPau9BDSvy', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1ljFqE3uzIVetytHq7DTWGJMetd_fEZ_e', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1m3KoHcAgLmIPVXTauSy38MLvfu2RfmSp', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1nilOcRJgJ5EMb1fYO8cK62UgxSU7cG0A', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1OiSuyCLvrlQpO3rityZAipC4WdHJPOXZ', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1OYcSm_kwuWRgHdYhDX_oufSp6LAywpVn', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1p-4ppPdZFQqyGt9ayPuzk2a5MoohtiBM', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1Pkvi_fJCtfne5StrxTXfDoytzbksqIaX', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1q_lZgCxcFDLT5su90xLKEqVRjf3yf1Uo', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1qZcp_MgQKTcNs6N_KCuYco60vvWKJwIc', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1scxy2vNWWCxUnkjCOyWF1WLYJwwte4h6', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1TegOz5OZ95D2CjMG4Kz__8SsACNiaSgm', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1ti1Cfw8q0PpJC3sbVM6GS2j5iHohlA_T', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1tLFBUQAWfiRK9ypJskBXjiNvEC8EPFfr', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1TtoPFuh3SEo4zADgVffG2rOLWWud9fJB', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1TXiexz8J_fptDkC81b2E8aOaezsd3i8c', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1UowsGyUz2piPnZ9Sw4alqCVclmxpN6F1', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1VN2uIqEHAwmR8i9UoeTSwtcYUqU5ePPw', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1wIsZQkAueNKoBAWKpvFzwi3L0LEk3Glk', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1XjzwvYAVDkMHut-qA0-JbhZC1SGG5vaZ', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1-xVi1prvfba2u3dpoo71MshMA7WFVBYt', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1y96LaM5-QxKjz2uz7ReeabgjjnKyPpVz', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1ZbaNzT9Cc7XxL5268L-RsuvYKCTq60ph', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1Ze-ApgF68FPrnP6HT5gp-df7XkwzATil', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+    ];
+
+    const FALLBACK_MEALS = {
+      cal: '842 kcal',
+      items: [
+        { name: '혼합잡곡밥', type: 'rice' },
+        { name: '얼큰순두부찌개', type: 'soup' },
+        { name: '수제돈가스 & 소스', type: 'meat' },
+        { name: '감자채베이컨볶음', type: 'veg' },
+        { name: '포기김치', type: 'veg' },
+        { name: '유기농 요구르트', type: 'dessert' }
+      ]
+    };
+
+    const ANNOUNCEMENTS = [
+      { text: '⏳ 1학기 2차 지필평가 D-3! 스스로의 노력을 믿고 침착하게 끝까지 최선을 다합시다.', critical: true },
+      { text: '🚨 [안전 지도] 등하교 교통안전 스쿨존 시속 30km 이하 준수! 보행 중 스마트폰 사용은 절대 금물입니다.', critical: true },
+      { text: '📅 금일 창체 자율활동 운영! 질서정연하게 시청각 교육 시청 바랍니다.', critical: false },
+      { text: '🌿 하절기 혼용 착용 기간입니다. 생활복 착용으로 쾌적하고 건강한 학습 환경을 유지합시다.', critical: false }
+    ];
+
+    const MEAL_ICONS = {
+      rice:    { icon: 'fa-bowl-rice',       class: 'meal-rice' },
+      soup:    { icon: 'fa-soup',             class: 'meal-soup' },
+      meat:    { icon: 'fa-drumstick-bite',   class: 'meal-meat' },
+      veg:     { icon: 'fa-leaf',             class: 'meal-veg' },
+      dessert: { icon: 'fa-cookie',           class: 'meal-dessert' }
+    };
+
+    // ========================================================
+    // 1. 디지털 시계 (초단위 갱신)
+    // ========================================================
+    let bgmMockTime = null; // { hour, min }
+    function updateClock() {
+      const now = new Date();
+      const hVal = bgmMockTime ? bgmMockTime.hour : now.getHours();
+      const mVal = bgmMockTime ? bgmMockTime.min : now.getMinutes();
+      const sVal = bgmMockTime ? 0 : now.getSeconds();
+
+      const h = String(hVal).padStart(2,'0');
+      const m = String(mVal).padStart(2,'0');
+      const s = String(sVal).padStart(2,'0');
+      document.getElementById('live-time').innerHTML = `${h}:${m}<span class="clock-sec" id="live-sec">${s}</span>`;
+      const month = String(now.getMonth()+1).padStart(2,'0');
+      const date  = String(now.getDate()).padStart(2,'0');
+      const days  = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+      document.getElementById('live-date').textContent = `${month}.${date} (${days[now.getDay()]})`;
+
+      // 19:30 ~ 07:30 야간 절전 모드 (검은 화면 오버레이)
+      const realTv = now.getHours() * 100 + now.getMinutes();
+      let sleepOverlay = document.getElementById('sleep-overlay');
+      if (realTv >= 1930 || realTv < 730) {
+        if (!sleepOverlay) {
+          // create overlay for night mode
+          sleepOverlay = document.createElement('div');
+          sleepOverlay.id = 'sleep-overlay';
+          sleepOverlay.style.position = 'fixed';
+          sleepOverlay.style.top = 0;
+          sleepOverlay.style.left = 0;
+          sleepOverlay.style.width = '100vw';
+          sleepOverlay.style.height = '100vh';
+          sleepOverlay.style.background = 'black';
+          sleepOverlay.style.zIndex = '9999';
+          document.body.appendChild(sleepOverlay);
+        }
+        // Ensure fullscreen on wakeup at 07:30
+        const now = new Date();
+        const curVal = now.getHours()*100 + now.getMinutes();
+        if (curVal >= 730 && curVal < 800) {
+          // Remove overlay if present
+          if (sleepOverlay) {
+            sleepOverlay.remove();
+            sleepOverlay = null;
+          }
+          // Request fullscreen
+          if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen().catch(()=>{});
+          }
+        }
+        if (sleepOverlay) {
+          sleepOverlay.style.top = '0';
+          sleepOverlay.style.left = '0';
+          sleepOverlay.style.width = '100vw';
+          sleepOverlay.style.height = '100vh';
+          sleepOverlay.style.backgroundColor = '#000000';
+          sleepOverlay.style.zIndex = '100000';
+          sleepOverlay.style.display = 'flex';
+          sleepOverlay.style.flexDirection = 'column';
+          sleepOverlay.style.alignItems = 'center';
+          sleepOverlay.style.justifyContent = 'center';
+          sleepOverlay.style.color = '#333';
+          sleepOverlay.innerHTML = '<i class="fa-solid fa-moon" style="font-size: 4rem; margin-bottom: 20px;"></i><h2 style="font-family: var(--font-noto);">야간 절전 모드입니다 (19:30 ~ 07:30)</h2>';
+          document.body.appendChild(sleepOverlay);
+        }
+      } else {
+        if (sleepOverlay) sleepOverlay.remove();
+      }
+    }
+
+    // ========================================================
+    // 2. 뉴스 티커
+    // ========================================================
+    function initTicker() {
+      const track = document.getElementById('ticker-track');
+      if (!track) return;
+      track.innerHTML = '';
+      [...ANNOUNCEMENTS, ...ANNOUNCEMENTS].forEach(a => {
+        const item = document.createElement('div');
+        item.className = `ticker-item ${a.critical ? 'alert-critical' : 'alert-normal'}`;
+        item.innerHTML = `<i class="fa-solid ${a.critical ? 'fa-triangle-exclamation' : 'fa-bell'}"></i><span>${a.text}</span>`;
+        track.appendChild(item);
+      });
+      let x = 0;
+      const speed = 1.0;
+      function scroll() {
+        x -= speed;
+        track.style.transform = `translateX(${x}px)`;
+        if (Math.abs(x) >= track.scrollWidth / 2) x = 0;
+        requestAnimationFrame(scroll);
+      }
+      setTimeout(scroll, 1000);
+    }
+
+    // ========================================================
+    // 3. 미디어 연동 엔진
+    // ========================================================
+    let verticalList = [];
+    let horizontalList = [];
+
+    function extractGoogleDriveFileId(url) {
+      if (!url) return null;
+      const m = url.match(/d\/([a-zA-Z0-9-_]+)|id=([a-zA-Z0-9-_]+)/);
+      return m ? (m[1] || m[2]) : null;
+    }
+
+    async function fetchWorkspaceMedia() {
+      verticalList = [];
+      horizontalList = [];
+
+      const apiKey = CONFIG.GOOGLE_API_KEY;
+      const folderId = CONFIG.WORKSPACE_DRIVE_FOLDER_ID;
+
+      if (apiKey && folderId) {
+        try {
+          const res = await fetch(`https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+mimeType='application/vnd.google-apps.folder'&orderBy=createdTime+desc&fields=files(id,name,createdTime)&key=${apiKey}`);
+          if (res.ok) {
+            const data = await res.json();
+            if (data.files && data.files.length > 0) {
+              const allMedia = [];
+              for (let folder of data.files.slice(0,4)) {
+                const fr = await fetch(`https://www.googleapis.com/drive/v3/files?q='${folder.id}'+in+parents+and+(mimeType+contains+'image/'+or+mimeType+contains+'video/')&fields=files(id,name,mimeType,webContentLink)&key=${apiKey}`);
+                if (fr.ok) {
+                  const fd = await fr.json();
+                  if (fd.files) fd.files.forEach(f => allMedia.push({ url: f.webContentLink || `https://docs.google.com/uc?export=download&id=${f.id}`, eventName: folder.name, type: f.mimeType.includes('video') ? 'video' : 'image' }));
+                }
+              }
+              if (allMedia.length > 0) { analyzeAndClassifyMedia(allMedia); return; }
+            }
+          }
+        } catch(e) { console.warn('API 드라이브 스캔 실패, 시트 연동 시도'); }
+      }
+
+      try {
+        const res = await fetch(CONFIG.CREATIVE_SHEET_EXPORT_URL);
+        if (res.ok) {
+          const csv = await res.text();
+          const rows = parseCSV(csv);
+          if (rows && rows.length > 0) {
+            const sample = rows[0];
+            const mediaKeys = Object.keys(sample).filter(k => k.includes('사진')||k.includes('이미지')||k.includes('동영상')||k.includes('미디어')||k.includes('링크')||k.toLowerCase().includes('photo')||k.toLowerCase().includes('image')||k.toLowerCase().includes('link')||k.toLowerCase().includes('media'));
+            const dateKey  = Object.keys(sample).find(k => k.includes('날짜')||k.includes('일자')) || Object.keys(sample)[0];
+            const eventKey = Object.keys(sample).find(k => k.includes('주제')||k.includes('계획')||k.includes('활동')) || Object.keys(sample)[4];
+            const sheetMedia = [];
+            if (mediaKeys.length > 0) {
+              rows.forEach(row => {
+                mediaKeys.forEach(mk => {
+                  const v = row[mk] || '';
+                  if (v && (v.includes('http') || v.includes('drive.google.com'))) {
+                    let finalUrl = v;
+                    const id = extractGoogleDriveFileId(v);
+                    if (id) finalUrl = `https://docs.google.com/uc?export=download&id=${id}`;
+                    sheetMedia.push({ url: finalUrl, eventName: row[eventKey] ? `${row[dateKey].replace(/\d{4}년\s+/,'')} - ${row[eventKey]}` : '학교 교육 활동', type: v.toLowerCase().includes('.mp4')||v.toLowerCase().includes('.mov') ? 'video' : 'image' });
+                  }
+                });
+              });
+            }
+            if (sheetMedia.length > 0) { analyzeAndClassifyMedia(sheetMedia); return; }
+          }
+        }
+      } catch(e) { console.warn('시트 연동 실패, 모의 데이터로 폴백'); }
+
+      processMediaList(MOCK_MEDIA);
+    }
+
+    function analyzeAndClassifyMedia(mediaList) {
+      let loadedCount = 0;
+      const targetCount = mediaList.length;
+      let completed = false;
+
+      const safetyTimer = setTimeout(() => {
+        if (!completed) { completed = true; console.warn('타임아웃 — 강제 기동'); startMediaRotators(); }
+      }, 3500);
+
+      mediaList.forEach(item => {
+        let finalUrl = item.url;
+        if (!finalUrl.startsWith('/proxy') && (finalUrl.includes('drive.google.com') || finalUrl.includes('docs.google.com'))) {
+          const id = extractGoogleDriveFileId(finalUrl);
+          if (id) { finalUrl = `/proxy?id=${id}&type=${item.type === 'video' ? 'video' : 'image'}`; item.url = finalUrl; }
+        }
+
+        // isVertical이 이미 정의된 경우 즉시 분류
+        if (typeof item.isVertical === 'boolean') { sortItem(item); return; }
+
+        if (item.type === 'video') {
+          const v = document.createElement('video');
+          v.src = finalUrl;
+          v.addEventListener('loadedmetadata', () => { if (!completed) { item.isVertical = v.videoHeight > v.videoWidth; sortItem(item); } });
+          v.addEventListener('error', () => { if (!completed) { loadedCount++; checkComplete(); } });
+        } else {
+          const img = new Image();
+          img.src = finalUrl;
+          img.onload  = () => { if (!completed) { item.isVertical = img.naturalHeight > img.naturalWidth; sortItem(item); } };
+          img.onerror = () => { if (!completed) { loadedCount++; checkComplete(); } };
+        }
+      });
+
+      function sortItem(item) {
+        if (item.isVertical) verticalList.push(item); else horizontalList.push(item);
+        loadedCount++;
+        checkComplete();
+      }
+      function checkComplete() {
+        if (loadedCount >= targetCount && !completed) { clearTimeout(safetyTimer); completed = true; startMediaRotators(); }
+      }
+    }
+
+    function processMediaList(list) {
+      // 원본 배열 복사 후 셔플하여 전체 미디어를 골고루 사용
+      const shuffled = shuffleArray([...list]);
+      const verticals   = shuffled.filter(m => m.isVertical);
+      const hVideos     = shuffled.filter(m => !m.isVertical && m.type === 'video');
+      const hImages     = shuffled.filter(m => !m.isVertical && m.type !== 'video');
+      analyzeAndClassifyMedia([...verticals, ...hVideos, ...hImages]);
+    }
+
+    function toProxyUrl(item) {
+      const id   = extractGoogleDriveFileId(item.url);
+      const type = item.type === 'video' ? 'video' : 'image';
+      return id ? `/proxy?id=${id}&type=${type}` : item.url;
+    }
+
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function startMediaRotators() {
+      if (verticalList.length === 0)
+        verticalList = MOCK_MEDIA.filter(m => m.isVertical).map(m => ({ ...m, url: toProxyUrl(m) }));
+      if (horizontalList.length === 0)
+        horizontalList = MOCK_MEDIA.filter(m => !m.isVertical).map(m => ({ ...m, url: toProxyUrl(m) }));
+
+      // 미디어 목록 셔플
+      shuffleArray(verticalList);
+      shuffleArray(horizontalList);
+
+      renderMediaRotator('vertical-container',   verticalList,   'vmedia', 0);
+      renderMediaRotator('horizontal-container', horizontalList, 'hmedia', 1500);
+    }
+
+    function renderMediaRotator(containerId, list, typeClass, delay = 0) {
+      const container = document.getElementById(containerId);
+      if (!container || !list || list.length === 0) return;
+
+      container.innerHTML = '';
+      list.forEach((item, index) => {
+        let el;
+        const finalUrl = item.url; // 이미 proxy URL로 변환됨
+
+        if (item.type === 'video') {
+          el = document.createElement('video');
+          el.src = finalUrl; 
+          el.autoplay = (index === 0); // 초기 0번째 요소만 자동 재생
+          el.muted = true; el.loop = true; el.playsInline = true;
+          el.onerror = () => {
+            console.error(`[재생 실패] ${finalUrl}`);
+            el.classList.add('media-error');
+            if (el.classList.contains('active')) {
+              triggerNextSlide();
+            }
+          };
+        } else {
+          el = document.createElement('img');
+          el.src = finalUrl;
+          el.onerror = () => {
+            console.error(`[로딩 실패] ${finalUrl}`);
+            el.classList.add('media-error');
+            if (el.classList.contains('active')) {
+              triggerNextSlide();
+            }
+          };
+        }
+        el.className = `media-content ${typeClass}-item ${index === 0 ? 'active' : ''}`;
+        container.appendChild(el);
+      });
+
+      const overlay = document.createElement('div');
+      overlay.className = 'event-overlay';
+      overlay.innerHTML = `
+        <i class="fa-solid fa-circle-play event-icon"></i>
+        <div class="event-details">
+          <span class="event-label">Live Campus Story</span>
+          <span class="event-title" id="${containerId}-event-title">${list[0].eventName}</span>
+        </div>`;
+      container.appendChild(overlay);
+
+      let idx = 0;
+      let timerId;
+
+      function triggerNextSlide() {
+        const items = container.querySelectorAll(`.${typeClass}-item`);
+        if (items.length <= 1) return;
+
+        items[idx].classList.remove('active');
+        if (items[idx].tagName === 'VIDEO') items[idx].pause();
+
+        let attempts = 0;
+        do {
+          idx = (idx + 1) % items.length;
+          attempts++;
+        } while (items[idx].classList.contains('media-error') && attempts < items.length);
+
+        if (items[idx].classList.contains('media-error')) {
+          console.warn('모든 미디어 로드 실패');
+          return;
+        }
+
+        items[idx].classList.add('active');
+        if (items[idx].tagName === 'VIDEO') items[idx].play().catch(()=>{});
+        
+        const titleEl = document.getElementById(`${containerId}-event-title`);
+        if (titleEl) titleEl.textContent = list[idx].eventName;
+      }
+
+      if (delay > 0) {
+        setTimeout(() => { timerId = setInterval(triggerNextSlide, CONFIG.MEDIA_CYCLE_INTERVAL); }, delay);
+      } else {
+        timerId = setInterval(triggerNextSlide, CONFIG.MEDIA_CYCLE_INTERVAL);
+      }
+    }
+
+    // ========================================================
+    // 4. 급식 & 날씨 인포그래픽 (구역 E)
+    // ========================================================
+    function getMealTargetDate() {
+      const now = new Date();
+      const tv = now.getHours() * 100 + now.getMinutes();
+      let target = new Date();
+      let isNext = false;
+      if (tv >= 1320) { target.setDate(target.getDate()+1); isNext = true; }
+      if (target.getDay() === 6) { target.setDate(target.getDate()+2); isNext = true; }
+      else if (target.getDay() === 0) { target.setDate(target.getDate()+1); isNext = true; }
+      const yyyy = target.getFullYear();
+      const mm = String(target.getMonth()+1).padStart(2,'0');
+      const dd = String(target.getDate()).padStart(2,'0');
+      const days = ['일','월','화','수','목','금','토'];
+      return {
+        dateStr: `${yyyy}${mm}${dd}`,
+        label: isNext ? '내일의 웰빙 급식' : '오늘의 웰빙 급식',
+        badgeStr: `${target.getMonth()+1}/${target.getDate()} (${days[target.getDay()]})`
+      };
+    }
+
+    async function loadInfographicMeal() {
+      const grid = document.getElementById('meal-grid-box');
+      const calEl = document.getElementById('meal-cal');
+      const dateEl = document.getElementById('meal-date');
+      const titleEl = document.getElementById('meal-card-title');
+      const t = getMealTargetDate();
+      if (titleEl) titleEl.textContent = t.label;
+      if (dateEl)  dateEl.textContent  = t.badgeStr;
+
+      const url = `https://open.neis.go.kr/hub/mealServiceDietInfo?KEY=${CONFIG.NEIS_API_KEY}&Type=json&ATPT_OFCDC_SC_CODE=${CONFIG.ATPT_OFCDC_SC_CODE}&SD_SCHUL_CODE=${CONFIG.SD_SCH_CODE}&MLSV_YMD=${t.dateStr}`;
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        if (data.mealServiceDietInfo) {
+          const row = data.mealServiceDietInfo[1].row[0];
+          if (calEl) calEl.textContent = row.CAL_INFO;
+          const items = row.DDISH_NM.split(/<br\s*\/?>|\n/);
+          grid.innerHTML = '';
+          items.forEach(item => {
+            let cleaned = item.replace(/\([0-9.]+\)|\[[0-9.]+\]|[0-9]+\./g,'').trim();
+            if (!cleaned) return;
+            let cfg = MEAL_ICONS.veg;
+            if (cleaned.includes('밥')||cleaned.includes('잡곡')||cleaned.includes('볶음밥')) cfg = MEAL_ICONS.rice;
+            else if (cleaned.includes('찌개')||cleaned.includes('국')||cleaned.includes('탕')) cfg = MEAL_ICONS.soup;
+            else if (cleaned.includes('돈가스')||cleaned.includes('고기')||cleaned.includes('구이')||cleaned.includes('볶음')||cleaned.includes('갈비')||cleaned.includes('치킨')) cfg = MEAL_ICONS.meat;
+            else if (cleaned.includes('케이크')||cleaned.includes('요구르트')||cleaned.includes('푸딩')||cleaned.includes('과일')||cleaned.includes('주스')||cleaned.includes('빵')) cfg = MEAL_ICONS.dessert;
+            const card = document.createElement('div');
+            card.className = `meal-grid-item ${cfg.class}`;
+            card.innerHTML = `<i class="fa-solid ${cfg.icon}"></i>${cleaned}`;
+            grid.appendChild(card);
+          });
+          return;
+        }
+      } catch(e) { console.warn('급식 API 실패, 폴백'); }
+
+      if (calEl) calEl.textContent = FALLBACK_MEALS.cal;
+      grid.innerHTML = '';
+      FALLBACK_MEALS.items.forEach(item => {
+        const cfg = MEAL_ICONS[item.type];
+        const card = document.createElement('div');
+        card.className = `meal-grid-item ${cfg.class}`;
+        card.innerHTML = `<i class="fa-solid ${cfg.icon}"></i>${item.name}`;
+        grid.appendChild(card);
+      });
+    }
+
+    // ========================================================
+    // 4-2. 날씨 그래픽 & API
+    // ========================================================
+    function getWeatherStatus(code) {
+      if (code === 0)                                         return { label: '맑음',    icon: 'fa-sun',         color: '#fee440' };
+      if (code === 1 || code === 2)                           return { label: '구름 조금', icon: 'fa-cloud-sun',   color: '#94a3b8' };
+      if (code === 3)                                         return { label: '흐림',    icon: 'fa-cloud',       color: '#64748b' };
+      if (code === 45 || code === 48)                         return { label: '안개',    icon: 'fa-smog',        color: '#94a3b8' };
+      if ([51,53,55,61,63,65,80,81,82].includes(code))       return { label: '비',      icon: 'fa-cloud-rain',  color: '#00bbf9' };
+      if ([71,73,75,85,86].includes(code))                   return { label: '눈',      icon: 'fa-snowflake',   color: '#f8fafc' };
+      if ([95,96,99].includes(code))                         return { label: '뇌우',    icon: 'fa-cloud-bolt',  color: '#ff007f' };
+      return { label: '맑음', icon: 'fa-sun', color: '#fee440' };
+    }
+
+    function getPm10Status(val) {
+      if (val <= 30)  return { label: '좋음',    color: '#4ade80' };
+      if (val <= 80)  return { label: '보통',    color: '#fbbf24' };
+      if (val <= 150) return { label: '나쁨',    color: '#ea580c' };
+      return              { label: '매우 나쁨', color: '#f43f5e' };
+    }
+
+    function setWeatherGraphic(code) {
+      const el = document.getElementById('weather-graphic');
+      if (!el) return;
+      let html = '';
+      if (code === 0) {
+        html = `<div style="position:relative;display:flex;align-items:center;justify-content:center;width:70px;height:70px;"><div class="wx-sun-rays" style="position:absolute;width:70px;height:70px;"></div><div class="wx-sun"></div></div>`;
+      } else if (code === 1 || code === 2) {
+        html = `<div class="wx-cloudsun"><div class="wx-sun-small"></div><div class="wx-cloud-small"></div></div>`;
+      } else if (code === 3) {
+        html = `<div class="wx-cloud" style="width:60px;height:32px;"></div>`;
+      } else if (code === 45 || code === 48) {
+        html = `<div class="wx-fog-lines"><div class="wx-fog-line"></div><div class="wx-fog-line"></div><div class="wx-fog-line"></div></div>`;
+      } else if ([51,53,55,61,63,65,80,81,82].includes(code)) {
+        html = `<div class="wx-rain-wrap"><div class="wx-cloud"></div><div class="wx-drops"><div class="wx-drop"></div><div class="wx-drop"></div><div class="wx-drop"></div><div class="wx-drop"></div></div></div>`;
+      } else if ([71,73,75,85,86].includes(code)) {
+        html = `<div class="wx-snow-wrap"><div class="wx-cloud"></div><div class="wx-flakes"><span class="wx-flake">❄</span><span class="wx-flake">❄</span><span class="wx-flake">❄</span><span class="wx-flake">❄</span></div></div>`;
+      } else if ([95,96,99].includes(code)) {
+        html = `<div class="wx-thunder-wrap"><div class="wx-cloud"></div><div class="wx-drops" style="margin-top:2px;"><div class="wx-drop"></div><div class="wx-drop"></div><div class="wx-drop"></div></div><div class="wx-lightning">⚡</div></div>`;
+      } else {
+        html = `<div style="position:relative;display:flex;align-items:center;justify-content:center;width:70px;height:70px;"><div class="wx-sun"></div></div>`;
+      }
+      el.innerHTML = html;
+    }
+
+    async function loadInfographicWeather() {
+      const tempEl     = document.getElementById('weather-temp');
+      const statusEl   = document.getElementById('weather-status');
+      const humEl      = document.getElementById('weather-humidity');
+      const windEl     = document.getElementById('weather-wind');
+      const pm10El     = document.getElementById('weather-pm10');
+      const apparentEl = document.getElementById('weather-apparent');
+
+      // 부산시 서구 서대신동 좌표 (daily 데이터 요청 - 내일 날씨 반영)
+      const weatherUrl = 'https://api.open-meteo.com/v1/forecast?latitude=35.1108&longitude=129.0119&daily=weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max,precipitation_probability_max,wind_speed_10m_max&timezone=Asia/Seoul';
+      const airUrl     = 'https://air-quality-api.open-meteo.com/v1/air-quality?latitude=35.1108&longitude=129.0119&hourly=pm10&timezone=Asia/Seoul';
+
+      try {
+        const res = await fetch(weatherUrl);
+        if (res.ok) {
+          const d = await res.json();
+          const daily = d.daily;
+          // 내일 날씨는 1번째 인덱스
+          const tempMin = daily.temperature_2m_min[1];
+          const tempMax = daily.temperature_2m_max[1];
+          const apparentMax = daily.apparent_temperature_max[1];
+          const rainProb = daily.precipitation_probability_max[1];
+          const windMax = daily.wind_speed_10m_max[1];
+          const code = daily.weather_code[1];
+
+          if (tempEl)     tempEl.textContent     = `${tempMin.toFixed(1)}°C / ${tempMax.toFixed(1)}°C`;
+          if (apparentEl) apparentEl.textContent = `${apparentMax.toFixed(1)}°C`;
+          if (humEl)      humEl.textContent      = `${rainProb}%`;
+          if (windEl)     windEl.textContent     = `${windMax.toFixed(1)} m/s`;
+          const st = getWeatherStatus(code);
+          if (statusEl) { statusEl.textContent = st.label; statusEl.style.color = st.color; }
+          setWeatherGraphic(code);
+        }
+      } catch(e) {
+        console.warn('날씨 API 실패:', e);
+        if (tempEl) tempEl.textContent = '15.0°C / 24.5°C';
+        if (apparentEl) apparentEl.textContent = '23.8°C';
+        if (humEl) humEl.textContent = '20%';
+        if (windEl) windEl.textContent = '3.5 m/s';
+        if (statusEl) statusEl.textContent = '맑음';
+        setWeatherGraphic(0);
+      }
+
+      try {
+        const res = await fetch(airUrl);
+        if (res.ok) {
+          const d = await res.json();
+          // 내일 24시간 동안의 pm10 평균값 계산 (인덱스 24 ~ 47)
+          const pm10Tomorrow = d.hourly.pm10.slice(24, 48);
+          const avgPm10 = pm10Tomorrow.reduce((sum, val) => sum + val, 0) / pm10Tomorrow.length;
+          const s = getPm10Status(avgPm10);
+          if (pm10El) { pm10El.textContent = `${s.label} (${avgPm10.toFixed(0)})`; pm10El.style.color = s.color; }
+        }
+      } catch(e) {
+        if (pm10El) { pm10El.textContent = '좋음 (18)'; pm10El.style.color = '#4ade80'; }
+      }
+    }
+
+    // ========================================================
+    // 5. 창체 일정 (멀티카드 - 최대 3건)
+    // ========================================================
+    const DAYS_KO = ['일','월','화','수','목','금','토'];
+
+    // 학생에게 의미 있는 일정인지 판단
+    function isStudentRelevant(title6, title7) {
+      const boring = ['동아리 활동 내용 입력','','undefined'];
+      const t6 = (title6 || '').trim();
+      const t7 = (title7 || '').trim();
+      // 둘 다 boring이거나 비어있으면 제외
+      if (boring.includes(t6) && boring.includes(t7)) return false;
+      if (!t6 && !t7) return false;
+      return true;
+    }
+
+    function buildEventCards(events) {
+      const container = document.getElementById('creative-events-list');
+      if (!container) return;
+      if (!events || events.length === 0) {
+        container.innerHTML = '<div style="text-align:center;color:var(--color-text-secondary);font-size:0.82rem;padding:8px 0;">다가오는 창체 일정이 없습니다.</div>';
+        return;
+      }
+      container.innerHTML = events.map((ev, i) => {
+        const ddayLabel = ev.dday === 0 ? '<span class="creative-event-dday">🎯 D-DAY</span>'
+          : `<span class="creative-event-dday">D-${ev.dday}</span>`;
+        const icon = ev.type === '문화예술' ? 'fa-palette'
+          : ev.type === '방학' ? 'fa-sun'
+          : ev.type === '체험' ? 'fa-bus'
+          : ev.type === '동아리' ? 'fa-users'
+          : 'fa-chalkboard-teacher';
+        return `
+        <div class="creative-event-card">
+          <div class="creative-event-header">
+            <span class="creative-event-tag"><i class="fa-solid ${icon}"></i> ${ev.tag}</span>
+            <div style="display:flex;gap:6px;align-items:center;">
+              ${ddayLabel}
+              <span class="creative-event-date">${ev.dateLabel}</span>
+            </div>
+          </div>
+          <div class="creative-event-title">${ev.title}</div>
+          <div class="creative-event-dept"><i class="fa-solid fa-user-tie"></i>${ev.dept}</div>
+        </div>`;
+      }).join('');
+    }
+
+    async function loadInfographicCreative() {
+      const FALLBACK_EVENTS = [
+        { tag: '자율활동', dday: 2, dateLabel: '05월 29일 (금)', title: '장애인식 개선 교육 / 찾아가는 성희롱·성폭력 교육', dept: '교무기획부 · 생활지도부 주관', type: '교육' },
+        { tag: '문화예술', dday: 34, dateLabel: '06월 30일 (화)', title: '문화예술체험 (2~4교시 외부 체험)', dept: '창의인성부 주관', type: '문화예술' },
+        { tag: '방학식', dday: 50, dateLabel: '07월 16일 (목)', title: '방학식 · 학교주변 대청소 활동', dept: '교무기획부 주관', type: '방학' }
+      ];
+
+      try {
+        const res = await fetch(CONFIG.CREATIVE_SHEET_EXPORT_URL);
+        if (!res.ok) throw new Error('fetch fail');
+        const text = await res.text();
+        const lines = text.split(/\r?\n/);
+        if (lines.length < 2) throw new Error('empty');
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const upcoming = [];
+
+        for (let i = 1; i < lines.length; i++) {
+          const line = lines[i];
+          if (!line.trim()) continue;
+          // 날짜 파싱 ("2026년 MM DD일 요일" 형태)
+          const dm = line.match(/(\d{4})년\s+(\d{1,2})\s+(\d{1,2})일/);
+          if (!dm) continue;
+          const evDate = new Date(parseInt(dm[1]), parseInt(dm[2])-1, parseInt(dm[3]));
+          evDate.setHours(0, 0, 0, 0);
+          if (evDate < today) continue;
+
+          // CSV 간단 분리: 따옴표 셀 내 개행 포함하므로 다음 줄도 흡수
+          // 이미 날짜 줄 자체에서 콤마 기준 분리
+          const cols = line.split(',');
+          const grade1 = (cols[1] || '').replace(/"/g,'').trim();
+          let title6   = (cols[4] || '').replace(/"/g,'').trim();
+          let title7   = (cols[5] || '').replace(/"/g,'').trim();
+          const dept6  = (cols[6] || '').replace(/"/g,'').trim();
+
+          // 여러 줄 셀 처리: 제목이 비어있으면 다음 행 흡수 시도
+          if (!title6 && i+1 < lines.length) title6 = (lines[i+1].split(',')[0] || '').replace(/"/g,'').trim();
+
+          if (!isStudentRelevant(title6, title7)) continue;
+
+          const dday = Math.round((evDate - today) / 86400000);
+          const dateLabel = `${parseInt(dm[2])}월 ${parseInt(dm[3])}일 (${DAYS_KO[evDate.getDay()]})`;
+
+          // 활동 유형 분류
+          const combinedTitle = title6 + title7;
+          const type = combinedTitle.includes('문화예술') ? '문화예술'
+            : combinedTitle.includes('방학') || combinedTitle.includes('종업') ? '방학'
+            : combinedTitle.includes('체험') ? '체험'
+            : combinedTitle.includes('동아리') ? '동아리' : '교육';
+
+          // 활동 태그 (1학년 시수 기반 간단 표기)
+          const tag = grade1.includes('동아리') ? '동아리' 
+            : grade1.includes('봉사') ? '봉사활동'
+            : grade1.includes('자율') ? '자율활동' : '창체';
+
+          const displayTitle = [title6, title7].filter(t => t && t !== '동아리 활동 내용 입력').join(' / ');
+          const dept = dept6 ? dept6 + ' 주관' : '각 부서 주관';
+
+          upcoming.push({ tag, dday, dateLabel, title: displayTitle, dept, type });
+          if (upcoming.length >= 3) break;
+        }
+
+        if (upcoming.length > 0) {
+          buildEventCards(upcoming);
+          return;
+        }
+      } catch(e) {
+        console.warn('창체 시트 파싱 실패, 하드코딩 폴백 사용:', e);
+      }
+
+      // 하드코딩 폴백 — 실제 2026학년도 일정 기반
+      buildEventCards(FALLBACK_EVENTS);
+    }
+
+    // ========================================================
+    // 6. CSV 파서
+    // ========================================================
+    function parseCSV(csvText) {
+      const lines = []; let row = ['']; let inQ = false;
+      for (let i = 0; i < csvText.length; i++) {
+        const c = csvText[i], n = csvText[i+1];
+        if (c === '"') { if (inQ && n === '"') { row[row.length-1] += '"'; i++; } else inQ = !inQ; }
+        else if (c === ',' && !inQ) row.push('');
+        else if ((c === '\r' || c === '\n') && !inQ) { if (c === '\r' && n === '\n') i++; lines.push(row); row = ['']; }
+        else row[row.length-1] += c;
+      }
+      if (row.length > 1 || row[0] !== '') lines.push(row);
+      if (lines.length === 0) return [];
+      const headers = lines[0].map(h => h.trim());
+      const result = [];
+      for (let i = 1; i < lines.length; i++) {
+        const l = lines[i];
+        if (l.length === 1 && l[0] === '') continue;
+        const obj = {};
+        headers.forEach((h,j) => obj[h] = l[j] ? l[j].trim() : '');
+        result.push(obj);
+      }
+      return result;
+    }
+
+    // ========================================================
+    // 7. 부서 전달사항 (티커)
+    // ========================================================
+    async function loadNoticeBoard() {
+      const apiKey = CONFIG.GOOGLE_API_KEY;
+      const folderId = CONFIG.NOTICE_DRIVE_FOLDER_ID;
+      if (!apiKey || !folderId) { initTicker(); return; }
+      const now = new Date();
+      const yy = String(now.getFullYear()).substring(2);
+      const mm = now.getMonth()+1;
+      try {
+        const res = await fetch(`https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+mimeType='application/vnd.google-apps.spreadsheet'&orderBy=createdTime+desc&fields=files(id,name,createdTime)&key=${apiKey}`);
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        if (data.files && data.files.length > 0) {
+          let target = data.files[0];
+          for (let term of [`${yy}.${mm}`,`${yy}년 ${mm}월`,`${yy}년 ${String(mm).padStart(2,'0')}월`,`${mm}월`]) {
+            const found = data.files.find(f => f.name.includes(term));
+            if (found) { target = found; break; }
+          }
+          const csvRes = await fetch(`https://docs.google.com/spreadsheets/d/${target.id}/export?format=csv`);
+          if (!csvRes.ok) throw new Error();
+          const rows = parseCSV(await csvRes.text());
+          if (rows && rows.length > 0) {
+            const sample = rows[0];
+            const deptK = Object.keys(sample).find(k => k.includes('부서')||k.includes('부')) || Object.keys(sample)[0];
+            const contK = Object.keys(sample).find(k => k.includes('전달')||k.includes('협의')||k.includes('내용')) || Object.keys(sample)[2];
+            const newAnn = [];
+            rows.forEach(row => { if (row[contK]) newAnn.push({ text: `[${row[deptK]||'기타'}] ${row[contK]}`, critical: (row[deptK]||'').includes('기획')||(row[deptK]||'').includes('생활')||(row[deptK]||'').includes('안전') }); });
+            if (newAnn.length > 0) { ANNOUNCEMENTS.length = 0; newAnn.forEach(a => ANNOUNCEMENTS.push(a)); }
+          }
+        }
+      } catch(e) { console.warn('부서 전달사항 연동 실패'); }
+      initTicker();
+    }
+
+    // ========================================================
+    // 8. 시뮬레이터 제어
+    // ========================================================
+    let isGridActive = false, isBlackoutDebugActive = false;
+
+    function togglePhysicalGrid() {
+      const btn = document.getElementById('btn-grid-toggle');
+      isGridActive = !isGridActive;
+      ['guide-x','guide-y','label-horizontal','label-vertical'].forEach(id => {
+        document.getElementById(id).style.display = isGridActive ? 'block' : 'none';
+      });
+      btn.classList.toggle('active', isGridActive);
+    }
+
+    function toggleBlackoutVisual() {
+      const btn = document.getElementById('btn-blackout-toggle');
+      const zone = document.getElementById('blackout-zone');
+      isBlackoutDebugActive = !isBlackoutDebugActive;
+      if (isBlackoutDebugActive) {
+        btn.classList.add('active');
+        zone.style.backgroundColor = 'rgba(255,0,127,0.2)';
+        zone.style.border = '2px dashed var(--color-zone-c)';
+      } else {
+        btn.classList.remove('active');
+        zone.style.backgroundColor = '#000000';
+        zone.style.border = 'none';
+      }
+    }
+
+    // ========================================================
+    // 9. 종합 구동 컨트롤러
+    // ========================================================
+    async function refreshAllData() {
+      const now = new Date();
+      const tv  = now.getHours()*100 + now.getMinutes();
+      const mH = document.getElementById('meal-card-header');
+      const mC = document.getElementById('meal-card-content');
+      const wH = document.getElementById('weather-card-header');
+      const wC = document.getElementById('weather-card-content');
+
+      if (tv < 1320) {
+        if (mH) mH.style.display = 'flex';
+        if (mC) mC.style.display = 'flex';
+        if (wH) wH.style.display = 'none';
+        if (wC) wC.style.display = 'none';
+        loadInfographicMeal();
+      } else {
+        if (mH) mH.style.display = 'none';
+        if (mC) mC.style.display = 'none';
+        if (wH) wH.style.display = 'flex';
+        if (wC) wC.style.display = 'flex';
+        loadInfographicWeather();
+      }
+      loadInfographicCreative();
+      loadNoticeBoard();
+    }
+
+    // ========================================================
+    // BGM (배경음악) 플레이어 시스템
+    // ========================================================
+    const BGM_PLAYLIST = {
+      welcome: [ // 등교 맞이 클래식 (로컬 긴 MP3 파일로 직접 교체 권장)
+        { title: 'Vivaldi - Spring (Allegro)', url: 'welcome1.mp3' },
+        { title: 'Mozart - Eine kleine Nachtmusik', url: 'welcome2.mp3' },
+        { title: 'Beethoven - Symphony No. 6 (Pastoral)', url: 'welcome3.mp3' }
+      ],
+      break: [ // 쉬는 시간 힐링 피아노 (로컬 긴 MP3 파일로 직접 교체 권장)
+        { title: 'Debussy - Clair de lune', url: 'break1.mp3' },
+        { title: 'Erik Satie - Gymnopédie No. 1', url: 'break2.mp3' },
+        { title: 'Chopin - Nocturne in E-flat Major', url: 'break3.mp3' }
+      ]
+    };
+
+    let bgmAudio = new Audio();
+    bgmAudio.crossOrigin = 'anonymous';
+    bgmAudio.volume = 0.4;
+    bgmAudio.muted = true; // 최초 상태는 브라우저 차단에 대비해 음소거
+
+    let isSoundActivated = false;
+    let currentBgmType = null;
+    let currentBgmIndex = 0;
+
+    function activateSoundSystem() {
+      isSoundActivated = true;
+      const overlay = document.getElementById('sound-activation-overlay');
+      if (overlay) {
+        overlay.style.opacity = '0';
+        setTimeout(() => overlay.remove(), 500);
+      }
+      
+      // 뮤트 풀기
+      bgmAudio.muted = false;
+      const btn = document.getElementById('bgm-ctrl-btn');
+      const icon = document.getElementById('bgm-ctrl-icon');
+      const visualizer = document.getElementById('bgm-visualizer');
+      
+      icon.className = 'fa-solid fa-volume-high';
+      btn.style.background = 'rgba(255,0,127,0.3)';
+      visualizer.classList.add('playing');
+
+      checkBgmSchedule();
+    }
+
+    function toggleBgmPlay() {
+      if (!isSoundActivated) return;
+      const btn = document.getElementById('bgm-ctrl-btn');
+      const icon = document.getElementById('bgm-ctrl-icon');
+      const visualizer = document.getElementById('bgm-visualizer');
+
+      if (bgmAudio.muted) {
+        bgmAudio.muted = false;
+        if (bgmAudio.paused && currentBgmType) {
+          bgmAudio.play().catch(()=>{});
+        }
+        icon.className = 'fa-solid fa-volume-high';
+        btn.style.background = 'rgba(255,0,127,0.3)';
+        visualizer.classList.add('playing');
+      } else {
+        bgmAudio.muted = true;
+        icon.className = 'fa-solid fa-volume-xmark';
+        btn.style.background = 'rgba(255,0,127,0.15)';
+        visualizer.classList.remove('playing');
+      }
+    }
+
+    function checkBgmSchedule() {
+      if (!isSoundActivated) return;
+
+      const now = new Date();
+      const currentHour = bgmMockTime ? bgmMockTime.hour : now.getHours();
+      const currentMin = bgmMockTime ? bgmMockTime.min : now.getMinutes();
+      const timeVal = currentHour * 100 + currentMin;
+
+      let matchedSchedule = null;
+
+      // 등교 시간 BGM (08:00 ~ 08:50)
+      if (timeVal >= 800 && timeVal < 850) {
+        matchedSchedule = { name: '등교 맞이 피아노 클래식', type: 'welcome' };
+      }
+      // 쉬는 시간 BGM (1~6교시)
+      else if (timeVal >= 950 && timeVal < 1000) matchedSchedule = { name: '1교시 쉬는시간 Lofi', type: 'break' };
+      else if (timeVal >= 1050 && timeVal < 1100) matchedSchedule = { name: '2교시 쉬는시간 Lofi', type: 'break' };
+      else if (timeVal >= 1150 && timeVal < 1200) matchedSchedule = { name: '3교시 쉬는시간 Lofi', type: 'break' };
+      else if (timeVal >= 1350 && timeVal < 1400) matchedSchedule = { name: '4교시 쉬는시간 Lofi', type: 'break' };
+      else if (timeVal >= 1450 && timeVal < 1500) matchedSchedule = { name: '5교시 쉬는시간 Lofi', type: 'break' };
+      else if (timeVal >= 1550 && timeVal < 1600) matchedSchedule = { name: '6교시 쉬는시간 Lofi', type: 'break' };
+
+      const tagEl = document.getElementById('bgm-tag');
+      const titleEl = document.getElementById('bgm-title');
+      const visualizer = document.getElementById('bgm-visualizer');
+
+      if (matchedSchedule) {
+        tagEl.textContent = matchedSchedule.name;
+        tagEl.style.color = 'var(--color-zone-c)';
+        
+        if (currentBgmType !== matchedSchedule.type) {
+          currentBgmType = matchedSchedule.type;
+          const playlist = BGM_PLAYLIST[currentBgmType];
+          currentBgmIndex = Math.floor(Math.random() * playlist.length);
+          playBgmTrack(playlist[currentBgmIndex]);
+        }
+      } else {
+        tagEl.textContent = '사운드 대기';
+        tagEl.style.color = 'var(--color-text-muted)';
+        titleEl.textContent = '일과 정규 수업 중';
+        visualizer.classList.remove('playing');
+        if (currentBgmType !== null) {
+          bgmAudio.pause();
+          currentBgmType = null;
+        }
+      }
+    }
+
+    function playBgmTrack(track) {
+      const titleEl = document.getElementById('bgm-title');
+      const visualizer = document.getElementById('bgm-visualizer');
+      titleEl.textContent = track.title;
+      
+      bgmAudio.src = track.url;
+      bgmAudio.load();
+      
+      if (!bgmAudio.muted) {
+        bgmAudio.play().then(() => {
+          visualizer.classList.add('playing');
+        }).catch(err => {
+          console.warn('재생 차단 또는 지연:', err);
+        });
+      }
+    }
+
+    bgmAudio.onended = () => {
+      if (currentBgmType) {
+        const playlist = BGM_PLAYLIST[currentBgmType];
+        currentBgmIndex = (currentBgmIndex + 1) % playlist.length;
+        playBgmTrack(playlist[currentBgmIndex]);
+      }
+    };
+
+    // 가상 시뮬레이터 시간 제어 함수
+    function setBgmSimTime(hour, min, btnElement) {
+      bgmMockTime = { hour, min };
+      
+      // 버튼 액티브 클래스 제어
+      document.querySelectorAll('.btn-sim-class').forEach(btn => btn.classList.remove('active'));
+      btnElement.classList.add('active');
+      
+      // 13:20 타임 시프트 식단/날씨 연동을 위해 가상 시간 적용하여 갱신
+      updateClock();
+      refreshAllData();
+      checkBgmSchedule();
+    }
+
+    function resetBgmSimTime(btnElement) {
+      bgmMockTime = null;
+      
+      document.querySelectorAll('.btn-sim-class').forEach(btn => btn.classList.remove('active'));
+      btnElement.classList.add('active');
+      
+      updateClock();
+      refreshAllData();
+      checkBgmSchedule();
+    }
+
+    // 주기적 갱신
+    setInterval(checkBgmSchedule, 10000);
+
+    async function initSystem() {
+      updateClock();
+      setInterval(updateClock, 1000);
+      await refreshAllData();
+      await fetchWorkspaceMedia();
+      setInterval(refreshAllData, CONFIG.DATA_REFRESH_INTERVAL);
+    }
+
+    window.addEventListener('DOMContentLoaded', initSystem);
+  </script>
+</body>
+</html>
