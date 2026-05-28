@@ -25,11 +25,20 @@ try {
                 }
                 
                 try {
-                    $response.StatusCode = 302
-                    $response.RedirectLocation = $url
+                    $wc = New-Object System.Net.WebClient
+                    $wc.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
+                    $bytes = $wc.DownloadData($url)
+                    
+                    if ($type -eq "video") {
+                        $response.ContentType = "video/mp4"
+                    } else {
+                        $response.ContentType = "image/jpeg"
+                    }
+                    $response.ContentLength64 = $bytes.Length
+                    $response.OutputStream.Write($bytes, 0, $bytes.Length)
                 } catch {
                     $response.StatusCode = 500
-                    $errMsg = [System.Text.Encoding]::UTF8.GetBytes("Error redirecting proxy: $_")
+                    $errMsg = [System.Text.Encoding]::UTF8.GetBytes("Error proxying data: $_")
                     $response.ContentType = "text/plain; charset=utf-8"
                     $response.ContentLength64 = $errMsg.Length
                     $response.OutputStream.Write($errMsg, 0, $errMsg.Length)
