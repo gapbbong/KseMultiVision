@@ -74,19 +74,19 @@
       background: #020617; z-index: 4; overflow: hidden;
     }
 
-    /* 구역 C: 4사분면 하단 (시계 + 일과상태) */
+    /* 구역 C: 4사분면 하단 (시계 + 일과상태 + 교감대표행사) */
     .zone-c {
-      position: absolute; left: 50vw; top: 70vh;
-      width: 50vw; height: 15vh;
+      position: absolute; left: 50vw; top: 60vh;
+      width: 50vw; height: 25vh;
       border-bottom: 2px solid rgba(255, 0, 127, 0.3);
       border-left: 2px solid rgba(255, 0, 127, 0.2);
       background: linear-gradient(135deg, rgba(13,27,42,0.95) 0%, rgba(2,6,23,0.95) 100%);
       z-index: 6;
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      justify-content: space-between;
       align-items: stretch;
-      padding: 10px 24px;
+      padding: 12px 24px;
       overflow: hidden;
     }
 
@@ -97,19 +97,19 @@
       background-color: #000000; z-index: 10; pointer-events: none;
     }
 
-    /* 구역 F: 4사분면 상단 학습동기 부여 명언 영역 */
+    /* 구역 F: 4사분면 상단 학습동기 부여 명언 영역 (절반인 10vh로 축소) */
     .zone-f {
       position: absolute; left: 50vw; top: 50vh;
-      width: 50vw; height: 20vh;
+      width: 50vw; height: 10vh;
       border-bottom: 2px solid rgba(255, 0, 127, 0.3);
       border-left: 2px solid rgba(255, 0, 127, 0.2);
       background: linear-gradient(135deg, rgba(13,27,42,0.95) 0%, rgba(2,6,23,0.95) 100%);
       z-index: 6;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
-      padding: 12px 20px;
+      padding: 6px 20px;
       overflow: hidden;
       box-sizing: border-box;
     }
@@ -125,7 +125,6 @@
       text-align: center;
       opacity: 1;
       transition: opacity 0.5s ease-in-out;
-      margin-bottom: 2px;
     }
     
     .quote-container.fade-out {
@@ -242,19 +241,54 @@
     .creative-event-dept { font-size: 1.01rem; color: var(--color-text-secondary); display: flex; align-items: center; gap: 5px; }
     .creative-event-dept i { color: var(--color-zone-e); font-size: 0.78rem; }
 
-    /* 교감선생님 대표 행사 멀티카드 (가로 3열) */
-    .vp-events-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 100%; margin-top: 2px; }
-    .vp-event-card { background: rgba(254,228,64,0.04); border: 1px solid rgba(254,228,64,0.12); border-radius: 8px; padding: 6px 10px; display: flex; flex-direction: column; gap: 2px; transition: border-color 0.2s, background 0.2s; min-height: 90px; }
-    .vp-event-card:first-child { background: rgba(254,228,64,0.08); border-color: rgba(254,228,64,0.28); }
-    .vp-event-card:hover { background: rgba(254,228,64,0.09); border-color: rgba(254,228,64,0.3); }
-    .vp-event-header { display: flex; justify-content: space-between; align-items: center; gap: 4px; }
-    .vp-event-tag { font-size: 0.89rem; font-weight: 800; background: rgba(254,228,64,0.14); color: var(--color-zone-e); padding: 2px 6px; border-radius: 4px; white-space: nowrap; }
-    .vp-event-card:first-child .vp-event-tag { background: rgba(254,228,64,0.22); }
-    .vp-event-dday { font-family: var(--font-outfit); font-size: 0.89rem; font-weight: 800; color: var(--color-zone-c); white-space: nowrap; }
-    .vp-event-date { font-family: var(--font-outfit); font-size: 0.94rem; font-weight: 700; color: var(--color-text-secondary); }
-    .vp-event-title { font-size: 1.18rem; font-weight: 700; color: #ffffff; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-    .vp-event-dept { font-size: 1.01rem; color: var(--color-text-secondary); display: flex; align-items: center; gap: 4px; }
-    .vp-event-dept i { color: var(--color-zone-e); font-size: 0.78rem; }
+    /* 교감선생님 대표 행사 멀티카드 (가로 1줄 바 형태) */
+    .vp-events-list {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.015);
+      border: 1px solid rgba(255, 0, 127, 0.12);
+      border-radius: 8px;
+      padding: 6px 16px;
+      box-sizing: border-box;
+    }
+    .vp-event-inline-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #ffffff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .vp-event-tag {
+      font-size: 0.82rem;
+      font-weight: 800;
+      background: rgba(255, 0, 127, 0.15);
+      color: var(--color-zone-c);
+      padding: 2px 6px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    .vp-event-dday {
+      font-family: var(--font-outfit);
+      font-size: 0.9rem;
+      font-weight: 900;
+      color: var(--color-zone-e);
+      white-space: nowrap;
+    }
+    .vp-event-title {
+      color: #f8fafc;
+      letter-spacing: -0.3px;
+    }
+    .vp-event-divider {
+      width: 1px;
+      height: 14px;
+      background: rgba(255, 0, 127, 0.25);
+    }
 
     /* ==========================================
        5. Cybernetic Clock & Ticker (구역 C)
@@ -458,8 +492,16 @@
       </div>
     </div>
 
-    <!-- [구역 C: 4사분면 하단 시계+일과상태] -->
+    <!-- [구역 C: 4사분면 하단 시계+일과상태 + 교감대표행사] -->
     <div class="zone-c">
+      <!-- 교감선생님 행사 일정 3개 가로로 길게 나열 (시계 위에 배치) -->
+      <div class="vp-events-list" id="vp-events-list">
+        <div style="text-align: center; color: var(--color-text-secondary); font-size: 0.95rem; width: 100%;">
+          <i class="fa-solid fa-spinner fa-spin"></i> 대표 행사를 불러오는 중...
+        </div>
+      </div>
+      <!-- 구분 가로선 -->
+      <div style="width: 100%; height: 1px; background: rgba(255,0,127,0.15); margin-bottom: 8px;"></div>
       <!-- 학교명 | 일과상태 | 날짜 | 시계 | BGM -->
       <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
         <div style="display: flex; align-items: center; gap: 16px;">
@@ -500,16 +542,11 @@
       <div id="static-announcements-box" style="display: none;"></div>
     </div>
 
-    <!-- [구역 F: 4사분면 중단 학습동기 부여 명언] -->
+    <!-- [구역 F: 4사분면 중단 학습동기 부여 명언] (10vh로 절반 축소) -->
     <div class="zone-f" id="quote-zone">
       <div class="quote-container" id="quote-container">
         <div class="quote-text" id="quote-text">행동은 모든 성공의 기초가 된다.</div>
         <div class="quote-author" id="quote-author" style="display: none;">- 파블로 피카소 -</div>
-      </div>
-      <div class="vp-events-list" id="vp-events-list">
-        <div style="grid-column: span 3; text-align: center; color: var(--color-text-secondary); font-size: 0.98rem; padding: 8px 0;">
-          <i class="fa-solid fa-spinner fa-spin"></i> 대표 행사를 불러오는 중...
-        </div>
       </div>
     </div>
 
@@ -1687,7 +1724,7 @@
       const container = document.getElementById('vp-events-list');
       if (!container) return;
       if (!events || events.length === 0) {
-        container.innerHTML = '<div style="grid-column: span 3; text-align:center;color:var(--color-text-secondary);font-size:0.98rem;padding:8px 0;">다가오는 대표 행사가 없습니다.</div>';
+        container.innerHTML = '<div style="text-align:center;color:var(--color-text-secondary);font-size:1.05rem;padding:6px 0;width:100%;">다가오는 대표 행사가 없습니다.</div>';
         return;
       }
       container.innerHTML = events.map((ev, i) => {
@@ -1702,18 +1739,12 @@
           : 'fa-bullhorn';
           
         return `
-        <div class="vp-event-card">
-          <div class="vp-event-header">
-            <span class="vp-event-tag"><i class="fa-solid ${icon}"></i> ${ev.tag}</span>
-            <div style="display:flex;gap:6px;align-items:center;">
-              ${ddayLabel}
-              <span class="vp-event-date">${ev.dateLabel}</span>
-            </div>
-          </div>
-          <div class="vp-event-title">${ev.title}</div>
-          <div class="vp-event-dept"><i class="fa-solid fa-user-tie"></i>${ev.dept}</div>
+        <div class="vp-event-inline-item">
+          <span class="vp-event-tag"><i class="fa-solid ${icon}"></i> ${ev.tag}</span>
+          ${ddayLabel}
+          <span class="vp-event-title">${ev.title}</span>
         </div>`;
-      }).join('');
+      }).join('<div class="vp-event-divider"></div>');
     }
 
     async function loadNoticeBoard() {
