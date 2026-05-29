@@ -1561,11 +1561,7 @@
     }
 
     async function loadInfographicCreative() {
-      const FALLBACK_EVENTS = [
-        { tag: '자율활동', dday: 2, dateLabel: '05월 29일 (금)', title: '장애인식 개선 교육 / 찾아가는 성희롱·성폭력 교육', dept: '교무기획부 · 생활지도부 주관', type: '교육' },
-        { tag: '문화예술', dday: 34, dateLabel: '06월 30일 (화)', title: '문화예술체험 (2~4교시 외부 체험)', dept: '창의인성부 주관', type: '문화예술' },
-        { tag: '방학식', dday: 50, dateLabel: '07월 16일 (목)', title: '방학식 · 학교주변 대청소 활동', dept: '교무기획부 주관', type: '방학' }
-      ];
+      const FALLBACK_EVENTS = [];
 
       try {
         const res = await fetch(CONFIG.CREATIVE_SHEET_EXPORT_URL);
@@ -1766,11 +1762,7 @@
       const folderId = CONFIG.NOTICE_DRIVE_FOLDER_ID;
       const isTokenValid = googleAccessToken && googleTokenExpiry && Date.now() < parseInt(googleTokenExpiry);
       
-      const FALLBACK_VP_EVENTS = [
-        { tag: '교무기획', dday: 4, dateLabel: '06월 02일 (화)', title: '1학기 2차 지필평가 실시 (1~3학년)', dept: '교무기획부 주관' },
-        { tag: '생활지도', dday: 0, dateLabel: '05월 29일 (금)', title: '교무실 출입 제한 및 평가 기간 특별 지도 운영', dept: '생활지도부 주관' },
-        { tag: '창의인성', dday: 14, dateLabel: '06월 12일 (금)', title: '1, 2학년 교내 영어 팝송 경연 대회 개최 및 시상 계획', dept: '창의인성부 주관' }
-      ];
+      const FALLBACK_VP_EVENTS = [];
 
       if (!apiKey && !isTokenValid) { 
         initTicker();
