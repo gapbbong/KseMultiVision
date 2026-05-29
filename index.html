@@ -74,19 +74,19 @@
       background: #020617; z-index: 4; overflow: hidden;
     }
 
-    /* 구역 C: 4사분면 상단 (시계 + 티커) */
+    /* 구역 C: 4사분면 하단 (시계 + 일과상태) */
     .zone-c {
-      position: absolute; left: 50vw; top: 50vh;
-      width: 50vw; height: 20vh;
+      position: absolute; left: 50vw; top: 70vh;
+      width: 50vw; height: 15vh;
       border-bottom: 2px solid rgba(255, 0, 127, 0.3);
       border-left: 2px solid rgba(255, 0, 127, 0.2);
       background: linear-gradient(135deg, rgba(13,27,42,0.95) 0%, rgba(2,6,23,0.95) 100%);
       z-index: 6;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: center;
       align-items: stretch;
-      padding: 14px 24px;
+      padding: 10px 24px;
       overflow: hidden;
     }
 
@@ -97,10 +97,10 @@
       background-color: #000000; z-index: 10; pointer-events: none;
     }
 
-    /* 구역 F: 4사분면 중단 학습동기 부여 명언 영역 */
+    /* 구역 F: 4사분면 상단 학습동기 부여 명언 영역 */
     .zone-f {
-      position: absolute; left: 50vw; top: 70vh;
-      width: 50vw; height: 15vh;
+      position: absolute; left: 50vw; top: 50vh;
+      width: 50vw; height: 20vh;
       border-bottom: 2px solid rgba(255, 0, 127, 0.3);
       border-left: 2px solid rgba(255, 0, 127, 0.2);
       background: linear-gradient(135deg, rgba(13,27,42,0.95) 0%, rgba(2,6,23,0.95) 100%);
@@ -132,14 +132,15 @@
     }
     
     .quote-text {
-      font-size: 1.05rem;
+      font-size: 2.1rem;
       font-weight: 700;
       color: #ffffff;
-      line-height: 1.45;
+      line-height: 1.4;
       letter-spacing: -0.5px;
       margin-bottom: 6px;
-      text-shadow: 0 0 10px rgba(255,255,255,0.15);
+      text-shadow: 0 0 18px rgba(255,255,255,0.25);
       word-break: keep-all;
+      animation: turnSignal 0.85s ease-in-out infinite;
     }
     
     .quote-author {
@@ -232,12 +233,12 @@
     .creative-event-card:first-child { background: rgba(254,228,64,0.08); border-color: rgba(254,228,64,0.28); }
     .creative-event-card:hover { background: rgba(254,228,64,0.09); border-color: rgba(254,228,64,0.3); }
     .creative-event-header { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
-    .creative-event-tag { font-size: 0.62rem; font-weight: 800; background: rgba(254,228,64,0.14); color: var(--color-zone-e); padding: 2px 7px; border-radius: 4px; white-space: nowrap; }
+    .creative-event-tag { font-size: 0.74rem; font-weight: 800; background: rgba(254,228,64,0.14); color: var(--color-zone-e); padding: 2px 7px; border-radius: 4px; white-space: nowrap; }
     .creative-event-card:first-child .creative-event-tag { background: rgba(254,228,64,0.22); }
-    .creative-event-dday { font-family: var(--font-outfit); font-size: 0.62rem; font-weight: 800; color: var(--color-zone-c); white-space: nowrap; }
-    .creative-event-date { font-family: var(--font-outfit); font-size: 0.65rem; font-weight: 700; color: var(--color-text-secondary); }
-    .creative-event-title { font-size: 0.82rem; font-weight: 700; color: #ffffff; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-    .creative-event-dept { font-size: 0.7rem; color: var(--color-text-secondary); display: flex; align-items: center; gap: 5px; }
+    .creative-event-dday { font-family: var(--font-outfit); font-size: 0.74rem; font-weight: 800; color: var(--color-zone-c); white-space: nowrap; }
+    .creative-event-date { font-family: var(--font-outfit); font-size: 0.78rem; font-weight: 700; color: var(--color-text-secondary); }
+    .creative-event-title { font-size: 0.98rem; font-weight: 700; color: #ffffff; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .creative-event-dept { font-size: 0.84rem; color: var(--color-text-secondary); display: flex; align-items: center; gap: 5px; }
     .creative-event-dept i { color: var(--color-zone-e); font-size: 0.65rem; }
 
     /* ==========================================
@@ -330,6 +331,14 @@
        ========================================== */
     @keyframes alertBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
     @keyframes pulseEvent { 0%, 100% { transform: scale(1); filter: brightness(1); } 50% { transform: scale(1.05); filter: brightness(1.2); } }
+    /* 고급 차 턴 시그널 깜빡임 */
+    @keyframes turnSignal {
+      0%   { opacity: 1; }
+      52%  { opacity: 1; }
+      58%  { opacity: 0.04; }
+      93%  { opacity: 0.04; }
+      100% { opacity: 1; }
+    }
 
     /* ==========================================
        8. Animated Weather Graphics
@@ -434,24 +443,29 @@
       </div>
     </div>
 
-    <!-- [구역 C: 4사분면 상단 시계+티커] -->
+    <!-- [구역 C: 4사분면 하단 시계+일과상태] -->
     <div class="zone-c">
-      <!-- 1층: 시계 및 날짜, 학교 이름, BGM 위젯 -->
-      <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; border-bottom: 1px solid rgba(255,0,127,0.15); padding-bottom: 8px;">
-        <div style="display: flex; align-items: center; gap: 14px;">
+      <!-- 학교명 | 일과상태 | 날짜 | 시계 | BGM -->
+      <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <!-- 학교명 -->
+          <div class="clock-cal-day" id="live-year" style="font-size: 0.95rem; color: var(--color-zone-c); font-weight: 800; white-space: nowrap; letter-spacing: 0.5px;">경성전자고등학교</div>
+          <!-- 구분선 -->
+          <div style="width: 1px; height: 14px; background: rgba(255,0,127,0.3);"></div>
+          <!-- 일과 상태 (BGM title 인라인) -->
+          <span id="bgm-title" style="font-size: 0.85rem; font-weight: 700; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;">-</span>
+          <!-- 구분선 -->
+          <div style="width: 1px; height: 14px; background: rgba(255,0,127,0.3);"></div>
+          <!-- 날짜 -->
+          <div class="clock-cal-date" id="live-date" style="font-size: 1.05rem; white-space: nowrap;">05.28 (목)</div>
+          <!-- 구분선 -->
+          <div style="width: 1px; height: 14px; background: rgba(255,0,127,0.3);"></div>
           <!-- 시계 -->
           <div class="clock-digital" id="live-time" style="font-size: 2.2rem; text-shadow: 0 0 15px rgba(255,0,127,0.35);">
             00:00<span class="clock-sec" id="live-sec">00</span>
           </div>
-          <!-- 날짜 (요일 1글자 한글) -->
-          <div class="clock-cal-date" id="live-date" style="font-size: 1.05rem; white-space: nowrap;">05.28 (목)</div>
-          <!-- 구분선 -->
-          <div style="width: 1px; height: 14px; background: rgba(255,0,127,0.25);"></div>
-          <!-- 학교명 (학년도 제거) -->
-          <div class="clock-cal-day" id="live-year" style="font-size: 0.95rem; color: var(--color-zone-c); font-weight: 800; white-space: nowrap; letter-spacing: 0.5px;">경성전자고등학교</div>
         </div>
-        
-        <!-- BGM 위젯 -->
+        <!-- BGM 위젯 (비주얼라이저 + 버튼) -->
         <div class="bgm-widget" id="bgm-widget" style="display: flex; align-items: center; gap: 10px; flex-shrink: 0;">
           <div class="bgm-visualizer" id="bgm-visualizer" style="display: flex; align-items: flex-end; gap: 2px; height: 18px; width: 24px;">
             <div class="bar" style="width: 3px; height: 100%; background: var(--color-zone-c); border-radius: 2px;"></div>
@@ -459,20 +473,16 @@
             <div class="bar" style="width: 3px; height: 80%; background: var(--color-zone-c); border-radius: 2px;"></div>
             <div class="bar" style="width: 3px; height: 40%; background: var(--color-zone-c); border-radius: 2px;"></div>
           </div>
-          <div class="bgm-info" style="display: flex; flex-direction: column; gap: 1px; max-width: 110px;">
-            <span class="bgm-tag" id="bgm-tag" style="font-family: var(--font-outfit); font-size: 0.55rem; font-weight: 800; color: var(--color-zone-c); text-transform: uppercase; letter-spacing: 0.5px;">사운드 대기</span>
-            <span class="bgm-title" id="bgm-title" style="font-size: 0.75rem; font-weight: 700; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 90px;">-</span>
+          <div style="display: flex; flex-direction: column; gap: 1px;">
+            <span id="bgm-tag" style="font-family: var(--font-outfit); font-size: 0.55rem; font-weight: 800; color: var(--color-zone-c); text-transform: uppercase; letter-spacing: 0.5px;">사운드 대기</span>
           </div>
           <button class="bgm-ctrl-btn" id="bgm-ctrl-btn" onclick="toggleBgmPlay()" style="background: rgba(255,0,127,0.15); border: 1px solid rgba(255,0,127,0.3); color: var(--color-zone-c); width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; outline: none;">
             <i class="fa-solid fa-volume-xmark" id="bgm-ctrl-icon" style="font-size: 0.75rem;"></i>
           </button>
         </div>
       </div>
-
-      <!-- 2층: 흘러가지 않고 고정된 3줄 스케줄 목록 -->
-      <div id="static-announcements-box" style="display: flex; flex-direction: column; gap: 6px; justify-content: center; flex-grow: 1; margin-top: 10px;">
-        <!-- JS dynamically injects the 3 announcements here -->
-      </div>
+      <!-- 공지사항 숨김 -->
+      <div id="static-announcements-box" style="display: none;"></div>
     </div>
 
     <!-- [구역 F: 4사분면 중단 학습동기 부여 명언] -->
