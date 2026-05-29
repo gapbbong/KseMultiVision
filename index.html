@@ -229,18 +229,32 @@
     .meal-dessert i { color: #fbbf24; }
 
     /* 창체 이벤트 멀티카드 */
-    .creative-events-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 100%; margin-top: 2px; }
-    .creative-event-card { background: rgba(254,228,64,0.04); border: 1px solid rgba(254,228,64,0.12); border-radius: 8px; padding: 6px 10px; display: flex; flex-direction: column; gap: 2px; transition: border-color 0.2s, background 0.2s; min-height: 90px; }
+    .creative-events-list { display: flex; flex-direction: column; gap: 6px; margin-top: 2px; }
+    .creative-event-card { background: rgba(254,228,64,0.04); border: 1px solid rgba(254,228,64,0.12); border-radius: 10px; padding: 8px 12px; display: flex; flex-direction: column; gap: 4px; transition: border-color 0.2s, background 0.2s; }
     .creative-event-card:first-child { background: rgba(254,228,64,0.08); border-color: rgba(254,228,64,0.28); }
     .creative-event-card:hover { background: rgba(254,228,64,0.09); border-color: rgba(254,228,64,0.3); }
-    .creative-event-header { display: flex; justify-content: space-between; align-items: center; gap: 4px; }
-    .creative-event-tag { font-size: 0.89rem; font-weight: 800; background: rgba(254,228,64,0.14); color: var(--color-zone-e); padding: 2px 6px; border-radius: 4px; white-space: nowrap; }
+    .creative-event-header { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+    .creative-event-tag { font-size: 0.89rem; font-weight: 800; background: rgba(254,228,64,0.14); color: var(--color-zone-e); padding: 2px 7px; border-radius: 4px; white-space: nowrap; }
     .creative-event-card:first-child .creative-event-tag { background: rgba(254,228,64,0.22); }
     .creative-event-dday { font-family: var(--font-outfit); font-size: 0.89rem; font-weight: 800; color: var(--color-zone-c); white-space: nowrap; }
     .creative-event-date { font-family: var(--font-outfit); font-size: 0.94rem; font-weight: 700; color: var(--color-text-secondary); }
-    .creative-event-title { font-size: 1.18rem; font-weight: 700; color: #ffffff; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-    .creative-event-dept { font-size: 1.01rem; color: var(--color-text-secondary); display: flex; align-items: center; gap: 4px; }
+    .creative-event-title { font-size: 1.18rem; font-weight: 700; color: #ffffff; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .creative-event-dept { font-size: 1.01rem; color: var(--color-text-secondary); display: flex; align-items: center; gap: 5px; }
     .creative-event-dept i { color: var(--color-zone-e); font-size: 0.78rem; }
+
+    /* 교감선생님 대표 행사 멀티카드 (가로 3열) */
+    .vp-events-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 100%; margin-top: 2px; }
+    .vp-event-card { background: rgba(254,228,64,0.04); border: 1px solid rgba(254,228,64,0.12); border-radius: 8px; padding: 6px 10px; display: flex; flex-direction: column; gap: 2px; transition: border-color 0.2s, background 0.2s; min-height: 90px; }
+    .vp-event-card:first-child { background: rgba(254,228,64,0.08); border-color: rgba(254,228,64,0.28); }
+    .vp-event-card:hover { background: rgba(254,228,64,0.09); border-color: rgba(254,228,64,0.3); }
+    .vp-event-header { display: flex; justify-content: space-between; align-items: center; gap: 4px; }
+    .vp-event-tag { font-size: 0.89rem; font-weight: 800; background: rgba(254,228,64,0.14); color: var(--color-zone-e); padding: 2px 6px; border-radius: 4px; white-space: nowrap; }
+    .vp-event-card:first-child .vp-event-tag { background: rgba(254,228,64,0.22); }
+    .vp-event-dday { font-family: var(--font-outfit); font-size: 0.89rem; font-weight: 800; color: var(--color-zone-c); white-space: nowrap; }
+    .vp-event-date { font-family: var(--font-outfit); font-size: 0.94rem; font-weight: 700; color: var(--color-text-secondary); }
+    .vp-event-title { font-size: 1.18rem; font-weight: 700; color: #ffffff; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .vp-event-dept { font-size: 1.01rem; color: var(--color-text-secondary); display: flex; align-items: center; gap: 4px; }
+    .vp-event-dept i { color: var(--color-zone-e); font-size: 0.78rem; }
 
     /* ==========================================
        5. Cybernetic Clock & Ticker (구역 C)
@@ -492,9 +506,9 @@
         <div class="quote-text" id="quote-text">행동은 모든 성공의 기초가 된다.</div>
         <div class="quote-author" id="quote-author" style="display: none;">- 파블로 피카소 -</div>
       </div>
-      <div class="creative-events-list" id="creative-events-list">
+      <div class="vp-events-list" id="vp-events-list">
         <div style="grid-column: span 3; text-align: center; color: var(--color-text-secondary); font-size: 0.98rem; padding: 8px 0;">
-          <i class="fa-solid fa-spinner fa-spin"></i> 일정을 불러오는 중...
+          <i class="fa-solid fa-spinner fa-spin"></i> 대표 행사를 불러오는 중...
         </div>
       </div>
     </div>
@@ -587,6 +601,17 @@
       </div>
 
 
+
+      <!-- E-2: 다가오는 창체 일정 (멀티카드) -->
+      <div class="section-title" style="border-top: 1px solid rgba(254,228,64,0.15); padding-top: 12px; margin-top: 4px;">
+        <i class="fa-solid fa-calendar-check"></i> 다가오는 창체 일정
+        <span id="creative-subtitle" style="font-size:0.62rem; font-weight:600; color:var(--color-text-secondary); margin-left:auto;">최대 3건 표시</span>
+      </div>
+      <div class="creative-events-list" id="creative-events-list">
+        <div style="text-align: center; color: var(--color-text-secondary); font-size:0.82rem; padding: 8px 0;">
+          <i class="fa-solid fa-spinner fa-spin"></i> 일정을 불러오는 중...
+        </div>
+      </div>
 
     </div><!-- /zone-e -->
 
@@ -1591,13 +1616,127 @@
     // ========================================================
     // 7. 부서 전달사항 (티커)
     // ========================================================
+    // ========================================================
+    // 7. 부서 전달사항 (티커) 및 교감선생님 대표 행사 파싱
+    // ========================================================
+    function extractVpEvents(rows) {
+      if (!rows || rows.length === 0) return [];
+      
+      const sample = rows[0];
+      const deptK = Object.keys(sample).find(k => k.includes('부서')||k.includes('부')) || Object.keys(sample)[0];
+      const contK = Object.keys(sample).find(k => k.includes('전달')||k.includes('결의')||k.includes('내용')) || Object.keys(sample)[2];
+      
+      const list = [];
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const importantKeywords = ['평가', '시험', '지필', '모의', '대회', '교육', '훈련', '행사', '축제', '방학', '조사', '출입', '예방', '안전', '일정'];
+      const importantDepts = ['교무기획', '생활지도', '안전', '창의인성', '교감', '교장'];
+
+      rows.forEach(row => {
+        const content = (row[contK] || '').trim();
+        const dept = (row[deptK] || '').trim();
+        if (!content) return;
+
+        let score = 0;
+        if (importantDepts.some(d => dept.includes(d))) score += 10;
+        if (importantKeywords.some(k => content.includes(k))) score += 5;
+        if (content.includes('교감') || dept.includes('교감')) score += 15;
+
+        let ddayNum = 0;
+        let dateLabel = '';
+        
+        const dateMatch = content.match(/(\d{1,2})월\s*(\d{1,2})일|(\d{1,2})[.\/](\d{1,2})/);
+        if (dateMatch) {
+          const month = parseInt(dateMatch[1] || dateMatch[3]);
+          const day = parseInt(dateMatch[2] || dateMatch[4]);
+          const currentYear = today.getFullYear();
+          const targetDate = new Date(currentYear, month - 1, day);
+          targetDate.setHours(0,0,0,0);
+          
+          const diffTime = targetDate - today;
+          const diffDays = Math.round(diffTime / 86400000);
+          if (diffDays >= 0) {
+            ddayNum = diffDays;
+            dateLabel = `${month}월 ${day}일`;
+          } else {
+            dateLabel = `${month}월 ${day}일`;
+            ddayNum = -1;
+          }
+        }
+
+        list.push({
+          tag: dept.replace('부','').substring(0, 4) || '안내',
+          title: content.length > 55 ? content.substring(0, 52) + '...' : content,
+          dept: dept ? `${dept} 주관` : '학교 주관',
+          dday: ddayNum,
+          dateLabel: dateLabel || '수시 진행',
+          score: score
+        });
+      });
+
+      list.sort((a, b) => {
+        if (b.score !== a.score) return b.score - a.score;
+        return a.dday - b.dday;
+      });
+
+      return list.slice(0, 3);
+    }
+
+    function buildVpEventCards(events) {
+      const container = document.getElementById('vp-events-list');
+      if (!container) return;
+      if (!events || events.length === 0) {
+        container.innerHTML = '<div style="grid-column: span 3; text-align:center;color:var(--color-text-secondary);font-size:0.98rem;padding:8px 0;">다가오는 대표 행사가 없습니다.</div>';
+        return;
+      }
+      container.innerHTML = events.map((ev, i) => {
+        const ddayLabel = ev.dday === 0 ? '<span class="vp-event-dday">🎯 D-DAY</span>'
+          : ev.dday > 0 ? `<span class="vp-event-dday">D-${ev.dday}</span>`
+          : `<span class="vp-event-dday" style="color: var(--color-text-muted);">완료</span>`;
+          
+        const icon = ev.title.includes('평가') || ev.title.includes('시험') ? 'fa-pen-clip'
+          : ev.title.includes('교육') ? 'fa-graduation-cap'
+          : ev.title.includes('대회') ? 'fa-trophy'
+          : ev.title.includes('안전') ? 'fa-shield-halved'
+          : 'fa-bullhorn';
+          
+        return `
+        <div class="vp-event-card">
+          <div class="vp-event-header">
+            <span class="vp-event-tag"><i class="fa-solid ${icon}"></i> ${ev.tag}</span>
+            <div style="display:flex;gap:6px;align-items:center;">
+              ${ddayLabel}
+              <span class="vp-event-date">${ev.dateLabel}</span>
+            </div>
+          </div>
+          <div class="vp-event-title">${ev.title}</div>
+          <div class="vp-event-dept"><i class="fa-solid fa-user-tie"></i>${ev.dept}</div>
+        </div>`;
+      }).join('');
+    }
+
     async function loadNoticeBoard() {
       const apiKey = CONFIG.GOOGLE_API_KEY;
       const folderId = CONFIG.NOTICE_DRIVE_FOLDER_ID;
       const isTokenValid = googleAccessToken && googleTokenExpiry && Date.now() < parseInt(googleTokenExpiry);
       
-      if (!apiKey && !isTokenValid) { initTicker(); return; }
-      if (!folderId) { initTicker(); return; }
+      const FALLBACK_VP_EVENTS = [
+        { tag: '교무기획', dday: 4, dateLabel: '06월 02일 (화)', title: '1학기 2차 지필평가 문항 출제 마감 (나이스 입력 완료)', dept: '교무기획부 주관' },
+        { tag: '생활지도', dday: 0, dateLabel: '05월 29일 (금)', title: '교무실 출입 제한 및 평가 기간 특별 지도 운영', dept: '생활지도부 주관' },
+        { tag: '창의인성', dday: 14, dateLabel: '06월 12일 (금)', title: '1, 2학년 교내 영어 팝송 경연 대회 개최 및 시상 계획', dept: '창의인성부 주관' }
+      ];
+
+      if (!apiKey && !isTokenValid) { 
+        initTicker();
+        buildVpEventCards(FALLBACK_VP_EVENTS);
+        return; 
+      }
+      if (!folderId) { 
+        initTicker(); 
+        buildVpEventCards(FALLBACK_VP_EVENTS);
+        return; 
+      }
 
       const now = new Date();
       const yy = String(now.getFullYear()).substring(2);
@@ -1636,9 +1775,19 @@
             const newAnn = [];
             rows.forEach(row => { if (row[contK]) newAnn.push({ text: `[${row[deptK]||'기타'}] ${row[contK]}`, critical: (row[deptK]||'').includes('기획')||(row[deptK]||'').includes('생활')||(row[deptK]||'').includes('안전') }); });
             if (newAnn.length > 0) { ANNOUNCEMENTS.length = 0; newAnn.forEach(a => ANNOUNCEMENTS.push(a)); }
+            
+            const vpEvents = extractVpEvents(rows);
+            buildVpEventCards(vpEvents);
+          } else {
+            buildVpEventCards(FALLBACK_VP_EVENTS);
           }
+        } else {
+          buildVpEventCards(FALLBACK_VP_EVENTS);
         }
-      } catch(e) { console.warn('부서 전달사항 연동 실패'); }
+      } catch(e) { 
+        console.warn('부서 전달사항 연동 실패'); 
+        buildVpEventCards(FALLBACK_VP_EVENTS);
+      }
       initTicker();
     }
 
