@@ -241,28 +241,27 @@
     .creative-event-dept { font-size: 1.01rem; color: var(--color-text-secondary); display: flex; align-items: center; gap: 5px; }
     .creative-event-dept i { color: var(--color-zone-e); font-size: 0.78rem; }
 
-    /* 교감선생님 대표 행사 멀티카드 (가로 1줄 바 형태) */
+    /* 교감선생님 대표 행사 목록 (세로 3줄 배치) */
     .vp-events-list {
       display: flex;
-      justify-content: space-around;
-      align-items: center;
+      flex-direction: column;
+      gap: 6px;
       width: 100%;
       background: rgba(255, 255, 255, 0.015);
       border: 1px solid rgba(255, 0, 127, 0.12);
       border-radius: 8px;
-      padding: 6px 16px;
+      padding: 10px 18px;
       box-sizing: border-box;
     }
     .vp-event-inline-item {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 12px;
       font-size: 1.05rem;
       font-weight: 700;
       color: #ffffff;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      width: 100%;
+      text-align: left;
     }
     .vp-event-tag {
       font-size: 0.82rem;
@@ -272,6 +271,8 @@
       padding: 2px 6px;
       border-radius: 4px;
       white-space: nowrap;
+      min-width: 60px;
+      text-align: center;
     }
     .vp-event-dday {
       font-family: var(--font-outfit);
@@ -279,15 +280,15 @@
       font-weight: 900;
       color: var(--color-zone-e);
       white-space: nowrap;
+      min-width: 50px;
     }
     .vp-event-title {
       color: #f8fafc;
       letter-spacing: -0.3px;
-    }
-    .vp-event-divider {
-      width: 1px;
-      height: 14px;
-      background: rgba(255, 0, 127, 0.25);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex-grow: 1;
     }
 
     /* ==========================================
@@ -1744,7 +1745,7 @@
           ${ddayLabel}
           <span class="vp-event-title">${ev.title}</span>
         </div>`;
-      }).join('<div class="vp-event-divider"></div>');
+      }).join('');
     }
 
     async function loadNoticeBoard() {
