@@ -1668,7 +1668,17 @@
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
-      const importantKeywords = ['평가', '시험', '지필', '모의', '대회', '교육', '훈련', '행사', '축제', '방학', '조사', '출입', '예방', '안전', '일정'];
+      // 교직원/행정 업무용 키워드 (제외 대상)
+      const staffKeywords = [
+        '출제', '나이스', '입력 완료', '마감', '제출', '결재', '기안', 
+        '인쇄', '연수', '교직원', '공문', '배부', '취합', '수령', 
+        '검토', '채점', '등록', '심사위원', '회의', '협의회'
+      ];
+      // 학생 중요 키워드 (가점 대상)
+      const studentKeywords = [
+        '실시', '평가', '시험', '지필평가', '대회', '행사', '축제', 
+        '방학', '체험학습', '콘서트', '교육', '훈련', '안전', '출입 제한', '강연'
+      ];
       const importantDepts = ['교무기획', '생활지도', '안전', '창의인성', '교감', '교장'];
 
       rows.forEach(row => {
@@ -1676,10 +1686,13 @@
         const dept = (row[deptK] || '').trim();
         if (!content) return;
 
+        // 교사 행정 업무용 문구 차단
+        if (staffKeywords.some(k => content.includes(k))) return;
+
         let score = 0;
         if (importantDepts.some(d => dept.includes(d))) score += 10;
-        if (importantKeywords.some(k => content.includes(k))) score += 5;
-        if (content.includes('교감') || dept.includes('교감')) score += 15;
+        if (studentKeywords.some(k => content.includes(k))) score += 15;
+        if (content.includes('교감') || dept.includes('교감')) score += 5;
 
         let ddayNum = 0;
         let dateLabel = '';
@@ -1754,7 +1767,7 @@
       const isTokenValid = googleAccessToken && googleTokenExpiry && Date.now() < parseInt(googleTokenExpiry);
       
       const FALLBACK_VP_EVENTS = [
-        { tag: '교무기획', dday: 4, dateLabel: '06월 02일 (화)', title: '1학기 2차 지필평가 문항 출제 마감 (나이스 입력 완료)', dept: '교무기획부 주관' },
+        { tag: '교무기획', dday: 4, dateLabel: '06월 02일 (화)', title: '1학기 2차 지필평가 실시 (1~3학년)', dept: '교무기획부 주관' },
         { tag: '생활지도', dday: 0, dateLabel: '05월 29일 (금)', title: '교무실 출입 제한 및 평가 기간 특별 지도 운영', dept: '생활지도부 주관' },
         { tag: '창의인성', dday: 14, dateLabel: '06월 12일 (금)', title: '1, 2학년 교내 영어 팝송 경연 대회 개최 및 시상 계획', dept: '창의인성부 주관' }
       ];
