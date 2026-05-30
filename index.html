@@ -933,6 +933,9 @@
           <button class="bgm-ctrl-btn" id="bgm-ctrl-btn" onclick="toggleBgmPlay()" style="background: rgba(255,0,127,0.15); border: 1px solid rgba(255,0,127,0.3); color: var(--color-zone-c); width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; outline: none;">
             <i class="fa-solid fa-volume-xmark" id="bgm-ctrl-icon" style="font-size: 0.75rem;"></i>
           </button>
+          <button class="bgm-ctrl-btn" id="bgm-next-btn" onclick="playNextTrack()" style="background: rgba(255,0,127,0.15); border: 1px solid rgba(255,0,127,0.3); color: var(--color-zone-c); width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; outline: none;" title="다음 곡 재생">
+            <i class="fa-solid fa-forward" style="font-size: 0.7rem;"></i>
+          </button>
         </div>
       </div>
       <!-- 공지사항 숨김 -->
@@ -2768,7 +2771,8 @@
       const eff2 = getEffectiveTime();
       const currentHour = eff2.hour;
       const currentMin = eff2.min;
-      const info = getBlackoutPeriodInfo(currentHour, currentMin, now.getDay()); // 실제 요일 반영
+      const day = (bgmMockTime !== null) ? 1 : now.getDay();
+      const info = getBlackoutPeriodInfo(currentHour, currentMin, day);
       
       // 만약 수동 선택이 없으면 현재 시각 기준 교시를 기본 활성화
       const targetPeriod = blackoutSelectedPeriod || info.period;
@@ -2834,7 +2838,7 @@
       const month = String(now.getMonth() + 1).padStart(2, '0');
       const date = String(now.getDate()).padStart(2, '0');
       const ymd = `${year}${month}${date}`;
-      const day = now.getDay();
+      const day = (bgmMockTime !== null) ? 1 : now.getDay();
       
       // 1. 시간 및 날짜 표시 갱신
       const dateEl = document.getElementById('blackout-date-text');
@@ -2888,7 +2892,7 @@
 
     function checkBgmSchedule() {
       const now = new Date();
-      const day = now.getDay();
+      const day = (bgmMockTime !== null) ? 1 : now.getDay();
       const effBgm = getEffectiveTime();
       const currentHour = effBgm.hour;
       const currentMin = effBgm.min;
@@ -3001,10 +3005,15 @@
           currentBgmType = matchedSchedule.type;
           const weatherCat = getWeatherCategory(current_weather_code);
           const playlist = BGM_PLAYLIST[weatherCat][currentBgmType];
+          
+          const lastPlayedId = localStorage.getItem('last_played_bgm_id');
           let selectIdx = Math.floor(Math.random() * playlist.length);
-          if (playlist.length > 1 && currentTrack) {
-            let limit = 10;
-            while (playlist[selectIdx].youtubeId === currentTrack.youtubeId && limit > 0) {
+          if (playlist.length > 1) {
+            let limit = 15;
+            while (limit > 0 && (
+              playlist[selectIdx].youtubeId === lastPlayedId || 
+              (currentTrack && playlist[selectIdx].youtubeId === currentTrack.youtubeId)
+            )) {
               selectIdx = Math.floor(Math.random() * playlist.length);
               limit--;
             }
@@ -3047,7 +3056,9 @@
     }
 
     function playBgmTrack(track) {
+      if (!track) return;
       currentTrack = track;
+      localStorage.setItem('last_played_bgm_id', track.youtubeId);
       const titleEl = document.getElementById('bgm-title');
       const visualizer = document.getElementById('bgm-visualizer');
       if (titleEl) titleEl.textContent = track.title;
