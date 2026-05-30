@@ -1337,12 +1337,13 @@
       const days  = ['일','월','화','수','목','금','토'];
       document.getElementById('live-date').textContent = `${month}.${date} (${days[now.getDay()]})`;
 
-      // 19:30 ~ 07:30 야간 절전 모드 (검은 화면 오버레이)
+      // 19:30 ~ 07:30 야간 절전 모드 또는 주말 절전 모드 (검은 화면 오버레이)
       const realTv = now.getHours() * 100 + now.getMinutes();
+      const isWeekend = (now.getDay() === 0 || now.getDay() === 6) && (bgmMockTime === null);
       let sleepOverlay = document.getElementById('sleep-overlay');
-      if (realTv >= 1930 || realTv < 730) {
+      if (realTv >= 1930 || realTv < 730 || isWeekend) {
         if (!sleepOverlay) {
-          // create overlay for night mode
+          // create overlay for night/weekend mode
           sleepOverlay = document.createElement('div');
           sleepOverlay.id = 'sleep-overlay';
           sleepOverlay.style.position = 'fixed';
@@ -1353,20 +1354,6 @@
           sleepOverlay.style.background = 'black';
           sleepOverlay.style.zIndex = '9999';
           document.body.appendChild(sleepOverlay);
-        }
-        // Ensure fullscreen on wakeup at 07:30
-        const now = new Date();
-        const curVal = now.getHours()*100 + now.getMinutes();
-        if (curVal >= 730 && curVal < 800) {
-          // Remove overlay if present
-          if (sleepOverlay) {
-            sleepOverlay.remove();
-            sleepOverlay = null;
-          }
-          // Request fullscreen
-          if (document.documentElement.requestFullscreen) {
-            document.documentElement.requestFullscreen().catch(()=>{});
-          }
         }
         if (sleepOverlay) {
           sleepOverlay.style.top = '0';
@@ -1380,11 +1367,20 @@
           sleepOverlay.style.alignItems = 'center';
           sleepOverlay.style.justifyContent = 'center';
           sleepOverlay.style.color = '#333';
-          sleepOverlay.innerHTML = '<i class="fa-solid fa-moon" style="font-size: 4rem; margin-bottom: 20px;"></i><h2 style="font-family: var(--font-noto);">야간 절전 모드입니다 (19:30 ~ 07:30)</h2>';
-          document.body.appendChild(sleepOverlay);
+          if (isWeekend) {
+            sleepOverlay.innerHTML = '<i class="fa-solid fa-moon" style="font-size: 4rem; margin-bottom: 20px;"></i><h2 style="font-family: var(--font-noto);">주말 절전 모드입니다</h2>';
+          } else {
+            sleepOverlay.innerHTML = '<i class="fa-solid fa-moon" style="font-size: 4rem; margin-bottom: 20px;"></i><h2 style="font-family: var(--font-noto);">야간 절전 모드입니다 (19:30 ~ 07:30)</h2>';
+          }
         }
       } else {
-        if (sleepOverlay) sleepOverlay.remove();
+        if (sleepOverlay) {
+          sleepOverlay.remove();
+          // 평일 아침 절전 모드 해제 시 전체화면 요청
+          if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen().catch(()=>{});
+          }
+        }
       }
     }
 
