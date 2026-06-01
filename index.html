@@ -1902,8 +1902,8 @@
             let cfg = MEAL_ICONS.veg;
             if (cleaned.includes('밥')||cleaned.includes('잡곡')||cleaned.includes('볶음밥')) cfg = MEAL_ICONS.rice;
             else if (cleaned.includes('찌개')||cleaned.includes('국')||cleaned.includes('탕')) cfg = MEAL_ICONS.soup;
-            else if (cleaned.includes('돈가스')||cleaned.includes('고기')||cleaned.includes('구이')||cleaned.includes('볶음')||cleaned.includes('갈비')||cleaned.includes('치킨')) cfg = MEAL_ICONS.meat;
-            else if (cleaned.includes('케이크')||cleaned.includes('요구르트')||cleaned.includes('푸딩')||cleaned.includes('과일')||cleaned.includes('주스')||cleaned.includes('빵')) cfg = MEAL_ICONS.dessert;
+            else if (cleaned.includes('돈가스')||cleaned.includes('고기')||cleaned.includes('구이')||cleaned.includes('볶음')||cleaned.includes('갈비')||cleaned.includes('치킨')||cleaned.includes('불고기')||cleaned.includes('스테이크')||cleaned.includes('탕수육')||cleaned.includes('까스')||cleaned.includes('닭')||cleaned.includes('오리')||cleaned.includes('훈제')||cleaned.includes('함박')||cleaned.includes('찜')||cleaned.includes('너비아니')||cleaned.includes('완자')||cleaned.includes('튀김')||cleaned.includes('카츠')||cleaned.includes('강정')) cfg = MEAL_ICONS.meat;
+            else if (cleaned.includes('케이크')||cleaned.includes('요구르트')||cleaned.includes('푸딩')||cleaned.includes('과일')||cleaned.includes('주스')||cleaned.includes('빵')||cleaned.includes('에이드')||cleaned.includes('식혜')||cleaned.includes('마카롱')||cleaned.includes('와플')||cleaned.includes('타르트')||cleaned.includes('아이스크림')||cleaned.includes('요플레')||cleaned.includes('음료')||cleaned.includes('티')) cfg = MEAL_ICONS.dessert;
             const card = document.createElement('div');
             card.className = `meal-grid-item ${cfg.class}`;
             card.innerHTML = `<i class="fa-solid ${cfg.icon}"></i>${cleaned}`;
