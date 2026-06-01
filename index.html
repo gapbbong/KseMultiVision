@@ -263,11 +263,23 @@
     .calories-value { font-family: var(--font-outfit); font-size: 1.1rem; font-weight: 800; color: #ffffff; }
     .meal-date-badge { background: rgba(254,228,64,0.15); border: 1px solid rgba(254,228,64,0.25); padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 800; color: var(--color-zone-e); }
 
-    .meal-grid, .weather-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
-    .meal-grid-item, .weather-grid-item { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 8px 10px; display: flex; align-items: center; gap: 8px; font-size: 0.85rem; font-weight: 600; transition: background 0.2s; }
+    .meal-grid { display: grid; grid-template-columns: repeat(2, 1fr); grid-auto-flow: dense; gap: 6px; }
+    .weather-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+    .meal-grid-item, .weather-grid-item { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 8px 8px; display: flex; align-items: center; gap: 6px; font-size: 0.78rem; font-weight: 600; transition: background 0.2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .meal-grid-item:hover { background: rgba(254,228,64,0.05); border-color: rgba(254,228,64,0.2); }
     .weather-grid-item:hover { background: rgba(0,187,249,0.05); border-color: rgba(0,187,249,0.2); }
     .meal-grid-item i { font-size: 0.85rem; }
+
+    /* 학생 선호 핵심 메뉴 강조 (고기류 및 디저트류) - 2열 차지 및 골드 하이라이트 */
+    .meal-grid-item.meal-meat, .meal-grid-item.meal-dessert {
+      grid-column: span 2;
+      background: rgba(254, 228, 64, 0.08);
+      border: 1px solid rgba(254, 228, 64, 0.35);
+      box-shadow: 0 0 10px rgba(254, 228, 64, 0.15);
+      font-size: 0.95rem;
+      padding: 10px 14px;
+      gap: 10px;
+    }
 
     .meal-rice i { color: #f8fafc; }
     .meal-soup i { color: #38bdf8; }
