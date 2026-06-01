@@ -1377,7 +1377,15 @@
       if (isWorship) {
         if (!isWorshipOverridden) {
           isWorshipOverridden = true;
-          if (textEl) textEl.classList.add('damage-quote-blink-effect');
+          if (textEl) {
+            textEl.classList.add('damage-quote-blink-effect');
+            textEl.style.fontSize = '4.1rem'; // 2x normal size (2.05rem * 2)
+          }
+          if (damageQuoteEl) {
+            damageQuoteEl.style.fontSize = '2.9rem'; // 2x normal size (1.45rem * 2)
+            damageQuoteEl.style.maxWidth = 'none';
+            damageQuoteEl.style.whiteSpace = 'normal';
+          }
           if (authorEl) authorEl.style.display = 'none';
         }
         if (damageQuoteEl && damageQuoteEl.textContent !== worshipText) {
@@ -1389,7 +1397,15 @@
       } else {
         if (isWorshipOverridden) {
           isWorshipOverridden = false;
-          if (textEl) textEl.classList.remove('damage-quote-blink-effect');
+          if (textEl) {
+            textEl.classList.remove('damage-quote-blink-effect');
+            textEl.style.fontSize = ''; // 복구
+          }
+          if (damageQuoteEl) {
+            damageQuoteEl.style.fontSize = ''; // 복구
+            damageQuoteEl.style.maxWidth = ''; // 복구
+            damageQuoteEl.style.whiteSpace = ''; // 복구
+          }
           if (authorEl) authorEl.style.display = ''; // 복구
           if (typeof showNextQuote === 'function') {
             showNextQuote();
