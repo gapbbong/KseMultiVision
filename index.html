@@ -1366,6 +1366,37 @@
       if (damageTimeEl) damageTimeEl.textContent = `${h}:${m}:${s}`;
       if (damageDateEl) damageDateEl.textContent = `${month}.${date} (${days[now.getDay()]})`;
 
+      // 월요일 점심시간 (12:50 ~ 13:20) 예배 안내 오버라이드
+      const worshipText = "강당에서 13시10분부터 예배가 있습니다. 친구와 같이 와서 말씀도 듣고 간식도 받아가기 바랍니다";
+      const isWorship = (now.getDay() === 1 && ((hVal === 12 && mVal >= 50) || (hVal === 13 && mVal < 20)));
+
+      const damageQuoteEl = document.getElementById('damage-quote-text');
+      const textEl = document.getElementById('quote-text');
+      const authorEl = document.getElementById('quote-author');
+
+      if (isWorship) {
+        if (!isWorshipOverridden) {
+          isWorshipOverridden = true;
+          if (textEl) textEl.classList.add('damage-quote-blink-effect');
+          if (authorEl) authorEl.style.display = 'none';
+        }
+        if (damageQuoteEl && damageQuoteEl.textContent !== worshipText) {
+          damageQuoteEl.textContent = worshipText;
+        }
+        if (textEl && textEl.textContent !== worshipText) {
+          textEl.textContent = worshipText;
+        }
+      } else {
+        if (isWorshipOverridden) {
+          isWorshipOverridden = false;
+          if (textEl) textEl.classList.remove('damage-quote-blink-effect');
+          if (authorEl) authorEl.style.display = ''; // 복구
+          if (typeof showNextQuote === 'function') {
+            showNextQuote();
+          }
+        }
+      }
+
       // 19:30 ~ 07:30 야간 절전 모드 또는 주말 절전 모드 (검은 화면 오버레이)
       const realTv = now.getHours() * 100 + now.getMinutes();
       const isWeekend = (now.getDay() === 0 || now.getDay() === 6) && (bgmMockTime === null);
@@ -2536,6 +2567,7 @@
     let lastScheduleKey = '';
 
     function showNextQuote() {
+      if (typeof isWorshipOverridden !== 'undefined' && isWorshipOverridden) return;
       currentQuoteIndex = (currentQuoteIndex + 1) % dailyQuoteOrder.length;
       const q = QUOTES[dailyQuoteOrder[currentQuoteIndex]];
       const container = document.getElementById('quote-container');
@@ -3223,6 +3255,7 @@
     // 10. 4사분면 파손 우회 레이아웃 설정
     // ========================================================
     let damageMode = true; // 기본값: 파손 중
+    let isWorshipOverridden = false; // 월요일 예배 안내 오버라이드 여부
 
     function updateMonitorLayout() {
       const blackoutOverlay = document.getElementById('damage-blackout-overlay');
