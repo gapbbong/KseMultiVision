@@ -1371,8 +1371,8 @@
       if (damageTimeEl) damageTimeEl.textContent = `${h}:${m}:${s}`;
       if (damageDateEl) damageDateEl.textContent = `${month}.${date} (${days[now.getDay()]})`;
 
-      // 월요일 점심시간 (12:50 ~ 13:20) 예배 안내 오버라이드
-      const worshipText = "강당에서 13시10분부터 예배가 있습니다. 친구와 같이 와서 말씀도 듣고 간식도 받아가기 바랍니다";
+      // 월요일 점심시간 (12:50 ~ 13:20) 예배 안내 오버라이드 (HTML 형식)
+      const worshipHtml = '<span style="color: var(--color-zone-a); font-weight: 800;">강당</span>에서 <span style="color: var(--color-zone-a); font-weight: 800;">13시 30분</span>부터 <span style="color: var(--color-zone-a); font-weight: 800;">예배</span>가 있습니다.<br>친구와 같이 와서 말씀도 듣고 간식도 받아가기 바랍니다.';
       const isWorship = (now.getDay() === 1 && ((hVal === 12 && mVal >= 50) || (hVal === 13 && mVal < 20)));
 
       const damageQuoteEl = document.getElementById('damage-quote-text');
@@ -1397,11 +1397,11 @@
           }
           if (authorEl) authorEl.style.display = 'none';
         }
-        if (damageQuoteEl && damageQuoteEl.textContent !== worshipText) {
-          damageQuoteEl.textContent = worshipText;
+        if (damageQuoteEl && damageQuoteEl.innerHTML !== worshipHtml) {
+          damageQuoteEl.innerHTML = worshipHtml;
         }
-        if (textEl && textEl.textContent !== worshipText) {
-          textEl.textContent = worshipText;
+        if (textEl && textEl.innerHTML !== worshipHtml) {
+          textEl.innerHTML = worshipHtml;
         }
       } else {
         if (isWorshipOverridden) {
