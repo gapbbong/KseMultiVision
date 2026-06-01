@@ -374,7 +374,7 @@
       border: 1px solid rgba(0, 245, 212, 0.3);
       border-radius: 14px;
       padding: 16px;
-      z-index: 999;
+      z-index: 999999;
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -403,7 +403,7 @@
       color: var(--color-zone-a);
       font-size: 1.15rem;
       cursor: pointer;
-      z-index: 1000;
+      z-index: 1000000;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -561,8 +561,9 @@
     }
 
     .blackout-header {
+      position: relative;
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
       border-bottom: 2px solid rgba(0, 242, 254, 0.15);
       padding-bottom: 7px;
@@ -614,6 +615,8 @@
     }
 
     .blackout-time-box {
+      position: absolute;
+      right: 0;
       display: flex;
       flex-direction: column;
       align-items: flex-end;
@@ -809,6 +812,13 @@
       from { opacity: 0; transform: scale(0.99); }
       to { opacity: 1; transform: scale(1); }
     }
+    @keyframes damage-quote-blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.35; }
+    }
+    .damage-quote-blink-effect {
+      animation: damage-quote-blink 1.8s infinite ease-in-out;
+    }
   </style>
   </head>
 <body>
@@ -831,7 +841,7 @@
             <i class="fa-solid fa-school school-icon-glow"></i>
             <h2>경성전자고등학교 <span class="accent-text">실시간 수업 현황</span></h2>
           </div>
-          <div class="blackout-status-box">
+          <div class="blackout-status-box" style="display: none;">
             <span class="status-pulse"></span>
             <span id="blackout-status-text">현재 일과 상태 확인 중...</span>
           </div>
@@ -883,6 +893,14 @@
     <div class="zone-b">
       <div class="media-container" id="horizontal-container">
         <!-- JS dynamically inserts horizontal media contents -->
+      </div>
+      <!-- 4사분면 파손 우회용 한줄 상태 바 (명언 + 날짜 + 시간) -->
+      <div class="damage-status-bar" id="damage-status-bar" style="position: absolute; right: 16px; top: 16px; z-index: 100; display: flex; align-items: center; gap: 22px; background: rgba(13, 27, 42, 0.85); backdrop-filter: blur(8px); border: 1px solid rgba(0, 245, 212, 0.3); padding: 12px 28px; border-radius: 40px; color: #ffffff; font-size: 1.45rem; font-weight: 600; box-shadow: 0 4px 15px rgba(0,0,0,0.5); transition: all 0.3s ease;">
+        <span id="damage-quote-text" class="damage-quote-blink-effect" style="color: var(--color-zone-a); max-width: 50vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">공부하기 싫을 때마다 통장 잔고 0원을 상상해라.</span>
+        <span style="color: rgba(255,255,255,0.3); font-weight: 300;">|</span>
+        <span id="damage-date-text" style="color: var(--color-zone-b);">06.01 (월)</span>
+        <span style="color: rgba(255,255,255,0.3); font-weight: 300;">|</span>
+        <span id="damage-time-text" style="font-family: 'Outfit', sans-serif; color: var(--color-zone-c); font-weight: 800; min-width: 120px; text-align: center;">11:05:34</span>
       </div>
     </div>
 
@@ -952,6 +970,8 @@
 
     <!-- [구역 D: 4사분면 하단 파손 블랙아웃] -->
     <div class="zone-d" id="blackout-zone"></div>
+    <!-- 4사분면 파손 시 완전 암흑 처리용 오버레이 -->
+    <div id="damage-blackout-overlay" style="position: absolute; left: 50vw; top: 50vh; width: 50vw; height: 50vh; background: #000000; z-index: 9999; border-left: 2px solid rgba(255,255,255,0.05); border-top: 2px solid rgba(255,255,255,0.05); box-sizing: border-box; display: none;"></div>
 
     <!-- [구역 E: 3사분면 하단 실시간 인포그래픽] -->
     <div class="zone-e">
@@ -1058,9 +1078,9 @@
       4사분면 파손 우회 레이아웃 및 13:20 식단 타임 시프트가 가동 중입니다.
     </div>
     <div style="border-top: 1px solid rgba(0,245,212,0.15); padding-top: 10px; margin-top: 4px; display: flex; flex-direction: column; gap: 6px;">
-      <div style="font-size: 0.7rem; font-weight: 800; color: var(--color-zone-a); text-transform: uppercase; letter-spacing: 1px;">🔐 Google API 인증</div>
-      <button class="btn-toggle" id="btn-google-login" onclick="requestGoogleAuth()">
-        <i class="fa-solid fa-lock"></i> 구글 계정 인증 필요
+      <div style="font-size: 0.7rem; font-weight: 800; color: var(--color-zone-a); text-transform: uppercase; letter-spacing: 1px;">🔧 4사분면 모니터 상태</div>
+      <button class="btn-toggle" id="btn-monitor-status" onclick="toggleMonitorStatus()">
+        <i class="fa-solid fa-screwdriver-wrench"></i> 모니터 수리 완료 처리
       </button>
     </div>
     <div style="border-top: 1px solid rgba(255,0,127,0.15); padding-top: 10px; margin-top: 4px; display: flex; flex-direction: column; gap: 6px;">
@@ -1108,6 +1128,9 @@
       DATA_REFRESH_INTERVAL: 1800000,
       MEDIA_REFRESH_INTERVAL: 10800000 // 3시간 (오전/오후 각 2회 분량)
     };
+
+    let upcomingCreativeEvents = [];
+    let isVpEventsLoaded = false;
 
     // ========================================================
     // [모의 미디어 데이터]
@@ -1336,6 +1359,12 @@
       const date  = String(now.getDate()).padStart(2,'0');
       const days  = ['일','월','화','수','목','금','토'];
       document.getElementById('live-date').textContent = `${month}.${date} (${days[now.getDay()]})`;
+
+      // 2사분면 파손 우회용 시간/날짜 갱신
+      const damageTimeEl = document.getElementById('damage-time-text');
+      const damageDateEl = document.getElementById('damage-date-text');
+      if (damageTimeEl) damageTimeEl.textContent = `${h}:${m}:${s}`;
+      if (damageDateEl) damageDateEl.textContent = `${month}.${date} (${days[now.getDay()]})`;
 
       // 19:30 ~ 07:30 야간 절전 모드 또는 주말 절전 모드 (검은 화면 오버레이)
       const realTv = now.getHours() * 100 + now.getMinutes();
@@ -2241,7 +2270,12 @@
         return Math.max(0, Math.round((target - today) / 86400000));
       };
 
-      const FALLBACK_VP_EVENTS = []; // 실제 데이터는 구글 드라이브 시트에서 실시간 로드됨
+      const FALLBACK_VP_EVENTS = [
+        { tag: '고사보안', dday: getFallbackDday(6, 4), dateLabel: '~06월 04일(목)', title: '2차 고사(기말고사) 출제 기간 중 학생 교무실 출입 금지', dept: '교육연구부 주관' },
+        { tag: '전교생', dday: getFallbackDday(6, 12), dateLabel: '06월 12일(금)', title: '올바른 디지털 생활! 정보통신윤리교육 실시 (외부 강사 초청)', dept: '교육정보부 주관' },
+        { tag: '1학년', dday: getFallbackDday(6, 25), dateLabel: '06월 25일(목)', title: '내 미래를 그리는 첫걸음! 1학년 코스 선택 설명회', dept: '교무기획부 주관' },
+        { tag: '게임과', dday: getFallbackDday(6, 27), dateLabel: '06월 27일(토)', title: '게임콘텐츠과 1학년 전원 GTQ 자격시험 단체 응시', dept: '전문교육부 주관' }
+      ];
 
       if (!apiKey && !isTokenValid) { 
         initTicker();
@@ -2285,6 +2319,7 @@
           if (!csvRes.ok) throw new Error();
           const rows = parseCSV(await csvRes.text());
           if (rows && rows.length > 0) {
+            const sample = rows[0];
             const deptK = Object.keys(sample).find(k => k.includes('부서')||k.includes('부')) || Object.keys(sample)[0];
             const contK = Object.keys(sample).find(k => k.includes('전달')||k.includes('결의')||k.includes('내용')) || Object.keys(sample)[2];
             const newAnn = [];
@@ -2514,6 +2549,12 @@
         textEl.textContent   = q.text;
         authorEl.textContent = `— ${q.author} —`;
         container.classList.remove('fade-out');
+        
+        // 2사분면 파손 우회용 상태 바 명언 갱신
+        const damageQuoteEl = document.getElementById('damage-quote-text');
+        if (damageQuoteEl) {
+          damageQuoteEl.textContent = q.text;
+        }
       }, 520);
     }
 
@@ -3178,7 +3219,40 @@
     // 주기적 갱신
     setInterval(checkBgmSchedule, 10000);
 
+    // ========================================================
+    // 10. 4사분면 파손 우회 레이아웃 설정
+    // ========================================================
+    let damageMode = true; // 기본값: 파손 중
+
+    function updateMonitorLayout() {
+      const blackoutOverlay = document.getElementById('damage-blackout-overlay');
+      const statusBar = document.getElementById('damage-status-bar');
+      const statusBtn = document.getElementById('btn-monitor-status');
+
+      if (damageMode) {
+        if (blackoutOverlay) blackoutOverlay.style.display = 'block';
+        if (statusBar) statusBar.style.display = 'flex';
+        if (statusBtn) {
+          statusBtn.innerHTML = '<i class="fa-solid fa-screwdriver-wrench"></i> 모니터 수리 완료 처리';
+          statusBtn.classList.remove('active');
+        }
+      } else {
+        if (blackoutOverlay) blackoutOverlay.style.display = 'none';
+        if (statusBar) statusBar.style.display = 'none';
+        if (statusBtn) {
+          statusBtn.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> 모니터 파손 모드 전환';
+          statusBtn.classList.add('active');
+        }
+      }
+    }
+
+    function toggleMonitorStatus() {
+      damageMode = !damageMode;
+      updateMonitorLayout();
+    }
+
     async function initSystem() {
+      updateMonitorLayout(); // 모니터 상태 레이아웃 적용
       updateClock();
       setInterval(updateClock, 1000);
       initGoogleAuth();
