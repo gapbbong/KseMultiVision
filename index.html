@@ -913,26 +913,15 @@
     </div>
 
     <!-- [구역 C: 2사분면 전체 (우측 종합 대시보드 - 시계, 날짜, 일정, BGM, 급식, 날씨)] -->
-    <div class="zone-c" style="display: flex; flex-direction: column; gap: 4px; padding: 8px 18px; overflow: hidden;">
-      <!-- Top Header: 학교이름 | 날짜 | 시간 -->
-      <div id="zone-c-header" style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-shrink: 0; padding: 2px 0;">
-        <div class="clock-cal-day" id="live-year-top" style="font-size: 0.85rem; color: var(--color-zone-c); font-weight: 800; white-space: nowrap; letter-spacing: 0.5px;">경성전자고등학교</div>
-        <div style="display: flex; align-items: baseline; gap: 8px;">
-          <div class="clock-cal-date" id="live-date-top" style="font-size: 0.85rem; white-space: nowrap; font-weight: 600;">05.28 (목)</div>
-          <div class="clock-digital" id="live-time-top" style="font-size: 1.3rem; text-shadow: 0 0 12px rgba(255,0,127,0.35); font-weight: 800; display: flex; align-items: baseline;">00:00<span class="clock-sec" id="live-sec-top" style="font-size: 0.75rem;">00</span></div>
-        </div>
-      </div>
-      <div style="width: 100%; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,0,127,0.25), transparent); flex-shrink: 0;"></div>
-      <!-- C-Body: 급식+날씨(좌) + 일정+BGM(우) -->
-      <div style="display: flex; flex-direction: row; gap: 16px; flex: 1; overflow: hidden; align-items: stretch;">
+    <div class="zone-c" style="display: flex; flex-direction: row; gap: 16px; padding: 8px 18px; overflow: hidden; align-items: stretch;">
       <!-- C-Left: 급식 + 오후 날씨 -->
-      <div class="c-left-col" style="flex: 0 0 40%; display: flex; flex-direction: column; gap: 8px; height: 100%; overflow: hidden; justify-content: flex-start;">
+      <div class="c-left-col" style="flex: 0 0 40%; display: flex; flex-direction: column; gap: 4px; height: 100%; overflow: hidden; justify-content: flex-start;">
         <!-- 급식 카드 -->
         <div class="dashboard-subcard meal-subcard" style="height: 60%; display: flex; flex-direction: column; overflow: hidden;">
           <div id="meal-card-header" class="section-title" style="margin-bottom: 4px; font-size: 0.9rem;">
             <i class="fa-solid fa-salad"></i> <span id="meal-card-title">오늘의 웰빙 급식</span>
           </div>
-          <div id="meal-card-content" class="infographic-meal" style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center; gap: 6px; overflow: hidden;">
+          <div id="meal-card-content" class="infographic-meal" style="flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-start; gap: 4px; overflow: hidden;">
             <div class="meal-meta-row" style="padding: 6px 10px;">
               <div class="calories-radial-box">
                 <div class="calories-icon-wrap" style="width: 28px; height: 28px; font-size: 0.8rem;">
@@ -983,8 +972,17 @@
         </div>
       </div>
 
-      <!-- C-Right: 일정, BGM 정보 -->
-      <div class="c-right-col" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; height: 100%; overflow: hidden;">
+      <!-- C-Right: 학교명+날짜+시간 + 일정 + BGM -->
+      <div class="c-right-col" style="flex: 1; display: flex; flex-direction: column; justify-content: flex-start; gap: 6px; height: 100%; overflow: hidden;">
+        <!-- 학교이름 | 날짜 | 시간 (상단) -->
+        <div id="zone-c-header" style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-shrink: 0; padding: 2px 0;">
+          <div class="clock-cal-day" id="live-year-top" style="font-size: 1.6rem; color: var(--color-zone-c); font-weight: 800; white-space: nowrap; letter-spacing: 1px;">경성전자고등학교</div>
+          <div style="display: flex; align-items: baseline; gap: 10px;">
+            <div class="clock-cal-date" id="live-date-top" style="font-size: 1.6rem; white-space: nowrap; font-weight: 600;">05.28 (목)</div>
+            <div class="clock-digital" id="live-time-top" style="font-size: 2.6rem; text-shadow: 0 0 12px rgba(255,0,127,0.35); font-weight: 800; display: flex; align-items: baseline;">00:00<span class="clock-sec" id="live-sec-top" style="font-size: 1.4rem;">00</span></div>
+          </div>
+        </div>
+        <div style="width: 100%; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,0,127,0.25), transparent); flex-shrink: 0;"></div>
         <!-- 교감선생님 행사 일정 -->
         <div class="vp-events-list" id="vp-events-list" style="padding: 6px 12px; font-size: 0.85rem; border-color: rgba(255, 0, 127, 0.15);">
           <div style="text-align: center; color: var(--color-text-secondary); font-size: 0.8rem; width: 100%;">
@@ -1023,7 +1021,7 @@
           </div>
         </div>
       </div>
-      </div><!-- close C-Body row -->
+    </div>
     </div>
 
     <!-- [구역 F: 4사분면 중단 학습동기 부여 명언 - 미사용이지만 id는 호환성용으로 유지] -->
@@ -1729,6 +1727,9 @@
       return array;
     }
 
+    // 교대 전환 타이머 ID (전역)
+    let alternatingTimerId = null;
+
     function startMediaRotators() {
       if (verticalList.length === 0)
         verticalList = MOCK_MEDIA.filter(m => m.isVertical).map(m => ({ ...m, url: toProxyUrl(m) }));
@@ -1739,15 +1740,32 @@
       shuffleArray(verticalList);
       shuffleArray(horizontalList);
 
-      renderMediaRotator('vertical-container',   verticalList,   'vmedia', 0, CONFIG.MEDIA_CYCLE_INTERVAL_V);
-      renderMediaRotator('horizontal-container', horizontalList, 'hmedia', 1500, CONFIG.MEDIA_CYCLE_INTERVAL_H);
+      // DOM 구성만 하고 triggerNextSlide 함수를 반환받음
+      const triggerV = setupMediaDOM('vertical-container',   verticalList,   'vmedia');
+      const triggerH = setupMediaDOM('horizontal-container', horizontalList, 'hmedia');
+
+      // 기존 교대 타이머 해제
+      if (alternatingTimerId) { clearInterval(alternatingTimerId); alternatingTimerId = null; }
+
+      // 번갈아 순차 전환: V -> (대기) -> H -> (대기) -> V -> ...
+      let turn = 0; // 0 = vertical 차례, 1 = horizontal 차례
+      const ALTERNATE_INTERVAL = 4000; // 4초 간격으로 번갈아 전환
+
+      alternatingTimerId = setInterval(() => {
+        if (turn === 0 && triggerV) {
+          triggerV();
+        } else if (turn === 1 && triggerH) {
+          triggerH();
+        }
+        turn = (turn + 1) % 2;
+      }, ALTERNATE_INTERVAL);
     }
 
-    function renderMediaRotator(containerId, list, typeClass, delay = 0, interval = 6000) {
+    function setupMediaDOM(containerId, list, typeClass) {
       const container = document.getElementById(containerId);
-      if (!container || !list || list.length === 0) return;
+      if (!container || !list || list.length === 0) return null;
 
-      // 기존 타이머 및 딜레이용 타임아웃이 존재하면 안전하게 해제하여 중복 실행 방지
+      // 기존 타이머 해제
       if (container.dataset.timerId) {
         clearInterval(parseInt(container.dataset.timerId));
         container.dataset.timerId = '';
@@ -1760,13 +1778,13 @@
       container.innerHTML = '';
       list.forEach((item, index) => {
         let el;
-        const finalUrl = item.url; // 이미 proxy URL로 변환됨
+        const finalUrl = item.url;
 
         if (item.type === 'video') {
           el = document.createElement('video');
           el.referrerPolicy = 'no-referrer';
           el.src = finalUrl; 
-          el.autoplay = (index === 0); // 초기 0번째 요소만 자동 재생
+          el.autoplay = (index === 0);
           el.muted = true; el.loop = true; el.playsInline = true;
           el.onerror = () => {
             console.error(`[재생 실패] ${finalUrl}`);
@@ -1828,16 +1846,8 @@
         if (titleEl) titleEl.textContent = list[idx].eventName;
       }
 
-      if (delay > 0) {
-        const timeoutId = setTimeout(() => {
-          const tId = setInterval(triggerNextSlide, interval);
-          container.dataset.timerId = tId;
-        }, delay);
-        container.dataset.delayTimeoutId = timeoutId;
-      } else {
-        const tId = setInterval(triggerNextSlide, interval);
-        container.dataset.timerId = tId;
-      }
+      // triggerNextSlide 함수만 반환 (타이머는 startMediaRotators에서 교대로 관리)
+      return triggerNextSlide;
     }
 
     // ========================================================
