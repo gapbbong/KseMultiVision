@@ -462,6 +462,7 @@
        ========================================== */
     @keyframes alertBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
     @keyframes pulseEvent { 0%, 100% { transform: scale(1); filter: brightness(1); } 50% { transform: scale(1.05); filter: brightness(1.2); } }
+    @keyframes techPulse { 0% { opacity: 0.35; transform: scale(0.9); } 100% { opacity: 1; transform: scale(1.15); } }
     /* 고급 차 턴 시그널 깜빡임 */
     @keyframes turnSignal {
       0%   { opacity: 1; }
@@ -475,6 +476,7 @@
        8. Animated Weather Graphics
        ========================================== */
     .weather-graphic-wrap { display: flex; align-items: center; justify-content: center; height: 70px; position: relative; flex-shrink: 0; }
+    #weather-graphic > * { transform: scale(0.42); transform-origin: center; flex-shrink: 0; }
 
     .wx-sun { width: 42px; height: 42px; border-radius: 50%; background: radial-gradient(circle, #ffe566 40%, #ffb800 100%); box-shadow: 0 0 20px 6px rgba(255,210,0,0.45); animation: wxSunPulse 3s ease-in-out infinite; position: relative; z-index: 2; flex-shrink: 0; }
     @keyframes wxSunPulse { 0%, 100% { box-shadow: 0 0 18px 5px rgba(255,210,0,0.4); transform: scale(1); } 50% { box-shadow: 0 0 30px 10px rgba(255,210,0,0.65); transform: scale(1.07); } }
@@ -545,6 +547,11 @@
       background: #ff007f;
       border-color: #ff007f;
       color: #ffffff;
+    }
+    
+    @keyframes pulseGlow {
+      0% { text-shadow: 0 0 15px rgba(255, 0, 127, 0.5); transform: scale(0.97); }
+      100% { text-shadow: 0 0 35px rgba(255, 0, 127, 0.9); transform: scale(1.03); }
     }
 
     /* ==========================================
@@ -839,8 +846,8 @@
   <div class="viewport-canvas">
 
     <!-- 4사분면 파손 우회용 한줄 상태 바 (명언 전용) - 1사분면(50vw 이내)에만 노출되도록 너비 제한 -->
-    <div class="damage-status-bar" id="damage-status-bar" style="position: absolute; left: 16px; top: 16px; width: calc(50vw - 32px); z-index: 10000; display: flex; align-items: center; justify-content: center; background: rgba(13, 27, 42, 0.85); backdrop-filter: blur(8px); border: none; padding: 12px 24px; border-radius: 40px; color: #ffffff; box-shadow: 0 4px 15px rgba(0,0,0,0.5); transition: all 0.3s ease; box-sizing: border-box; overflow: hidden;">
-      <span id="damage-quote-text" class="damage-quote-blink-effect" style="color: var(--color-zone-a); font-weight: 800; font-size: 1.25rem; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: clip; width: 100%;">공부하기 싫을 때마다 통장 잔고 0원을 상상해라.</span>
+    <div class="damage-status-bar" id="damage-status-bar" style="position: absolute; left: 16px; top: 16px; width: calc(50vw - 32px); z-index: 10000; display: flex; align-items: center; justify-content: center; background: transparent; backdrop-filter: none; border: none; padding: 12px 24px; color: #ffffff; box-shadow: none; transition: all 0.3s ease; box-sizing: border-box; overflow: hidden;">
+      <span id="damage-quote-text" class="damage-quote-blink-effect" style="color: #ffffff; font-weight: 800; font-size: 1.25rem; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: clip; width: 100%;">공부하기 싫을 때마다 통장 잔고 0원을 상상해라.</span>
     </div>
 
     <!-- 2x2 물리 모니터 경계선 (디버그용) -->
@@ -915,7 +922,7 @@
     <!-- [구역 C: 2사분면 전체 (우측 종합 대시보드 - 시계, 날짜, 일정, BGM, 급식, 날씨)] -->
     <div class="zone-c" style="display: flex; flex-direction: row; gap: 16px; padding: 8px 18px; overflow: hidden; align-items: stretch;">
       <!-- C-Left: 급식 + 오후 날씨 -->
-      <div class="c-left-col" style="flex: 0 0 40%; display: flex; flex-direction: column; gap: 4px; height: 100%; overflow: hidden; justify-content: flex-start;">
+      <div class="c-left-col" style="flex: 0 0 26.67%; display: flex; flex-direction: column; gap: 4px; height: 100%; overflow: hidden; justify-content: flex-start;">
         <!-- 급식 카드 -->
         <div class="dashboard-subcard meal-subcard" style="height: 60%; display: flex; flex-direction: column; overflow: hidden;">
           <div id="meal-card-header" class="section-title" style="margin-bottom: 4px; font-size: 0.9rem;">
@@ -948,25 +955,44 @@
             <i class="fa-solid fa-cloud-sun" style="text-shadow: 0 0 10px rgba(0,187,249,0.4);"></i>
             <span id="weather-card-title">오늘 오후 날씨 예보</span>
           </div>
-          <div id="weather-card-content" class="infographic-weather" style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1; justify-content: center; overflow: hidden;">
-            <!-- 날씨 그래픽 + 기온 메인 행 -->
-            <div style="display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 4px 8px;">
-              <div class="weather-graphic-wrap" id="weather-graphic" style="height: 36px; width: 36px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
-                <div class="wx-cloudsun" style="transform: scale(0.6);">
-                  <div class="wx-sun-small"></div>
-                  <div class="wx-cloud-small"></div>
+          <div id="weather-card-content" class="infographic-weather" style="display: flex; flex-direction: column; gap: 6px; flex-grow: 1; justify-content: center; overflow: hidden; padding: 6px 10px; background: rgba(2, 6, 23, 0.6); border: 1px solid rgba(0, 187, 249, 0.25); border-radius: 4px; box-shadow: inset 0 0 10px rgba(0, 187, 249, 0.1);">
+            <!-- 첫째 줄: 날씨 그래픽과 상태 설명 (Sci-Fi 스타일) -->
+            <div style="display: flex; align-items: center; justify-content: space-between; height: 32px; border-bottom: 1px solid rgba(0, 187, 249, 0.15); padding-bottom: 4px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div class="weather-graphic-wrap" id="weather-graphic" style="height: 28px; width: 28px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                  <div class="wx-cloudsun" style="transform: scale(0.5);">
+                    <div class="wx-sun-small"></div>
+                    <div class="wx-cloud-small"></div>
+                  </div>
                 </div>
+                <span id="weather-status" style="font-size: 0.85rem; font-weight: 800; color: var(--color-zone-b); letter-spacing: 0.5px;">맑음</span>
               </div>
-              <div style="display: flex; flex-direction: column; gap: 1px; flex: 1;">
-                <span style="font-size: 0.55rem; color: var(--color-text-secondary); font-weight: 700;">오후 기온</span>
-                <span id="weather-temp" style="font-family: var(--font-outfit); font-size: 1.05rem; font-weight: 900; color: #ffffff; line-height: 1;">--.-°C / --.-°C</span>
-              </div>
-              <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 1px;">
-                <span id="weather-status" style="font-size: 0.7rem; font-weight: 800; color: var(--color-zone-b);">맑음</span>
-                <span id="weather-apparent" style="font-family: var(--font-outfit); font-size: 0.75rem; font-weight: 800; color: var(--color-text-secondary);">--.-°C</span>
+              <!-- 활성 상태 점 (Sci-Fi Pulse) -->
+              <div style="display: flex; align-items: center; gap: 4px;">
+                <span class="tech-dot" style="display: inline-block; width: 5px; height: 5px; background-color: var(--color-zone-b); border-radius: 50%; box-shadow: 0 0 8px var(--color-zone-b); animation: techPulse 1.5s infinite alternate;"></span>
+                <span style="font-family: var(--font-noto); font-size: 0.55rem; color: var(--color-text-muted); font-weight: 700; letter-spacing: 0.5px;">정상 작동</span>
               </div>
             </div>
-            <!-- 상세 지표 (숨김) -->
+            <!-- 둘째 줄: 데이터 그리드 -->
+            <div style="display: flex; gap: 6px; width: 100%;">
+              <!-- 기온 정보 박스 -->
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 1px; padding: 4px 6px; background: rgba(255, 255, 255, 0.01); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 3px;">
+                <span style="font-family: var(--font-noto); font-size: 0.5rem; font-weight: 800; color: var(--color-text-secondary); letter-spacing: 0.5px;">기온 정보</span>
+                <span id="weather-temp" style="font-family: var(--font-outfit); font-size: 0.85rem; font-weight: 800; color: #ffffff; letter-spacing: -0.2px;">--.-°C / --.-°C</span>
+              </div>
+              <!-- 미세먼지 정보 박스 -->
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 1px; padding: 4px 6px; background: rgba(255, 255, 255, 0.01); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 3px;">
+                <span style="font-family: var(--font-noto); font-size: 0.5rem; font-weight: 800; color: var(--color-text-secondary); letter-spacing: 0.5px;">미세먼지</span>
+                <div style="display: flex; align-items: center; gap: 4px;">
+                  <i class="fa-solid fa-smog" style="color: #fbbf24; font-size: 0.65rem;"></i>
+                  <span id="weather-pm10" style="font-family: var(--font-noto); font-size: 0.82rem; font-weight: 800; color: #ffffff;">좋음</span>
+                </div>
+              </div>
+            </div>
+            <!-- 기타 지표 (오류 방지용 요소) -->
+            <span id="weather-apparent" style="display: none;">--.-°C</span>
+            <span id="weather-humidity" style="display: none;">--%</span>
+            <span id="weather-wind" style="display: none;">-- m/s</span>
             <div class="weather-grid" style="display: none;"></div>
           </div>
         </div>
@@ -976,7 +1002,7 @@
       <div class="c-right-col" style="flex: 1; display: flex; flex-direction: column; justify-content: flex-start; gap: 6px; height: 100%; overflow: hidden;">
         <!-- 학교이름 | 날짜 | 시간 (상단) -->
         <div id="zone-c-header" style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-shrink: 0; padding: 2px 0;">
-          <div class="clock-cal-day" id="live-year-top" style="font-size: 1.6rem; color: var(--color-zone-c); font-weight: 800; white-space: nowrap; letter-spacing: 1px;">경성전자고등학교</div>
+          <div class="clock-cal-day" id="live-year-top" style="font-size: 1.6rem; color: #3b82f6; font-weight: 800; white-space: nowrap; letter-spacing: 1px;">경성전자고등학교</div>
           <div style="display: flex; align-items: baseline; gap: 10px;">
             <div class="clock-cal-date" id="live-date-top" style="font-size: 1.6rem; white-space: nowrap; font-weight: 600;">05.28 (목)</div>
             <div class="clock-digital" id="live-time-top" style="font-size: 2.6rem; text-shadow: 0 0 12px rgba(255,0,127,0.35); font-weight: 800; display: flex; align-items: baseline;">00:00<span class="clock-sec" id="live-sec-top" style="font-size: 1.4rem;">00</span></div>
@@ -994,10 +1020,11 @@
         <div id="creative-in-c" style="width: 100%; display: none; align-items: center; justify-content: start; gap: 8px; box-sizing: border-box; margin-bottom: 2px; padding-left: 10px;">
         </div>
 
-        <!-- 구분 가로선 -->
+        <!-- 구분 가로선
         <div style="width: 100%; height: 1px; background: rgba(255,0,127,0.15); margin: 4px 0;"></div>
+        -->
 
-        <!-- BGM 위젯 -->
+        <!-- BGM 위젯
         <div style="display: flex; flex-direction: column; gap: 6px; width: 100%;">
           <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
             <div class="bgm-widget" id="bgm-widget" style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
@@ -1014,12 +1041,12 @@
               </button>
             </div>
           </div>
-          <!-- BGM 타이틀을 별도 행으로 표시 -->
           <div style="display: flex; align-items: center; gap: 6px; width: 100%; border-top: 1px dashed rgba(255,0,127,0.1); padding-top: 2px;">
             <span id="bgm-tag" style="font-family: var(--font-outfit); font-size: 0.55rem; font-weight: 800; color: var(--color-zone-c); text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0;">BGM:</span>
             <span id="bgm-title" style="font-size: 0.72rem; font-weight: 600; color: var(--color-text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-grow: 1;">일과 중 무음</span>
           </div>
         </div>
+        -->
       </div>
     </div>
     </div>
@@ -1031,28 +1058,24 @@
         <div class="quote-author" id="quote-author" style="display: none;">- 파블로 피카소 -</div>
       </div>
     </div>
-
-          </div>
-          <div class="weather-grid-item" style="color: var(--color-text-primary); display: flex; justify-content: space-between; align-items: center;">
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <i class="fa-solid fa-smog" style="color: #fbbf24; font-size: 0.85rem;"></i>
-              <span>미세먼지</span>
-            </div>
-            <span id="weather-pm10" style="font-family: var(--font-noto); color: #ffffff;">좋음</span>
-          </div>
-          <div class="weather-grid-item" style="color: var(--color-text-primary); display: flex; justify-content: space-between; align-items: center;">
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <i class="fa-solid fa-location-dot" style="color: #00bbf9; font-size: 0.85rem;"></i>
-              <span>위치</span>
-            </div>
-            <span style="font-family: var(--font-noto); color: #ffffff; font-size: 0.78rem;">부산 서구</span>
-          </div>
-        </div>
+    <!-- 종 치기 13초 전 카운트다운 오버레이 -->
+    <div id="bell-countdown-overlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(5, 5, 15, 0.93); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); z-index: 1000000; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 30px; box-sizing: border-box;">
+      <div style="font-family: var(--font-noto); font-size: 2.4rem; font-weight: 900; color: #ff007f; display: flex; align-items: center; gap: 15px; animation: pulseGlow 1.5s infinite alternate;">
+        <i class="fa-solid fa-bell fa-bounce" style="font-size: 2.8rem;"></i>
+        <span>잠시 후 종이 울립니다!</span>
       </div>
-
-
-
-    </div><!-- /zone-e -->
+      <div style="font-family: var(--font-noto); font-size: 1.6rem; font-weight: 700; color: #f8fafc; letter-spacing: 0.5px;" id="bell-target-text">
+        --교시 수업 시작 종
+      </div>
+      <!-- 카운트다운 숫자 동그라미 -->
+      <div style="width: 200px; height: 200px; border-radius: 50%; border: 6px solid #ff007f; box-shadow: 0 0 35px rgba(255, 0, 127, 0.5); display: flex; align-items: center; justify-content: center; background: rgba(255, 0, 127, 0.06);">
+        <span id="bell-countdown-number" style="font-family: var(--font-outfit); font-size: 7rem; font-weight: 900; color: #ffffff; text-shadow: 0 0 15px rgba(255, 255, 255, 0.6);">13</span>
+      </div>
+      <div style="font-family: var(--font-noto); font-size: 1.35rem; font-weight: 600; color: #a3a3a3; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px;">
+        <i class="fa-solid fa-person-running"></i>
+        <span>신속히 교실로 이동해 주세요!</span>
+      </div>
+    </div>
 
   </div><!-- /viewport-canvas -->
 
@@ -1464,6 +1487,80 @@
           if (document.documentElement.requestFullscreen) {
             document.documentElement.requestFullscreen().catch(()=>{});
           }
+        }
+      }
+      
+      // 13초 전 종 울림 카운트다운 처리
+      const bellOverlay = document.getElementById('bell-countdown-overlay');
+      const bellNumEl = document.getElementById('bell-countdown-number');
+      const bellTextEl = document.getElementById('bell-target-text');
+      
+      let isCountdownActive = false;
+      let countdownSec = 0;
+      let targetBellName = "";
+      
+      if (sVal >= 47 && bellOverlay && bellNumEl && bellTextEl) {
+        let nextM = mVal + 1;
+        let nextH = hVal;
+        if (nextM >= 60) {
+          nextM = 0;
+          nextH = (nextH + 1) % 24;
+        }
+        const nextTimeStr = `${String(nextH).padStart(2,'0')}:${String(nextM).padStart(2,'0')}`;
+        
+        // 경성전자고등학교 일과 시간 경계 목록
+        const boundaries = [
+          "08:30", "08:50", "09:00", "09:50", 
+          "10:00", "10:50", "11:00", "11:50", 
+          "12:00", "12:50", "13:40", "14:30", 
+          "14:40", "15:30", "15:40", "16:30", 
+          "16:40"
+        ];
+        
+        if (boundaries.includes(nextTimeStr)) {
+          isCountdownActive = true;
+          countdownSec = 60 - sVal;
+          
+          if (["09:00", "10:00", "11:00", "12:00", "13:40", "14:40", "15:40"].includes(nextTimeStr)) {
+            let period = "";
+            if (nextTimeStr === "09:00") period = "1";
+            else if (nextTimeStr === "10:00") period = "2";
+            else if (nextTimeStr === "11:00") period = "3";
+            else if (nextTimeStr === "12:00") period = "4";
+            else if (nextTimeStr === "13:40") period = "5";
+            else if (nextTimeStr === "14:40") period = "6";
+            else if (nextTimeStr === "15:40") period = "7";
+            targetBellName = `${period}교시 정규 수업 시작 종`;
+          } else if (["09:50", "10:50", "11:50", "14:30", "15:30", "16:30"].includes(nextTimeStr)) {
+            let period = "";
+            if (nextTimeStr === "09:50") period = "1";
+            else if (nextTimeStr === "10:50") period = "2";
+            else if (nextTimeStr === "11:50") period = "3";
+            else if (nextTimeStr === "14:30") period = "5";
+            else if (nextTimeStr === "15:30") period = "6";
+            else if (nextTimeStr === "16:30") period = "7";
+            targetBellName = `${period}교시 수업 종료 종 (쉬는시간 시작)`;
+          } else if (nextTimeStr === "12:50") {
+            targetBellName = "4교시 수업 종료 종 (점심시간 시작)";
+          } else if (nextTimeStr === "08:30") {
+            targetBellName = "아침 조례 시작 종";
+          } else if (nextTimeStr === "08:50") {
+            targetBellName = "1교시 수업 준비 예비종";
+          } else if (nextTimeStr === "16:40") {
+            targetBellName = "종례 및 일과 종료 종";
+          } else {
+            targetBellName = "일과 시작 종";
+          }
+        }
+      }
+      
+      if (bellOverlay) {
+        if (isCountdownActive) {
+          bellOverlay.style.display = 'flex';
+          if (bellNumEl) bellNumEl.textContent = countdownSec;
+          if (bellTextEl) bellTextEl.textContent = targetBellName;
+        } else {
+          bellOverlay.style.display = 'none';
         }
       }
     }
