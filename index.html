@@ -870,23 +870,23 @@
       </defs>
     </svg>
 
-    <!-- 테스트 화면 모드 전용 오버레이 (1사분면: 드론 영상, 2사분면: 호랑이 입체 영상) -->
+    <!-- 테스트 화면 모드 전용 오버레이 (1사분면: 드라이브 영상, 2사분면: 범고래 입체 영상) -->
     <div id="test-screen-overlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #020617; z-index: 100010; display: none; pointer-events: all; box-sizing: border-box;">
       <!-- 1사분면 (좌상단 50vw, 50vh) - 구글 드라이브 드론 영상 -->
       <div id="test-quad-1" style="position: absolute; left: 0; top: 0; width: 50vw; height: 50vh; background: #000; overflow: hidden; border-right: 2px dashed rgba(0, 245, 212, 0.4); border-bottom: 2px dashed rgba(0, 245, 212, 0.4);">
         <video id="test-drone-video" style="width: 100%; height: 100%; object-fit: cover;" autoplay loop muted playsinline></video>
         <div style="position: absolute; top: 16px; left: 16px; background: rgba(13,27,42,0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: var(--color-zone-a); padding: 8px 16px; border-radius: 8px; font-size: 0.9rem; font-weight: 800; border: 1px solid rgba(0,245,212,0.3); font-family: var(--font-noto); display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(0,245,212,0.25);">
-          <i class="fa-solid fa-plane fa-spin"></i>
-          <span>1사분면: 드론 테스트 영상 (Google Drive 연동)</span>
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+          <span>1사분면: 구글 드라이브 연동 영상 테스트</span>
         </div>
       </div>
       
-      <!-- 2사분면 (우상단 50vw, 50vh) - 호랑이 입체 영상 -->
+      <!-- 2사분면 (우상단 50vw, 50vh) - 범고래 입체 영상 -->
       <div id="test-quad-2" style="position: absolute; left: 50vw; top: 0; width: 50vw; height: 50vh; background: radial-gradient(circle at center, #0a0f24 0%, #020617 100%); overflow: hidden; border-left: 2px dashed rgba(255, 0, 127, 0.4); border-bottom: 2px dashed rgba(255, 0, 127, 0.4); display: flex; align-items: center; justify-content: center;">
         <!-- 3D 입체 홀로그램 그리드 배경 -->
         <div style="position: absolute; inset: 0; background-image: linear-gradient(rgba(255,0,127,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,0,127,0.05) 1px, transparent 1px); background-size: 30px 30px; opacity: 0.8; transform: perspective(500px) rotateX(60deg) translateY(-30px); transform-origin: top; pointer-events: none;"></div>
         
-        <!-- 유튜브 호랑이 입체 크로마키 영상 -->
+        <!-- 유튜브 범고래 입체 크로마키 영상 -->
         <div style="position: relative; width: 100%; height: 100%; filter: url(#chromakey-filter); display: flex; align-items: center; justify-content: center; transform: scale(1.15);">
           <iframe id="test-tiger-iframe" style="width: 100%; height: 100%; border: none; pointer-events: none;" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
         </div>
@@ -896,7 +896,7 @@
         
         <div style="position: absolute; top: 16px; left: 16px; background: rgba(13,27,42,0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: var(--color-zone-c); padding: 8px 16px; border-radius: 8px; font-size: 0.9rem; font-weight: 800; border: 1px solid rgba(255,0,127,0.3); font-family: var(--font-noto); display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(255,0,127,0.25);">
           <i class="fa-solid fa-cube fa-bounce"></i>
-          <span>2사분면: 호랑이 3D 입체 시뮬레이션 (Chroma Key)</span>
+          <span>2사분면: 범고래 3D 입체 시뮬레이션 (Chroma Key)</span>
         </div>
       </div>
       
@@ -908,7 +908,7 @@
             <span>멀티비전 모니터 연동 테스트 작동 중</span>
           </div>
           <p style="color: var(--color-text-secondary); font-size: 0.95rem; font-weight: 500; max-width: 600px; line-height: 1.5; word-break: keep-all; padding: 0 20px;">
-            본 화면은 1사분면(좌측 모니터 영역)의 드론 촬영 클립 및 2사분면(우측 상단 모니터 영역)의 호랑이 크로마키 입체 영상을 검증하기 위한 테스트 모드입니다.
+            본 화면은 1사분면(좌측 모니터 영역)의 구글 드라이브 업로드 비디오 및 2사분면(우측 상단 모니터 영역)의 범고래 크로마키 입체 영상을 검증하기 위한 테스트 모드입니다.
           </p>
         </div>
         <button onclick="toggleTestScreen()" style="background: linear-gradient(135deg, #ea580c 0%, #ff7a00 100%); border: none; color: #ffffff; padding: 12px 32px; border-radius: 8px; cursor: pointer; font-size: 1.05rem; font-weight: 800; transition: all 0.3s; box-shadow: 0 4px 20px rgba(234,88,12,0.4); display: flex; align-items: center; gap: 8px; outline: none;">
@@ -2600,7 +2600,7 @@
     }
 
     let isTestScreenActive = false;
-    function toggleTestScreen() {
+    async function toggleTestScreen() {
       const overlay = document.getElementById('test-screen-overlay');
       const btn = document.getElementById('btn-test-screen-toggle');
       const droneVideo = document.getElementById('test-drone-video');
@@ -2612,17 +2612,17 @@
         if (overlay) overlay.style.display = 'block';
         if (btn) btn.classList.add('active');
         
-        // Find a drone video in horizontalList (Google Drive files)
-        const droneUrl = getDroneVideoUrl();
+        // Find a video directly from Google Drive folder or fallback
+        const videoUrl = await getTestScreenVideoUrl();
         if (droneVideo) {
-          droneVideo.src = droneUrl;
-          droneVideo.play().catch(e => console.warn("Drone video play blocked:", e));
+          droneVideo.src = videoUrl;
+          droneVideo.play().catch(e => console.warn("Test video play blocked:", e));
         }
         
-        // Load the 3D Tiger green screen video (autoplays, loops, mutes)
-        // Video ID: F5ZfXyY1dY0 (Tiger Walking Green Screen Video)
+        // Load the 3D Orca green screen video (autoplays, loops, mutes)
+        // Video ID: VgvM7av1o1Q (Green Screen Orca Killer Whale 3D Animation by PixelBoom)
         if (tigerIframe) {
-          tigerIframe.src = "https://www.youtube.com/embed/F5ZfXyY1dY0?autoplay=1&loop=1&playlist=F5ZfXyY1dY0&mute=1&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3";
+          tigerIframe.src = "https://www.youtube.com/embed/VgvM7av1o1Q?autoplay=1&loop=1&playlist=VgvM7av1o1Q&mute=1&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3";
         }
       } else {
         if (overlay) overlay.style.display = 'none';
@@ -2639,19 +2639,51 @@
       }
     }
 
-    function getDroneVideoUrl() {
-      if (typeof horizontalList !== 'undefined' && Array.isArray(horizontalList)) {
-        // horizontalList에서 이름에 '드론' 또는 'drone'이 들어간 영상 검색
-        const drone = horizontalList.find(m => m.type === 'video' && (
-          (m.eventName && (m.eventName.includes('드론') || m.eventName.toLowerCase().includes('drone'))) ||
-          (m.url && m.url.toLowerCase().includes('drone'))
-        ));
-        if (drone) {
-          return drone.url;
+    async function getTestScreenVideoUrl() {
+      const apiKey = CONFIG.GOOGLE_API_KEY;
+      const folderId = CONFIG.WORKSPACE_DRIVE_FOLDER_ID; // 14ThjsFnG5tjFM_cp3wrOv2sIHhArdVkb
+      
+      if (apiKey && folderId) {
+        try {
+          // 1. 부모 폴더 직접 검사 (영상 파일 검색)
+          const res = await fetch(`https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+mimeType+contains+'video/'&fields=files(id,name,mimeType,webContentLink)&key=${apiKey}`);
+          if (res.ok) {
+            const data = await res.json();
+            if (data.files && data.files.length > 0) {
+              const f = data.files[0];
+              return f.webContentLink || `https://docs.google.com/uc?export=download&id=${f.id}`;
+            }
+          }
+          
+          // 2. 부모 폴더의 하위 폴더들을 스캔하여 영상 검색
+          const resFolders = await fetch(`https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+mimeType='application/vnd.google-apps.folder'&orderBy=createdTime+desc&fields=files(id,name)&key=${apiKey}`);
+          if (resFolders.ok) {
+            const foldersData = await resFolders.json();
+            if (foldersData.files && foldersData.files.length > 0) {
+              for (let folder of foldersData.files) {
+                const resSubFiles = await fetch(`https://www.googleapis.com/drive/v3/files?q='${folder.id}'+in+parents+and+mimeType+contains+'video/'&fields=files(id,name,webContentLink)&key=${apiKey}`);
+                if (resSubFiles.ok) {
+                  const subData = await resSubFiles.json();
+                  if (subData.files && subData.files.length > 0) {
+                    const f = subData.files[0];
+                    return f.webContentLink || `https://docs.google.com/uc?export=download&id=${f.id}`;
+                  }
+                }
+              }
+            }
+          }
+        } catch (e) {
+          console.warn("구글 드라이브 API 테스트 영상 로드 실패:", e);
         }
       }
       
-      // Fallback: mixkit drone video
+      // 3. 로컬에 로드된 horizontalList에서 비디오 검색
+      if (typeof horizontalList !== 'undefined' && Array.isArray(horizontalList)) {
+        const vFile = horizontalList.find(m => m.type === 'video');
+        if (vFile) return vFile.url;
+      }
+      
+      // 4. 최종 폴백: mixkit 드론 비디오
       return 'https://assets.mixkit.co/videos/preview/mixkit-drone-shot-of-a-winding-road-in-the-mountains-43034-large.mp4';
     }
 
