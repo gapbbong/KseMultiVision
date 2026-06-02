@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="referrer" content="no-referrer">
-  <title>경성전자고등학교 실시간 데이터 연동형 학교 안내 멀티비전 시스템</title>
+  <title>寃쎌꽦?꾩옄怨좊벑?숆탳 ?ㅼ떆媛??곗씠???곕룞???숆탳 ?덈궡 硫?곕퉬???쒖뒪??/title>
   <!-- Modern Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -58,45 +58,46 @@
        ========================================== */
     .viewport-canvas { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
 
-    /* 구역 A: 1사분면 좌측 세로 숏폼 (50vh 전체 높이 복구) */
+    /* 援ъ뿭 A: 1,3?щ텇硫??몃줈 ?륂뤌 (9:16 怨좎젙) */
     .zone-a {
       position: absolute; left: 0; top: 0;
-      height: 50vh; width: 28.125vh;
+      height: 100vh; width: 56.25vh;
       border-right: 2px solid rgba(0, 245, 212, 0.3);
       background: #020617; z-index: 5; overflow: hidden;
     }
 
-    /* 구역 B: 1사분면 우측 가로 미디어 (1사분면 오른쪽 끝인 50vw까지 확장) */
+    /* 援ъ뿭 B: 1?щ텇硫??곗륫 + 2?щ텇硫??듯빀 ??대뱶 */
     .zone-b {
-      position: absolute; left: 28.125vh; top: 0;
-      width: calc(50vw - 28.125vh); height: 50vh;
-      border-right: 2px solid rgba(0, 187, 249, 0.3);
+      position: absolute; left: 56.25vh; top: 0;
+      width: calc(100vw - 56.25vh); height: 50vh;
+      border-bottom: 2px solid rgba(0, 187, 249, 0.3);
       background: #020617; z-index: 4; overflow: hidden;
     }
 
-    /* 구역 C: 2사분면 전체 (우측 종합 대시보드 - 시계, 날짜, 일정, BGM, 급식, 날씨) */
+    /* 援ъ뿭 C: 4?щ텇硫??섎떒 (?쒓퀎 + ?쇨낵?곹깭 + 援먭컧??쒗뻾?? */
     .zone-c {
-      position: absolute; left: 50vw; top: 0;
-      width: 50vw; height: 50vh;
+      position: absolute; left: 50vw; top: 60vh;
+      width: 50vw; height: 25vh;
+      border-bottom: 2px solid rgba(255, 0, 127, 0.3);
       border-left: 2px solid rgba(255, 0, 127, 0.2);
       background: linear-gradient(135deg, rgba(13,27,42,0.95) 0%, rgba(2,6,23,0.95) 100%);
       z-index: 6;
       display: flex;
-      flex-direction: row;
+      flex-direction: column;
       justify-content: space-between;
       align-items: stretch;
-      padding: 12px 18px;
+      padding: 12px 24px;
       overflow: hidden;
     }
 
-    /* 구역 D: 4사분면 하단 파손 블랙아웃 */
+    /* 援ъ뿭 D: 4?щ텇硫??섎떒 ?뚯넀 釉붾옓?꾩썐 */
     .zone-d {
       position: absolute; left: 50vw; top: 85vh;
       width: 50vw; height: 15vh;
       background-color: #000000; z-index: 10; pointer-events: none;
     }
 
-    /* 구역 F: 4사분면 상단 학습동기 부여 명언 영역 (절반인 10vh로 축소) */
+    /* 援ъ뿭 F: 4?щ텇硫??곷떒 ?숈뒿?숆린 遺??紐낆뼵 ?곸뿭 (?덈컲??10vh濡?異뺤냼) */
     .zone-f {
       position: absolute; left: 50vw; top: 50vh;
       width: 50vw; height: 10vh;
@@ -126,7 +127,7 @@
       }
     }
 
-    /* 명언 텍스트 스타일 */
+    /* 紐낆뼵 ?띿뒪???ㅽ???*/
     .quote-container {
       display: flex;
       flex-direction: column;
@@ -194,7 +195,7 @@
       opacity: 0.85;
     }
 
-    /* 구역 E: 3사분면 하단 인포그래픽 */
+    /* 援ъ뿭 E: 3?щ텇硫??섎떒 ?명룷洹몃옒??*/
     .zone-e {
       position: absolute; left: 56.25vh; top: 50vh;
       width: calc(50vw - 56.25vh); height: 50vh;
@@ -205,7 +206,7 @@
     }
 
     /* ==========================================
-       3. Media Viewer Components (구역 A, B)
+       3. Media Viewer Components (援ъ뿭 A, B)
        ========================================== */
     .media-container { position: relative; width: 100%; height: 100%; }
 
@@ -241,7 +242,7 @@
     .event-title { font-size: 0.95rem; font-weight: 700; color: var(--color-text-primary); letter-spacing: -0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 400px; }
 
     /* ==========================================
-       4. Visual Info Cards (구역 E)
+       4. Visual Info Cards (援ъ뿭 E)
        ========================================== */
     .section-title {
       font-size: 1.05rem; font-weight: 800; color: var(--color-zone-e);
@@ -251,7 +252,7 @@
     }
     .section-title i { text-shadow: 0 0 10px rgba(254,228,64,0.4); }
 
-    /* 급식 인포그래픽 */
+    /* 湲됱떇 ?명룷洹몃옒??*/
     .infographic-meal { display: flex; flex-direction: column; gap: 10px; flex-grow: 1; justify-content: center; }
 
     .meal-meta-row { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; padding: 10px 14px; }
@@ -269,7 +270,7 @@
     .weather-grid-item:hover { background: rgba(0,187,249,0.05); border-color: rgba(0,187,249,0.2); }
     .meal-grid-item i { font-size: 0.85rem; }
 
-    /* 학생 선호 핵심 메뉴 강조 (고기류 및 디저트류) - 2열 차지 및 골드 하이라이트 */
+    /* ?숈깮 ?좏샇 ?듭떖 硫붾돱 媛뺤“ (怨좉린瑜?諛??붿??몃쪟) - 2??李⑥? 諛?怨⑤뱶 ?섏씠?쇱씠??*/
     .meal-grid-item.meal-meat, .meal-grid-item.meal-dessert {
       grid-column: span 2;
       background: rgba(254, 228, 64, 0.08);
@@ -286,7 +287,7 @@
     .meal-veg  i { color: #4ade80; }
     .meal-dessert i { color: #fbbf24; }
 
-    /* 창체 이벤트 멀티카드 */
+    /* 李쎌껜 ?대깽??硫?곗뭅??*/
     .creative-events-list { display: flex; flex-direction: column; gap: 6px; margin-top: 2px; }
     .creative-event-card { background: rgba(254,228,64,0.04); border: 1px solid rgba(254,228,64,0.12); border-radius: 10px; padding: 8px 12px; display: flex; flex-direction: column; gap: 4px; transition: border-color 0.2s, background 0.2s; }
     .creative-event-card:first-child { background: rgba(254,228,64,0.08); border-color: rgba(254,228,64,0.28); }
@@ -300,7 +301,7 @@
     .creative-event-dept { font-size: 1.01rem; color: var(--color-text-secondary); display: flex; align-items: center; gap: 5px; }
     .creative-event-dept i { color: var(--color-zone-e); font-size: 0.78rem; }
 
-    /* 교감선생님 대표 행사 목록 (세로 3줄 배치) */
+    /* 援먭컧?좎깮??????됱궗 紐⑸줉 (?몃줈 3以?諛곗튂) */
     .vp-events-list {
       display: flex;
       flex-direction: column;
@@ -351,7 +352,7 @@
     }
 
     /* ==========================================
-       5. Cybernetic Clock & Ticker (구역 C)
+       5. Cybernetic Clock & Ticker (援ъ뿭 C)
        ========================================== */
     .clock-widget { display: flex; align-items: center; gap: 16px; flex-shrink: 0; border-right: 1px solid rgba(255,0,127,0.2); padding-right: 20px; }
     .clock-digital { font-family: var(--font-outfit); font-size: 2.2rem; font-weight: 900; color: #ffffff; line-height: 1; text-shadow: 0 0 15px rgba(255,0,127,0.4); display: flex; align-items: baseline; }
@@ -378,7 +379,7 @@
 
     .control-panel {
       position: fixed;
-      bottom: 84px; /* 토글 버튼 위로 배치 */
+      bottom: 84px; /* ?좉? 踰꾪듉 ?꾨줈 諛곗튂 */
       right: 24px;
       background: rgba(13, 27, 42, 0.95);
       backdrop-filter: blur(12px);
@@ -462,7 +463,7 @@
        ========================================== */
     @keyframes alertBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
     @keyframes pulseEvent { 0%, 100% { transform: scale(1); filter: brightness(1); } 50% { transform: scale(1.05); filter: brightness(1.2); } }
-    /* 고급 차 턴 시그널 깜빡임 */
+    /* 怨좉툒 李????쒓렇??源쒕묀??*/
     @keyframes turnSignal {
       0%   { opacity: 1; }
       52%  { opacity: 1; }
@@ -525,7 +526,7 @@
     .wx-lightning { position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); font-size: 1.3rem; animation: wxBolt 2s ease-in-out infinite; z-index: 3; filter: drop-shadow(0 0 6px #ffe566); }
     @keyframes wxBolt { 0%, 70%, 100% { opacity: 0; transform: translateX(-50%) scale(0.8); } 72%, 98% { opacity: 1; transform: translateX(-50%) scale(1.1); } }
     
-    /* BGM 플레이어 및 사운드 오버레이 스타일 */
+    /* BGM ?뚮젅?댁뼱 諛??ъ슫???ㅻ쾭?덉씠 ?ㅽ???*/
     @keyframes pulseSound {
       0%, 100% { transform: scale(1); box-shadow: 0 0 30px rgba(255,0,127,0.3); }
       50% { transform: scale(1.05); box-shadow: 0 0 50px rgba(255,0,127,0.5); }
@@ -838,214 +839,236 @@
 
   <div class="viewport-canvas">
 
-    <!-- 4사분면 파손 우회용 한줄 상태 바 (명언 전용) - 1사분면(50vw 이내)에만 노출되도록 너비 제한 -->
-    <div class="damage-status-bar" id="damage-status-bar" style="position: absolute; left: 16px; top: 16px; width: calc(50vw - 32px); z-index: 10000; display: flex; align-items: center; justify-content: center; background: rgba(13, 27, 42, 0.85); backdrop-filter: blur(8px); border: 1px solid rgba(0, 245, 212, 0.3); padding: 12px 24px; border-radius: 40px; color: #ffffff; box-shadow: 0 4px 15px rgba(0,0,0,0.5); transition: all 0.3s ease; box-sizing: border-box; overflow: hidden;">
-      <span id="damage-quote-text" class="damage-quote-blink-effect" style="color: var(--color-zone-a); font-weight: 800; font-size: 1.25rem; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: clip; width: 100%;">공부하기 싫을 때마다 통장 잔고 0원을 상상해라.</span>
+    <!-- 4?щ텇硫??뚯넀 ?고쉶???쒖쨪 ?곹깭 諛?(紐낆뼵 + ?좎쭨 + ?쒓컙) - 1?щ텇硫대???湲멸쾶 ?곗옣 諛?10% 異뺤냼(1.3rem) -->
+    <div class="damage-status-bar" id="damage-status-bar" style="position: absolute; left: 16px; top: 16px; right: 16px; z-index: 10000; display: flex; align-items: center; justify-content: space-between; background: rgba(13, 27, 42, 0.85); backdrop-filter: blur(8px); border: 1px solid rgba(0, 245, 212, 0.3); padding: 12px 28px; border-radius: 40px; color: #ffffff; font-size: 1.3rem; font-weight: 600; box-shadow: 0 4px 15px rgba(0,0,0,0.5); transition: all 0.3s ease;">
+      <span id="damage-quote-text" class="damage-quote-blink-effect" style="color: var(--color-zone-a); flex-grow: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 24px;">怨듬??섍린 ?レ쓣 ?뚮쭏???듭옣 ?붽퀬 0?먯쓣 ?곸긽?대씪.</span>
+      <div style="display: flex; align-items: center; gap: 22px; flex-shrink: 0;">
+        <span style="color: rgba(255,255,255,0.3); font-weight: 300;">|</span>
+        <span id="damage-date-text" style="color: var(--color-zone-b);">06.01 (??</span>
+        <span style="color: rgba(255,255,255,0.3); font-weight: 300;">|</span>
+        <span id="damage-time-text" style="font-family: 'Outfit', sans-serif; color: var(--color-zone-c); font-weight: 800; min-width: 120px; text-align: center;">11:05:34</span>
+      </div>
     </div>
 
-    <!-- 2x2 물리 모니터 경계선 (디버그용) -->
+    <!-- 2x2 臾쇰━ 紐⑤땲??寃쎄퀎??(?붾쾭洹몄슜) -->
     <div class="guide-line-x" id="guide-x"></div>
     <div class="guide-line-y" id="guide-y"></div>
-    <span class="guide-line-label" id="label-horizontal">2x2 모니터 가로 물리 경계선 (50vh)</span>
-    <span class="guide-line-label" id="label-vertical">2x2 모니터 세로 물리 경계선 (50vw)</span>
+    <span class="guide-line-label" id="label-horizontal">2x2 紐⑤땲??媛濡?臾쇰━ 寃쎄퀎??(50vh)</span>
+    <span class="guide-line-label" id="label-vertical">2x2 紐⑤땲???몃줈 臾쇰━ 寃쎄퀎??(50vw)</span>
 
-    <!-- 수업/조례/방과후 시간 전체 화면 블랙아웃 오버레이 -->
+    <!-- ?섏뾽/議곕?/諛⑷낵???쒓컙 ?꾩껜 ?붾㈃ 釉붾옓?꾩썐 ?ㅻ쾭?덉씠 -->
     <div id="fullscreen-blackout" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #070318; z-index: 99999; display: none; pointer-events: all; align-items: flex-start; justify-content: flex-start; padding: 16px 32px 0 32px; box-sizing: border-box;">
       <div class="blackout-dashboard">
         <div class="blackout-header">
           <div class="blackout-title-area">
             <i class="fa-solid fa-school school-icon-glow"></i>
-            <h2>경성전자고등학교 <span class="accent-text">실시간 수업 현황</span></h2>
+            <h2>寃쎌꽦?꾩옄怨좊벑?숆탳 <span class="accent-text">?ㅼ떆媛??섏뾽 ?꾪솴</span></h2>
           </div>
           <div class="blackout-status-box" style="display: none;">
             <span class="status-pulse"></span>
-            <span id="blackout-status-text">현재 일과 상태 확인 중...</span>
+            <span id="blackout-status-text">?꾩옱 ?쇨낵 ?곹깭 ?뺤씤 以?..</span>
           </div>
           <div class="blackout-time-box">
-            <span id="blackout-date-text">2026-06-01 (월)</span>
+            <span id="blackout-date-text">2026-06-01 (??</span>
             <span id="blackout-time-text">12:22:00</span>
           </div>
         </div>
         
         <div class="blackout-grid">
           <div class="blackout-grade-section" id="grade-1-section">
-            <div class="grade-title">1학년</div>
+            <div class="grade-title">1?숇뀈</div>
             <div class="grade-cards-grid" id="grade-1-cards">
-              <!-- JS로 1~6반 카드 자동 생성 -->
+              <!-- JS濡?1~6諛?移대뱶 ?먮룞 ?앹꽦 -->
             </div>
           </div>
           <div class="blackout-grade-section" id="grade-2-section">
-            <div class="grade-title">2학년</div>
+            <div class="grade-title">2?숇뀈</div>
             <div class="grade-cards-grid" id="grade-2-cards">
-              <!-- JS로 1~6반 카드 자동 생성 -->
+              <!-- JS濡?1~6諛?移대뱶 ?먮룞 ?앹꽦 -->
             </div>
           </div>
           <div class="blackout-grade-section" id="grade-3-section">
-            <div class="grade-title">3학년</div>
+            <div class="grade-title">3?숇뀈</div>
             <div class="grade-cards-grid" id="grade-3-cards">
-              <!-- JS로 1~6반 카드 자동 생성 -->
+              <!-- JS濡?1~6諛?移대뱶 ?먮룞 ?앹꽦 -->
             </div>
           </div>
         </div>
         
         <div class="blackout-footer">
-          <div id="blackout-api-status">나이스 API 로드 상태: 대기중...</div>
+          <div id="blackout-api-status">?섏씠??API 濡쒕뱶 ?곹깭: ?湲곗쨷...</div>
         </div>
       </div>
-      <!-- 수업시간용 4사분면 전체화면 버튼 -->
-      <button class="btn-fullscreen-toggle" id="btn-fullscreen-class" onclick="requestFullscreen()" title="전체화면" style="position: absolute; bottom: 24px; right: 24px; z-index: 100000;">
+      <!-- ?섏뾽?쒓컙??4?щ텇硫??꾩껜?붾㈃ 踰꾪듉 -->
+      <button class="btn-fullscreen-toggle" id="btn-fullscreen-class" onclick="requestFullscreen()" title="?꾩껜?붾㈃" style="position: absolute; bottom: 24px; right: 24px; z-index: 100000;">
         <i class="fa-solid fa-expand"></i>
       </button>
     </div>
 
-    <!-- [구역 A: 1사분면 좌측 세로 숏폼 (50vh)] -->
+    <!-- [援ъ뿭 A: 1,3?щ텇硫??몃줈 ?륂뤌/?ъ쭊 (9:16 怨좎젙)] -->
     <div class="zone-a">
       <div class="media-container" id="vertical-container">
         <!-- JS dynamically inserts vertical 9:16 media contents -->
       </div>
     </div>
 
-    <!-- [구역 B: 1사분면 우측 가로 미디어 (50vw까지 확장)] -->
+    <!-- [援ъ뿭 B: 1?щ텇硫??곗륫 + 2?щ텇硫??듯빀 ??대뱶] -->
     <div class="zone-b">
       <div class="media-container" id="horizontal-container">
         <!-- JS dynamically inserts horizontal media contents -->
       </div>
+
     </div>
 
-    <!-- [구역 C: 2사분면 전체 (우측 종합 대시보드 - 시계, 날짜, 일정, BGM, 급식, 날씨)] -->
-    <div class="zone-c" style="display: flex; flex-direction: row; gap: 16px; padding: 12px 18px; overflow: hidden; align-items: stretch; justify-content: space-between;">
-      <!-- C-Left: 급식(2/3) + 오후 날씨(1/3) -->
-      <div class="c-left-col" style="flex: 1; display: flex; flex-direction: column; gap: 8px; height: 100%; overflow: hidden; justify-content: flex-start;">
-        <!-- 급식 카드 -->
-        <div class="dashboard-subcard meal-subcard" style="height: 60%; display: flex; flex-direction: column; overflow: hidden;">
-          <div id="meal-card-header" class="section-title" style="margin-bottom: 4px; font-size: 0.9rem;">
-            <i class="fa-solid fa-salad"></i> <span id="meal-card-title">오늘의 웰빙 급식</span>
-          </div>
-          <div id="meal-card-content" class="infographic-meal" style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center; gap: 6px; overflow: hidden;">
-            <div class="meal-meta-row" style="padding: 6px 10px;">
-              <div class="calories-radial-box">
-                <div class="calories-icon-wrap" style="width: 28px; height: 28px; font-size: 0.8rem;">
-                  <i class="fa-solid fa-fire-flame-curved"></i>
-                </div>
-                <div class="calories-data">
-                  <span class="calories-title" style="font-size: 0.6rem;">총 열량</span>
-                  <span class="calories-value" id="meal-cal" style="font-size: 0.9rem;">--- kcal</span>
-                </div>
-              </div>
-              <span class="meal-date-badge" id="meal-date" style="padding: 2px 6px; font-size: 0.65rem;">---</span>
-            </div>
-            <div class="meal-grid" id="meal-grid-box" style="gap: 4px;">
-              <div style="grid-column: span 2; text-align: center; color: var(--color-text-secondary); font-size: 0.75rem;">
-                <i class="fa-solid fa-spinner fa-spin"></i> 식단 데이터를 가져오는 중...
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 날씨 카드 (상시 노출) -->
-        <div class="dashboard-subcard weather-subcard" style="height: 38%; display: flex; flex-direction: column; overflow: hidden;">
-          <div id="weather-card-header" class="section-title" style="border-bottom: 1px solid rgba(0,187,249,0.15); color: var(--color-zone-b); margin-bottom: 4px; font-size: 0.9rem;">
-            <i class="fa-solid fa-cloud-sun" style="text-shadow: 0 0 10px rgba(0,187,249,0.4);"></i>
-            <span id="weather-card-title">오늘 오후 날씨 예보</span>
-          </div>
-          <div id="weather-card-content" class="infographic-weather" style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1; justify-content: center; overflow: hidden;">
-            <!-- 날씨 그래픽 + 기온 메인 행 -->
-            <div style="display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 4px 8px;">
-              <div class="weather-graphic-wrap" id="weather-graphic" style="height: 36px; width: 36px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
-                <div class="wx-cloudsun" style="transform: scale(0.6);">
-                  <div class="wx-sun-small"></div>
-                  <div class="wx-cloud-small"></div>
-                </div>
-              </div>
-              <div style="display: flex; flex-direction: column; gap: 1px; flex: 1;">
-                <span style="font-size: 0.55rem; color: var(--color-text-secondary); font-weight: 700;">오후 기온</span>
-                <span id="weather-temp" style="font-family: var(--font-outfit); font-size: 1.05rem; font-weight: 900; color: #ffffff; line-height: 1;">--.-°C / --.-°C</span>
-              </div>
-              <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 1px;">
-                <span id="weather-status" style="font-size: 0.7rem; font-weight: 800; color: var(--color-zone-b);">맑음</span>
-                <span id="weather-apparent" style="font-family: var(--font-outfit); font-size: 0.75rem; font-weight: 800; color: var(--color-text-secondary);">--.-°C</span>
-              </div>
-            </div>
-            <!-- 상세 지표 (숨김) -->
-            <div class="weather-grid" style="display: none;"></div>
-          </div>
+    <!-- [援ъ뿭 C: 4?щ텇硫??섎떒 ?쒓퀎+?쇨낵?곹깭 + 援먭컧??쒗뻾?? -->
+    <div class="zone-c">
+      <!-- 援먭컧?좎깮???됱궗 ?쇱젙 4媛?媛濡쒕줈 湲멸쾶 ?섏뿴 (?쒓퀎 ?꾩뿉 諛곗튂) -->
+      <div class="vp-events-list" id="vp-events-list">
+        <div style="text-align: center; color: var(--color-text-secondary); font-size: 0.95rem; width: 100%;">
+          <i class="fa-solid fa-spinner fa-spin"></i> ????됱궗瑜?遺덈윭?ㅻ뒗 以?..
         </div>
       </div>
-
-      <!-- C-Right: 기존의 시간, 일정, BGM 정보 -->
-      <div class="c-right-col" style="flex: 1.2; display: flex; flex-direction: column; justify-content: space-between; height: 100%; overflow: hidden;">
-        <!-- 교감선생님 행사 일정 -->
-        <div class="vp-events-list" id="vp-events-list" style="padding: 6px 12px; font-size: 0.85rem; border-color: rgba(255, 0, 127, 0.15);">
-          <div style="text-align: center; color: var(--color-text-secondary); font-size: 0.8rem; width: 100%;">
-            <i class="fa-solid fa-spinner fa-spin"></i> 대표 행사를 불러오는 중...
+      <!-- 李쎌껜 ?쇱젙 1嫄?(Zone C ?? -->
+      <div id="creative-in-c" style="width: 100%; display: none; align-items: center; justify-content: start; gap: 8px; box-sizing: border-box; margin-bottom: 2px; padding-left: 19px;">
+      </div>
+      <!-- 援щ텇 媛濡쒖꽑 -->
+      <div style="width: 100%; height: 1px; background: rgba(255,0,127,0.15); margin-bottom: 8px;"></div>
+      <!-- ?숆탳紐?| ?쇨낵?곹깭 | ?좎쭨 | ?쒓퀎 | BGM -->
+      <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <!-- ?숆탳紐?-->
+          <div class="clock-cal-day" id="live-year" style="font-size: 0.95rem; color: var(--color-zone-c); font-weight: 800; white-space: nowrap; letter-spacing: 0.5px;">寃쎌꽦?꾩옄怨좊벑?숆탳</div>
+          <!-- 援щ텇??-->
+          <div style="width: 1px; height: 14px; background: rgba(255,0,127,0.3);"></div>
+          <!-- ?쇨낵 ?곹깭 (BGM title ?몃씪?? -->
+          <span id="bgm-title" style="font-size: 0.85rem; font-weight: 700; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;">-</span>
+          <!-- 援щ텇??-->
+          <div style="width: 1px; height: 14px; background: rgba(255,0,127,0.3);"></div>
+          <!-- ?좎쭨 -->
+          <div class="clock-cal-date" id="live-date" style="font-size: 1.05rem; white-space: nowrap;">05.28 (紐?</div>
+          <!-- 援щ텇??-->
+          <div style="width: 1px; height: 14px; background: rgba(255,0,127,0.3);"></div>
+          <!-- ?쒓퀎 -->
+          <div class="clock-digital" id="live-time" style="font-size: 2.2rem; text-shadow: 0 0 15px rgba(255,0,127,0.35);">
+            00:00<span class="clock-sec" id="live-sec">00</span>
           </div>
         </div>
-        
-        <!-- 창체 일정 1건 (Zone C 내) -->
-        <div id="creative-in-c" style="width: 100%; display: none; align-items: center; justify-content: start; gap: 8px; box-sizing: border-box; margin-bottom: 2px; padding-left: 10px;">
-        </div>
-
-        <!-- 구분 가로선 -->
-        <div style="width: 100%; height: 1px; background: rgba(255,0,127,0.15); margin: 4px 0;"></div>
-
-        <!-- 학교명 | 일과상태 | 날짜 | 시계 | BGM -->
-        <div style="display: flex; flex-direction: column; gap: 6px; width: 100%;">
-          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-            <div class="clock-cal-day" id="live-year" style="font-size: 0.85rem; color: var(--color-zone-c); font-weight: 800; white-space: nowrap; letter-spacing: 0.5px;">경성전자고등학교</div>
-            <div class="clock-cal-date" id="live-date" style="font-size: 0.95rem; white-space: nowrap; font-weight: 600;">05.28 (목)</div>
+        <!-- BGM ?꾩젽 (鍮꾩＜?쇰씪?댁? + 踰꾪듉) -->
+        <div class="bgm-widget" id="bgm-widget" style="display: flex; align-items: center; gap: 10px; flex-shrink: 0;">
+          <div class="bgm-visualizer" id="bgm-visualizer" style="display: flex; align-items: flex-end; gap: 2px; height: 18px; width: 24px;">
+            <div class="bar" style="width: 3px; height: 100%; background: var(--color-zone-c); border-radius: 2px;"></div>
+            <div class="bar" style="width: 3px; height: 60%; background: var(--color-zone-c); border-radius: 2px;"></div>
+            <div class="bar" style="width: 3px; height: 80%; background: var(--color-zone-c); border-radius: 2px;"></div>
+            <div class="bar" style="width: 3px; height: 40%; background: var(--color-zone-c); border-radius: 2px;"></div>
           </div>
-          
-          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-            <div class="clock-digital" id="live-time" style="font-size: 1.85rem; text-shadow: 0 0 12px rgba(255,0,127,0.35); font-weight: 800; display: flex; align-items: baseline;">
-              00:00<span class="clock-sec" id="live-sec" style="font-size: 1.05rem;">00</span>
-            </div>
-            
-            <!-- BGM 위젯 -->
-            <div class="bgm-widget" id="bgm-widget" style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
-              <div class="bgm-visualizer" id="bgm-visualizer" style="display: flex; align-items: flex-end; gap: 2.5px; height: 14px; width: 20px;">
-                <div class="bar" style="width: 2.5px; height: 100%; background: var(--color-zone-c); border-radius: 1px;"></div>
-                <div class="bar" style="width: 2.5px; height: 60%; background: var(--color-zone-c); border-radius: 1px;"></div>
-                <div class="bar" style="width: 2.5px; height: 80%; background: var(--color-zone-c); border-radius: 1px;"></div>
-              </div>
-              <button class="bgm-ctrl-btn" id="bgm-ctrl-btn" onclick="toggleBgmPlay()" style="background: rgba(255,0,127,0.15); border: 1px solid rgba(255,0,127,0.3); color: var(--color-zone-c); width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; outline: none;">
-                <i class="fa-solid fa-volume-xmark" id="bgm-ctrl-icon" style="font-size: 0.65rem;"></i>
-              </button>
-              <button class="bgm-ctrl-btn" id="bgm-next-btn" onclick="playNextTrack()" style="background: rgba(255,0,127,0.15); border: 1px solid rgba(255,0,127,0.3); color: var(--color-zone-c); width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; outline: none;" title="다음 곡 재생">
-                <i class="fa-solid fa-forward" style="font-size: 0.6rem;"></i>
-              </button>
-            </div>
+          <div style="display: flex; flex-direction: column; gap: 1px;">
+            <span id="bgm-tag" style="font-family: var(--font-outfit); font-size: 0.55rem; font-weight: 800; color: var(--color-zone-c); text-transform: uppercase; letter-spacing: 0.5px;">?ъ슫???湲?/span>
           </div>
-          <!-- BGM 타이틀을 별도 행으로 표시 -->
-          <div style="display: flex; align-items: center; gap: 6px; width: 100%; border-top: 1px dashed rgba(255,0,127,0.1); padding-top: 2px;">
-            <span id="bgm-tag" style="font-family: var(--font-outfit); font-size: 0.55rem; font-weight: 800; color: var(--color-zone-c); text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0;">BGM:</span>
-            <span id="bgm-title" style="font-size: 0.72rem; font-weight: 600; color: var(--color-text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-grow: 1;">일과 중 무음</span>
-          </div>
+          <button class="bgm-ctrl-btn" id="bgm-ctrl-btn" onclick="toggleBgmPlay()" style="background: rgba(255,0,127,0.15); border: 1px solid rgba(255,0,127,0.3); color: var(--color-zone-c); width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; outline: none;">
+            <i class="fa-solid fa-volume-xmark" id="bgm-ctrl-icon" style="font-size: 0.75rem;"></i>
+          </button>
+          <button class="bgm-ctrl-btn" id="bgm-next-btn" onclick="playNextTrack()" style="background: rgba(255,0,127,0.15); border: 1px solid rgba(255,0,127,0.3); color: var(--color-zone-c); width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; outline: none;" title="?ㅼ쓬 怨??ъ깮">
+            <i class="fa-solid fa-forward" style="font-size: 0.7rem;"></i>
+          </button>
         </div>
       </div>
+      <!-- 怨듭??ы빆 ?④? -->
+      <div id="static-announcements-box" style="display: none;"></div>
     </div>
 
-    <!-- [구역 F: 4사분면 중단 학습동기 부여 명언 - 미사용이지만 id는 호환성용으로 유지] -->
-    <div class="zone-f" id="quote-zone" style="display: none;">
+    <!-- [援ъ뿭 F: 4?щ텇硫?以묐떒 ?숈뒿?숆린 遺??紐낆뼵] (10vh濡??덈컲 異뺤냼) -->
+    <div class="zone-f" id="quote-zone">
       <div class="quote-container" id="quote-container">
-        <div class="quote-text" id="quote-text">행동은 모든 성공의 기초가 된다.</div>
-        <div class="quote-author" id="quote-author" style="display: none;">- 파블로 피카소 -</div>
+        <div class="quote-text" id="quote-text">?됰룞? 紐⑤뱺 ?깃났??湲곗큹媛 ?쒕떎.</div>
+        <div class="quote-author" id="quote-author" style="display: none;">- ?뚮툝濡??쇱뭅??-</div>
       </div>
     </div>
 
+    <!-- [援ъ뿭 D: 4?щ텇硫??섎떒 ?뚯넀 釉붾옓?꾩썐] -->
+    <div class="zone-d" id="blackout-zone"></div>
+    <!-- 4?щ텇硫??뚯넀 ???꾩쟾 ?뷀쓳 泥섎━???ㅻ쾭?덉씠 -->
+    <div id="damage-blackout-overlay" style="position: absolute; left: 50vw; top: 50vh; width: 50vw; height: 50vh; background: #000000; z-index: 9999; border-left: 2px solid rgba(255,255,255,0.05); border-top: 2px solid rgba(255,255,255,0.05); box-sizing: border-box; display: none;"></div>
+
+    <!-- [援ъ뿭 E: 3?щ텇硫??섎떒 ?ㅼ떆媛??명룷洹몃옒?? -->
+    <div class="zone-e">
+
+      <!-- E-1: ?ㅻ뒛???곕튃 湲됱떇 (13:20 ?댁쟾) -->
+      <div id="meal-card-header" class="section-title">
+        <i class="fa-solid fa-salad"></i> <span id="meal-card-title">?ㅻ뒛???곕튃 湲됱떇</span>
+      </div>
+      <div id="meal-card-content" class="infographic-meal">
+        <div class="meal-meta-row">
+          <div class="calories-radial-box">
+            <div class="calories-icon-wrap">
+              <i class="fa-solid fa-fire-flame-curved"></i>
+            </div>
+            <div class="calories-data">
+              <span class="calories-title">珥??대웾</span>
+              <span class="calories-value" id="meal-cal">--- kcal</span>
+            </div>
+          </div>
+          <span class="meal-date-badge" id="meal-date">---</span>
+        </div>
+        <div class="meal-grid" id="meal-grid-box">
+          <div style="grid-column: span 2; text-align: center; color: var(--color-text-secondary);">
+            <i class="fa-solid fa-spinner fa-spin"></i> ?앸떒 ?곗씠?곕? 媛?몄삤??以?..
+          </div>
+        </div>
+      </div>
+
+      <!-- E-1 ?泥? ?댁씪 ?좎뵪 (13:20 ?댄썑) -->
+      <div id="weather-card-header" class="section-title" style="display: none; border-bottom: 1px solid rgba(0,187,249,0.15); color: var(--color-zone-b);">
+        <i class="fa-solid fa-cloud-sun" style="text-shadow: 0 0 10px rgba(0,187,249,0.4);"></i>
+        <span id="weather-card-title">?댁씪??湲곗긽 ?덈낫</span>
+      </div>
+      <div id="weather-card-content" class="infographic-weather" style="display: none; flex-direction: column; gap: 8px; flex-grow: 1; justify-content: center;">
+        <!-- ?좎뵪 洹몃옒??+ 湲곗삩 硫붿씤 ??-->
+        <div style="display: flex; align-items: center; gap: 14px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 10px 14px;">
+          <div class="weather-graphic-wrap" id="weather-graphic">
+            <div class="wx-cloudsun">
+              <div class="wx-sun-small"></div>
+              <div class="wx-cloud-small"></div>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 2px; flex: 1;">
+            <span style="font-size: 0.65rem; color: var(--color-text-secondary); font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">?댁씪 湲곗삩 (理쒖?/理쒓퀬)</span>
+            <span id="weather-temp" style="font-family: var(--font-outfit); font-size: 1.3rem; font-weight: 900; color: #ffffff; line-height: 1;">--.-째C / --.-째C</span>
+            <span id="weather-status" style="font-size: 0.75rem; font-weight: 800; color: var(--color-zone-b); margin-top: 2px;">留묒쓬</span>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px;">
+            <span style="font-size: 0.6rem; color: var(--color-text-muted); font-weight: 600;">泥닿컧 理쒓퀬</span>
+            <span id="weather-apparent" style="font-family: var(--font-outfit); font-size: 0.9rem; font-weight: 800; color: var(--color-text-secondary);">--.-째C</span>
+          </div>
+        </div>
+        <!-- ?곸꽭 吏??洹몃━??-->
+        <div class="weather-grid">
+          <div class="weather-grid-item" style="color: var(--color-text-primary); display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <i class="fa-solid fa-droplet" style="color: #38bdf8; font-size: 0.85rem;"></i>
+              <span>媛뺤닔 ?뺣쪧</span>
+            </div>
+            <span id="weather-humidity" style="font-family: var(--font-outfit); color: #ffffff;">--%</span>
+          </div>
+          <div class="weather-grid-item" style="color: var(--color-text-primary); display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <i class="fa-solid fa-wind" style="color: #94a3b8; font-size: 0.85rem;"></i>
+              <span>理쒕? ?띿냽</span>
+            </div>
+            <span id="weather-wind" style="font-family: var(--font-outfit); color: #ffffff;">-- m/s</span>
           </div>
           <div class="weather-grid-item" style="color: var(--color-text-primary); display: flex; justify-content: space-between; align-items: center;">
             <div style="display: flex; align-items: center; gap: 8px;">
               <i class="fa-solid fa-smog" style="color: #fbbf24; font-size: 0.85rem;"></i>
-              <span>미세먼지</span>
+              <span>誘몄꽭癒쇱?</span>
             </div>
-            <span id="weather-pm10" style="font-family: var(--font-noto); color: #ffffff;">좋음</span>
+            <span id="weather-pm10" style="font-family: var(--font-noto); color: #ffffff;">醫뗭쓬</span>
           </div>
           <div class="weather-grid-item" style="color: var(--color-text-primary); display: flex; justify-content: space-between; align-items: center;">
             <div style="display: flex; align-items: center; gap: 8px;">
               <i class="fa-solid fa-location-dot" style="color: #00bbf9; font-size: 0.85rem;"></i>
-              <span>위치</span>
+              <span>?꾩튂</span>
             </div>
-            <span style="font-family: var(--font-noto); color: #ffffff; font-size: 0.78rem;">부산 서구</span>
+            <span style="font-family: var(--font-noto); color: #ffffff; font-size: 0.78rem;">遺???쒓뎄</span>
           </div>
         </div>
       </div>
@@ -1056,49 +1079,49 @@
 
   </div><!-- /viewport-canvas -->
 
-  <!-- 제어 패널 -->
+  <!-- ?쒖뼱 ?⑤꼸 -->
   <div class="control-panel" style="max-height: 80vh; overflow-y: auto;">
     <div class="panel-title">
-      <i class="fa-solid fa-circle-nodes"></i> 멀티비전 제어 패널
+      <i class="fa-solid fa-circle-nodes"></i> 硫?곕퉬???쒖뼱 ?⑤꼸
     </div>
     <button class="btn-toggle" id="btn-grid-toggle" onclick="togglePhysicalGrid()">
-      <i class="fa-solid fa-border-none"></i> 물리 2x2 경계선 표시
+      <i class="fa-solid fa-border-none"></i> 臾쇰━ 2x2 寃쎄퀎???쒖떆
     </button>
     <button class="btn-toggle" id="btn-blackout-toggle" onclick="toggleBlackoutVisual()">
-      <i class="fa-solid fa-eye-slash"></i> 파손구역 음영 제거 (검토용)
+      <i class="fa-solid fa-eye-slash"></i> ?뚯넀援ъ뿭 ?뚯쁺 ?쒓굅 (寃?좎슜)
     </button>
     <div class="view-info-banner">
-      4사분면 파손 우회 레이아웃 및 13:20 식단 타임 시프트가 가동 중입니다.
+      4?щ텇硫??뚯넀 ?고쉶 ?덉씠?꾩썐 諛?13:20 ?앸떒 ????쒗봽?멸? 媛??以묒엯?덈떎.
     </div>
     <div style="border-top: 1px solid rgba(0,245,212,0.15); padding-top: 10px; margin-top: 4px; display: flex; flex-direction: column; gap: 6px;">
-      <div style="font-size: 0.7rem; font-weight: 800; color: var(--color-zone-a); text-transform: uppercase; letter-spacing: 1px;">🔧 4사분면 모니터 상태</div>
+      <div style="font-size: 0.7rem; font-weight: 800; color: var(--color-zone-a); text-transform: uppercase; letter-spacing: 1px;">?뵩 4?щ텇硫?紐⑤땲???곹깭</div>
       <button class="btn-toggle" id="btn-monitor-status" onclick="toggleMonitorStatus()">
-        <i class="fa-solid fa-screwdriver-wrench"></i> 모니터 수리 완료 처리
+        <i class="fa-solid fa-screwdriver-wrench"></i> 紐⑤땲???섎━ ?꾨즺 泥섎━
       </button>
     </div>
     <div style="border-top: 1px solid rgba(255,0,127,0.15); padding-top: 10px; margin-top: 4px; display: flex; flex-direction: column; gap: 6px;">
-      <div style="font-size: 0.7rem; font-weight: 800; color: var(--color-zone-c); text-transform: uppercase; letter-spacing: 1px;">📻 BGM 일과 시뮬레이터</div>
+      <div style="font-size: 0.7rem; font-weight: 800; color: var(--color-zone-c); text-transform: uppercase; letter-spacing: 1px;">?벢 BGM ?쇨낵 ?쒕??덉씠??/div>
       <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px;">
-        <button class="btn-toggle btn-sim-class" id="btn-sim-welcome" onclick="setBgmSimTime(8, 30, this)">등교(08:30)</button>
-        <button class="btn-toggle btn-sim-class" id="btn-sim-break" onclick="setBgmSimTime(10, 50, this)">쉬는시간(10:50)</button>
-        <button class="btn-toggle btn-sim-class" id="btn-sim-class" onclick="setBgmSimTime(9, 20, this)">수업중(09:20)</button>
-        <button class="btn-toggle btn-sim-class" id="btn-sim-worship" onclick="setBgmSimTime(13, 0, this)">점심시간(13:00)</button>
-        <button class="btn-toggle btn-sim-class active" id="btn-sim-real" onclick="resetBgmSimTime(this)" style="grid-column: span 2;">실시간 가동</button>
+        <button class="btn-toggle btn-sim-class" id="btn-sim-welcome" onclick="setBgmSimTime(8, 30, this)">?깃탳(08:30)</button>
+        <button class="btn-toggle btn-sim-class" id="btn-sim-break" onclick="setBgmSimTime(10, 50, this)">?щ뒗?쒓컙(10:50)</button>
+        <button class="btn-toggle btn-sim-class" id="btn-sim-class" onclick="setBgmSimTime(9, 20, this)">?섏뾽以?09:20)</button>
+        <button class="btn-toggle btn-sim-class" id="btn-sim-worship" onclick="setBgmSimTime(13, 0, this)">?먯떖?쒓컙(13:00)</button>
+        <button class="btn-toggle btn-sim-class active" id="btn-sim-real" onclick="resetBgmSimTime(this)" style="grid-column: span 2;">?ㅼ떆媛?媛??/button>
       </div>
     </div>
   </div>
 
-  <!-- 쉬는시간용 전체화면 버튼 -->
-  <button class="btn-fullscreen-toggle" id="btn-fullscreen-break" onclick="requestFullscreen()" title="전체화면" style="bottom: 24px; right: 80px; z-index: 1000;">
+  <!-- ?щ뒗?쒓컙???꾩껜?붾㈃ 踰꾪듉 -->
+  <button class="btn-fullscreen-toggle" id="btn-fullscreen-break" onclick="requestFullscreen()" title="?꾩껜?붾㈃" style="bottom: 24px; right: 80px; z-index: 1000;">
     <i class="fa-solid fa-expand"></i>
   </button>
 
-  <!-- 제어 패널 접기/펼치기 토글 버튼 -->
-  <button class="btn-panel-toggle" id="btn-panel-toggle" onclick="toggleControlPanel()" title="제어 패널 토글">
+  <!-- ?쒖뼱 ?⑤꼸 ?묎린/?쇱튂湲??좉? 踰꾪듉 -->
+  <button class="btn-panel-toggle" id="btn-panel-toggle" onclick="toggleControlPanel()" title="?쒖뼱 ?⑤꼸 ?좉?">
     <i class="fa-solid fa-gear" id="panel-toggle-icon"></i>
   </button>
 
-  <!-- 숨겨진 유튜브 플레이어 IFrame 영역 -->
+  <!-- ?④꺼吏??좏뒠釉??뚮젅?댁뼱 IFrame ?곸뿭 -->
   <div id="yt-player" style="position: absolute; width: 1px; height: 1px; left: -9999px; top: -9999px; pointer-events: none; opacity: 0;"></div>
 
   <!-- ========================================================
@@ -1106,7 +1129,7 @@
        ======================================================== -->
   <script>
     // ========================================================
-    // [설정 변수]
+    // [?ㅼ젙 蹂??
     // ========================================================
     const CONFIG = {
       GOOGLE_CLIENT_ID: '476208201237-9cvftec2m6g60r07jfe88akitbkb7869.apps.googleusercontent.com',
@@ -1120,196 +1143,195 @@
       MEDIA_CYCLE_INTERVAL_V: 6000,
       MEDIA_CYCLE_INTERVAL_H: 2000,
       DATA_REFRESH_INTERVAL: 1800000,
-      MEDIA_REFRESH_INTERVAL: 10800000 // 3시간 (오전/오후 각 2회 분량)
+      MEDIA_REFRESH_INTERVAL: 10800000 // 3?쒓컙 (?ㅼ쟾/?ㅽ썑 媛?2??遺꾨웾)
     };
 
     let upcomingCreativeEvents = [];
     let isVpEventsLoaded = false;
 
     // ========================================================
-    // [모의 미디어 데이터]
+    // [紐⑥쓽 誘몃뵒???곗씠??
     // ========================================================
     const MOCK_MEDIA = [
-      // --- 세로 사진 (isVertical: true) ---
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=11foX3WD9GR8ECzBOBo4I9l-ZYa-LDhR1', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: true },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=12zIqT1aSQXMbMKkGWNsV41AAh7gzcj85', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: true },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1bN0vh97k76zns6TjvIDTh8EGPJhOvxYf', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: true },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1dpMRVbvlJ35rN5frSd73RaOM7WFvoZv5', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: true },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1EOSJ-Jzx7dl2xe4NB1YB09IolffHb03q', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: true },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1MOT8wFc2INxrI83W-aJDV0bm-SsNLFNk', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: true },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1nytzbCVGDBpofk5jjQuzRmChScDxMIiF', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: true },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1pKJHaiOK5L-ABznQQOJqatwoKGT-UndG', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: true },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1xQAFPsx5qSU2I88MLhz-OwEvXhgIsoh4', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: true },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1_pcmDIam-8l__sEu8ZKrE5MpMAQTn-tL', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: true },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=124gzLxVteEjdXeZuyyO5hCSeuG6catUS', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: true },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=12CZFrpb4QZA2o6PZS4g6CXcXJGPWuW0G', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: true },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=16ehg9uc_m0odr1ZXHmoINE_oJgJRtfQO', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: true },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1a3Ub8wpjLqKUgWS3v6lms1c_DJkjnwLb', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: true },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1A9EM1NWZbxeTcwhGKP5yfBCFDBV3GZko', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: true },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1d89zSSGaZQsVXCOEAOg1ejwRXsoyRXRn', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: true },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1ePhI5xarj6aY9poI1btrQRk5NFTDVd40', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: true },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1h9DPd-bp2MwDjdgmJ3vRfeIhLGnSfbcn', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: true },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1hIo236PQkI4OW6wiobKlMQlVcfSX_oJG', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: true },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1iWMeAkp0U_1j7M2wwik5sAYZRtsZ-7NU', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: true },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1NDIdUf28KOJTFxFBKe9JqgHwvHuTCbWW', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: true },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1o2Zyg4tFAXZ0NJP59tksP3qiDKO6LccT', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: true },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1PoDMxvW4Ih4l2aIBdlHXMan9oaQ_zU9C', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: true },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1sMYMIsZnnC8MsmhzClb_5xnrhiU-2zP4', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: true },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1wIcLEVIZ50aq4SelGczVvHeXJkOi_GBQ', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: true },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1XXlA0YUaniRXGfn5uERDxtjycbWxvgcF', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: true },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1ZHYlyOaYmQYFMEfmzfRblO3oPbMJ6-Cg', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: true },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1Qe3dz0zyv8MnNVpY4m9aM0ZpTdsAJURI', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: true },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1smCHSe47ezcLFMZXYbjNUi2UhFG0WTsv', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: true },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1So0pcc7qk1Pwt-jPEZRtCd-g0fv7NjyW', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: true },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1TOFownxjff8hyW7N5K-ys0rDewaGbgNe', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: true },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1zqKkdjXtRaJi_D2MzSn9PzIovSoUgPnn', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: true },
-      // --- 가로 영상 (이브닝콘서트) ---
-      { url: 'https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-sunlight-529-large.mp4', eventName: '20260429 이브닝콘서트 - 오케스트라 리허설', isVertical: false, type: 'video' },
-      { url: 'https://assets.mixkit.co/videos/preview/mixkit-under-a-clear-sky-with-clouds-running-4886-large.mp4', eventName: '20260429 이브닝콘서트 - 드론 연출 1', isVertical: false, type: 'video' },
-      { url: 'https://assets.mixkit.co/videos/preview/mixkit-waves-in-the-ocean-near-a-cliff-43026-large.mp4', eventName: '20260429 이브닝콘서트 - 백스테이지 현장', isVertical: false, type: 'video' },
-      { url: 'https://assets.mixkit.co/videos/preview/mixkit-drone-shot-of-a-winding-road-in-the-mountains-43034-large.mp4', eventName: '20260429 이브닝콘서트 - 외부 전경 촬영', isVertical: false, type: 'video' },
-      { url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', eventName: '20260429 이브닝콘서트 - 본 공연 실황', isVertical: false, type: 'video' },
-      // --- 가로 사진 (졸업앨범 3-5) ---
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=10Fd7t5l0xQkirE7UXoBg5flEtUZccB4N', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=10JLYaOdQlXoBXUU7T2w-dUhmyLq0qUDt', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=12gmPeOcMUzK0yTqf3nczkMULTm_3nzJ4', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=140B4-U-uG-XpvCHSW0F85Ow3oIHbDDlw', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=158RTO6wnC7MyleOS7It8G67vy7HCpM42', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=16am3wAhCUUGbZbrjktLYdyVpFV4PW4i3', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=18_T9s9eP55sXh5F9B_zICNLS2KqJMNHs', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1c3qKSXGY6bRX3H0Uy3tD8EMsgQDeIdat', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1ERghCCIH-MFP4ch-EUlZIEDAoOrk7KZZ', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1gRkAUSTOCynEl7M7Xp9IR0UhX4C_zFs6', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1GrrUu9pMo-qnPBuL4oT5yLdpDQn0AtRS', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1iuzv9Yzsy3F1On4dFebRx33y0dub1nnn', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1keXNxsdrZM4V5QHUYX30bDEBN_L4NMQ3', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1NPivlPFmitDzL86PqE2_ZTtD-RWgdb5m', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1Oun7ZuH8kHvF2IuIvJPw0N2aZlwJzOUm', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1pSWJmvtuR_ZtUNzlFtQ1nSULXkGI56UT', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1QLBgnnUyNzQc6EgK3o9pIEknKAxpRWHI', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1r1b-eBVA65A7r-GQoIx1xHtCvPERNiPZ', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1uBvBZ9IBm2HHOx6rVUFTq4dlPl8bj0e6', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1vIvMw1Dltugyz1vOHx0rqZBHemFq0D3t', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1w-0QQHenSPy2j8mxYyXnJ4PWJz58IVgG', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1wkzSRSOBvphBj5ewEbhkagC7cwJIEc41', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1wUIEHhFUBdHsqKYBOIuYWMHj6xRoMmk6', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1xr9pLb2SBK1ynuGqo8MiTJgkXYJr-pS5', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
-      // --- 가로 사진+영상 (졸업앨범 3-4) ---
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=16txQfFJPenfawaZhShIo-Gu9wkzWq0D3', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
-      { url: 'https://docs.google.com/uc?export=download&id=16wsJLioab14yjLTDRV1hEZz_j1RE3G9Z', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false, type: 'video' },
-      { url: 'https://docs.google.com/uc?export=download&id=18GdC5zcN06JlQuLm6ARvjtTL7BKCi_d0', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false, type: 'video' },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1A_SBuuDAhqX_pSI05HDWakqGDe06M4_q', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
-      { url: 'https://docs.google.com/uc?export=download&id=1BIfaD0RLiRBJcp56xzb6eYl_yd_OqaEJ', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false, type: 'video' },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1CnogaJZxX5xhD2g57zM8KjTOvMGoQcfc', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1EBEPvS9FdLY52JFJVMl9VBjvPcmjb4uz', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1ED-WIgtrH6BWjKFq5HBQmHjiyAqTsQ_5', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1GM0UBA8PhO8VXz0GFGgYxaYqmfSqvTGa', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1ilIkfhE_05cYGYp0AgR4FqPLyHa3f1Kk', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1j46vDUIALIvaOpELl2WL8H-ALkOp3eE0', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1j7VNQWolNhGMjm96N-Gssv0QDeelHG70', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1JCNsXuxN0_w4pGwZVUeLJSvFJOHIpcQd', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
-      { url: 'https://docs.google.com/uc?export=download&id=1K9z3sHCrbpjyQ0adeJxuHVAZosAAjOtG', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false, type: 'video' },
-      { url: 'https://docs.google.com/uc?export=download&id=1kNNi82-ro216bgjIbp0soX83AUbFOcm-', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false, type: 'video' },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1kpfCwqyQScyvZcz5uAHiLdduIbcxTiwC', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1lB-n8lSkK7rRQQhg5jymtDxfljO-RViM', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1Lt1TFLG52mnLFTGOtEfclLun2X1ucCjI', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
-      { url: 'https://docs.google.com/uc?export=download&id=1RIpzILf26eu7M5rROx4fhoQ1OosIwdlQ', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false, type: 'video' },
-      { url: 'https://docs.google.com/uc?export=download&id=1S1I6NcL2aaXzRpj0BIt1tib4ccYWF-CN', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false, type: 'video' },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1tgTGfo70xorLVll06WPBxog9cFp8WsKm', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1th4ONSuyI09Auknx-giQUAYIghub-bEq', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1VwfzOu093oNAjB27uNJOdQQjv5Ox01XI', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1xp-0aI8qKo173FUgx9HhJ-tcruo6LB1R', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1yFhCbaAQH-XnWlV4B32UYOmqXZbf49mZ', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1Ykvw-l9JdPc22HgB86hwLx9Kfur58yOc', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1ymJALqHZSGjegzO7wGyEK19N5Dl4FXX0', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1Y-Tx5fWehsYPyQKatFnxvHPwh2eo3RNJ', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1Z4e7G4pN_oknO1vEKOcKGJrKzJxXV-FE', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1zKHjXnYRHCL3lQUuAxpKz0k4c5RcnJIR', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
-      { url: 'https://docs.google.com/uc?export=download&id=1ZrHPqUncqycWYM2DbN9A5nebAEhs4rJS', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false, type: 'video' },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1ZTGl0SqOI2zY8_J7ejigSvAQV1IKGNiT', eventName: '260508 3학년 졸업앨범 야외촬영 (3-4)', isVertical: false },
-      // --- 가로 사진 (졸업앨범 3-1) ---
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=12MPz5DkLvvlJ5221US6rH1cwA8L7aRCZ', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=14APQ6DuzQYMy5wVvxuBGMAnaEDtLTP3W', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=15A4SVfGzuVaukKCd9sTM_scAEZ31MVDH', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=19jUpGpd9MBRGRFFG-wY0KMsWo9WT54EC', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1AVqPx84jlJryCYkn2be98Pt13yyisY6c', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1DesE7pquvsAaP8AJ1LqbBsJdQXYJ_37I', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1eC0hoZVId69ve9hQbp-WxKmEnJp_z7zo', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1EhBd9miNy59DmnSOpt25SYa2s_2Ttss1', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1fWZaesPkHMvtwl2r55ZrrWhWIZzq6m5F', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1iyT5v2Ve_MTpTDlAltRDgxNdwVfBqqKv', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1juYSis7aC-etOD6Xi8ZFseo-d6jzw0sK', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1pQIGUn2DsX-tZrqKayrazONgphAQ8b0d', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1Psl0sy2oALk8HOB5CBnUSQcIaqxvtAy2', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1r2vd5yxF0X6i9ETnn1Kl8db0H9gtXZuU', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1R6MIpj4iQDDaRcTzdVfIW68kBqmyCm7i', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1ra1Aiphe9FJ2BLUVz98kATK3Zq1aH_p5', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1t8MIOBdhbfNaVJAPWQWUxL6KJvgPsECG', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1vcryqFlo1R7Oa02xwjCyCzuEwU8fDeZ5', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1x_IxqVoCJYZx3ewRHjEAVdvl85_BTvpa', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1Y_sduahA6Fxur_kQORg-GlT7K2-6St0_', eventName: '260508 3학년 졸업앨범 야외촬영 (3-1)', isVertical: false },
-      // --- 가로 사진 (졸업앨범 3-2) ---
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1__isd5BIZrYb1_-ALySFreHrQ7Ee4c1M', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1_68VvzklhDcwoITB0OCXFfdYVIt5mgmO', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1_-qYG8i80elbdvgZxBO5N-Z43_sEwSsp', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=158twMr0Bf5UNG4nn0bRtseFFuXBg9QnD', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=15Fa9IJedYQXbKx08XNSp0wAknDp5_hAF', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=17bc0AEvxNVf9rggqhLspzzrEY9kG77L4', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=17XJFZnGwy-yXM5OVOeKUuXvEX5g2Snj7', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1aScxY22SU4g1bSlci7Qmecy9RGZHVmTf', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1AX4l9xfSsXsZq8JxX3-vIrrGEri4YfBq', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1Bmq1katAPWEWHXjxrdtSl9luejNjSFoF', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1CRV5CsGTdbJHOdqLaHAFtB4Dy6R7epa8', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1Cvt_ApB2QXNaUqxlMIRXOjmjrXgm57Kd', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1EsWsKxar1AlN-pybNGKChE_FnAwdfmWZ', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1f_CEqW5YQ7HtSQPLk7rAgX1rxw-okLDy', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1fToBb8zndIx5CqeIF3p7y2lYP9WDCQJ9', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1gDIqlmqgxoC66DCKL1BvfcPbjC55mH2d', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1gH-zGw9PS9m35gCaiKxjLH153xkk19ZG', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1GN-JivJYwyxlxelq8RDA5OXWSE_6PMUR', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1I6S1MvT6z9V1p7zV1saW30__3MXyB4iL', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1INy1x_DzfoxWuznxBMM33G5WRs-SUNnl', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1kP1VCPAjSk3cYg3HDmb6K0o5g2GEPH9-', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1l0rMaOAfNTPu8TB1yvSSCLrPau9BDSvy', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1ljFqE3uzIVetytHq7DTWGJMetd_fEZ_e', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1m3KoHcAgLmIPVXTauSy38MLvfu2RfmSp', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1nilOcRJgJ5EMb1fYO8cK62UgxSU7cG0A', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1OiSuyCLvrlQpO3rityZAipC4WdHJPOXZ', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1OYcSm_kwuWRgHdYhDX_oufSp6LAywpVn', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1p-4ppPdZFQqyGt9ayPuzk2a5MoohtiBM', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1Pkvi_fJCtfne5StrxTXfDoytzbksqIaX', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1q_lZgCxcFDLT5su90xLKEqVRjf3yf1Uo', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1qZcp_MgQKTcNs6N_KCuYco60vvWKJwIc', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1scxy2vNWWCxUnkjCOyWF1WLYJwwte4h6', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1TegOz5OZ95D2CjMG4Kz__8SsACNiaSgm', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1ti1Cfw8q0PpJC3sbVM6GS2j5iHohlA_T', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1tLFBUQAWfiRK9ypJskBXjiNvEC8EPFfr', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1TtoPFuh3SEo4zADgVffG2rOLWWud9fJB', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1TXiexz8J_fptDkC81b2E8aOaezsd3i8c', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1UowsGyUz2piPnZ9Sw4alqCVclmxpN6F1', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1VN2uIqEHAwmR8i9UoeTSwtcYUqU5ePPw', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1wIsZQkAueNKoBAWKpvFzwi3L0LEk3Glk', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1XjzwvYAVDkMHut-qA0-JbhZC1SGG5vaZ', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1-xVi1prvfba2u3dpoo71MshMA7WFVBYt', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1y96LaM5-QxKjz2uz7ReeabgjjnKyPpVz', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1ZbaNzT9Cc7XxL5268L-RsuvYKCTq60ph', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
-      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1Ze-ApgF68FPrnP6HT5gp-df7XkwzATil', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: false },
+      // --- ?몃줈 ?ъ쭊 (isVertical: true) ---
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=11foX3WD9GR8ECzBOBo4I9l-ZYa-LDhR1', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-5)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=12zIqT1aSQXMbMKkGWNsV41AAh7gzcj85', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-5)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1bN0vh97k76zns6TjvIDTh8EGPJhOvxYf', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-5)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1dpMRVbvlJ35rN5frSd73RaOM7WFvoZv5', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-5)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1EOSJ-Jzx7dl2xe4NB1YB09IolffHb03q', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-5)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1MOT8wFc2INxrI83W-aJDV0bm-SsNLFNk', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-5)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1nytzbCVGDBpofk5jjQuzRmChScDxMIiF', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-5)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1pKJHaiOK5L-ABznQQOJqatwoKGT-UndG', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-5)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1xQAFPsx5qSU2I88MLhz-OwEvXhgIsoh4', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-5)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1_pcmDIam-8l__sEu8ZKrE5MpMAQTn-tL', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=124gzLxVteEjdXeZuyyO5hCSeuG6catUS', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=12CZFrpb4QZA2o6PZS4g6CXcXJGPWuW0G', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=16ehg9uc_m0odr1ZXHmoINE_oJgJRtfQO', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1a3Ub8wpjLqKUgWS3v6lms1c_DJkjnwLb', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1A9EM1NWZbxeTcwhGKP5yfBCFDBV3GZko', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1d89zSSGaZQsVXCOEAOg1ejwRXsoyRXRn', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1ePhI5xarj6aY9poI1btrQRk5NFTDVd40', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1h9DPd-bp2MwDjdgmJ3vRfeIhLGnSfbcn', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1hIo236PQkI4OW6wiobKlMQlVcfSX_oJG', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1iWMeAkp0U_1j7M2wwik5sAYZRtsZ-7NU', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1NDIdUf28KOJTFxFBKe9JqgHwvHuTCbWW', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1o2Zyg4tFAXZ0NJP59tksP3qiDKO6LccT', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1PoDMxvW4Ih4l2aIBdlHXMan9oaQ_zU9C', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1sMYMIsZnnC8MsmhzClb_5xnrhiU-2zP4', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1wIcLEVIZ50aq4SelGczVvHeXJkOi_GBQ', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1XXlA0YUaniRXGfn5uERDxtjycbWxvgcF', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1ZHYlyOaYmQYFMEfmzfRblO3oPbMJ6-Cg', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1Qe3dz0zyv8MnNVpY4m9aM0ZpTdsAJURI', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1smCHSe47ezcLFMZXYbjNUi2UhFG0WTsv', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1So0pcc7qk1Pwt-jPEZRtCd-g0fv7NjyW', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1TOFownxjff8hyW7N5K-ys0rDewaGbgNe', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: true },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1zqKkdjXtRaJi_D2MzSn9PzIovSoUgPnn', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: true },
+      // --- 媛濡??곸긽 (?대툕?앹퐯?쒗듃) ---
+      { url: 'https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-sunlight-529-large.mp4', eventName: '20260429 ?대툕?앹퐯?쒗듃 - ?ㅼ??ㅽ듃??由ы뿀??, isVertical: false, type: 'video' },
+      { url: 'https://assets.mixkit.co/videos/preview/mixkit-under-a-clear-sky-with-clouds-running-4886-large.mp4', eventName: '20260429 ?대툕?앹퐯?쒗듃 - ?쒕줎 ?곗텧 1', isVertical: false, type: 'video' },
+      { url: 'https://assets.mixkit.co/videos/preview/mixkit-waves-in-the-ocean-near-a-cliff-43026-large.mp4', eventName: '20260429 ?대툕?앹퐯?쒗듃 - 諛깆뒪?뚯씠吏 ?꾩옣', isVertical: false, type: 'video' },
+      { url: 'https://assets.mixkit.co/videos/preview/mixkit-drone-shot-of-a-winding-road-in-the-mountains-43034-large.mp4', eventName: '20260429 ?대툕?앹퐯?쒗듃 - ?몃? ?꾧꼍 珥ъ쁺', isVertical: false, type: 'video' },
+      { url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', eventName: '20260429 ?대툕?앹퐯?쒗듃 - 蹂?怨듭뿰 ?ㅽ솴', isVertical: false, type: 'video' },
+      // --- 媛濡??ъ쭊 (議몄뾽?⑤쾾 3-5) ---
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=10Fd7t5l0xQkirE7UXoBg5flEtUZccB4N', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=10JLYaOdQlXoBXUU7T2w-dUhmyLq0qUDt', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=12gmPeOcMUzK0yTqf3nczkMULTm_3nzJ4', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=140B4-U-uG-XpvCHSW0F85Ow3oIHbDDlw', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=158RTO6wnC7MyleOS7It8G67vy7HCpM42', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=16am3wAhCUUGbZbrjktLYdyVpFV4PW4i3', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=18_T9s9eP55sXh5F9B_zICNLS2KqJMNHs', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1c3qKSXGY6bRX3H0Uy3tD8EMsgQDeIdat', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1ERghCCIH-MFP4ch-EUlZIEDAoOrk7KZZ', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1gRkAUSTOCynEl7M7Xp9IR0UhX4C_zFs6', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1GrrUu9pMo-qnPBuL4oT5yLdpDQn0AtRS', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1iuzv9Yzsy3F1On4dFebRx33y0dub1nnn', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1keXNxsdrZM4V5QHUYX30bDEBN_L4NMQ3', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1NPivlPFmitDzL86PqE2_ZTtD-RWgdb5m', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1Oun7ZuH8kHvF2IuIvJPw0N2aZlwJzOUm', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1pSWJmvtuR_ZtUNzlFtQ1nSULXkGI56UT', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1QLBgnnUyNzQc6EgK3o9pIEknKAxpRWHI', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1r1b-eBVA65A7r-GQoIx1xHtCvPERNiPZ', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1uBvBZ9IBm2HHOx6rVUFTq4dlPl8bj0e6', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1vIvMw1Dltugyz1vOHx0rqZBHemFq0D3t', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1w-0QQHenSPy2j8mxYyXnJ4PWJz58IVgG', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1wkzSRSOBvphBj5ewEbhkagC7cwJIEc41', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1wUIEHhFUBdHsqKYBOIuYWMHj6xRoMmk6', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-5)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1xr9pLb2SBK1ynuGqo8MiTJgkXYJr-pS5', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-5)', isVertical: false },
+      // --- 媛濡??ъ쭊+?곸긽 (議몄뾽?⑤쾾 3-4) ---
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=16txQfFJPenfawaZhShIo-Gu9wkzWq0D3', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: false },
+      { url: 'https://docs.google.com/uc?export=download&id=16wsJLioab14yjLTDRV1hEZz_j1RE3G9Z', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: false, type: 'video' },
+      { url: 'https://docs.google.com/uc?export=download&id=18GdC5zcN06JlQuLm6ARvjtTL7BKCi_d0', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: false, type: 'video' },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1A_SBuuDAhqX_pSI05HDWakqGDe06M4_q', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: false },
+      { url: 'https://docs.google.com/uc?export=download&id=1BIfaD0RLiRBJcp56xzb6eYl_yd_OqaEJ', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: false, type: 'video' },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1CnogaJZxX5xhD2g57zM8KjTOvMGoQcfc', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1EBEPvS9FdLY52JFJVMl9VBjvPcmjb4uz', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1ED-WIgtrH6BWjKFq5HBQmHjiyAqTsQ_5', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1GM0UBA8PhO8VXz0GFGgYxaYqmfSqvTGa', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1ilIkfhE_05cYGYp0AgR4FqPLyHa3f1Kk', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1j46vDUIALIvaOpELl2WL8H-ALkOp3eE0', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1j7VNQWolNhGMjm96N-Gssv0QDeelHG70', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1JCNsXuxN0_w4pGwZVUeLJSvFJOHIpcQd', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: false },
+      { url: 'https://docs.google.com/uc?export=download&id=1K9z3sHCrbpjyQ0adeJxuHVAZosAAjOtG', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: false, type: 'video' },
+      { url: 'https://docs.google.com/uc?export=download&id=1kNNi82-ro216bgjIbp0soX83AUbFOcm-', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: false, type: 'video' },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1kpfCwqyQScyvZcz5uAHiLdduIbcxTiwC', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1lB-n8lSkK7rRQQhg5jymtDxfljO-RViM', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1Lt1TFLG52mnLFTGOtEfclLun2X1ucCjI', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: false },
+      { url: 'https://docs.google.com/uc?export=download&id=1RIpzILf26eu7M5rROx4fhoQ1OosIwdlQ', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: false, type: 'video' },
+      { url: 'https://docs.google.com/uc?export=download&id=1S1I6NcL2aaXzRpj0BIt1tib4ccYWF-CN', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: false, type: 'video' },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1tgTGfo70xorLVll06WPBxog9cFp8WsKm', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1th4ONSuyI09Auknx-giQUAYIghub-bEq', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1VwfzOu093oNAjB27uNJOdQQjv5Ox01XI', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1xp-0aI8qKo173FUgx9HhJ-tcruo6LB1R', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1yFhCbaAQH-XnWlV4B32UYOmqXZbf49mZ', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1Ykvw-l9JdPc22HgB86hwLx9Kfur58yOc', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1ymJALqHZSGjegzO7wGyEK19N5Dl4FXX0', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1Y-Tx5fWehsYPyQKatFnxvHPwh2eo3RNJ', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1Z4e7G4pN_oknO1vEKOcKGJrKzJxXV-FE', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1zKHjXnYRHCL3lQUuAxpKz0k4c5RcnJIR', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: false },
+      { url: 'https://docs.google.com/uc?export=download&id=1ZrHPqUncqycWYM2DbN9A5nebAEhs4rJS', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: false, type: 'video' },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1ZTGl0SqOI2zY8_J7ejigSvAQV1IKGNiT', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-4)', isVertical: false },
+      // --- 媛濡??ъ쭊 (議몄뾽?⑤쾾 3-1) ---
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=12MPz5DkLvvlJ5221US6rH1cwA8L7aRCZ', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-1)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=14APQ6DuzQYMy5wVvxuBGMAnaEDtLTP3W', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-1)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=15A4SVfGzuVaukKCd9sTM_scAEZ31MVDH', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-1)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=19jUpGpd9MBRGRFFG-wY0KMsWo9WT54EC', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-1)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1AVqPx84jlJryCYkn2be98Pt13yyisY6c', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-1)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1DesE7pquvsAaP8AJ1LqbBsJdQXYJ_37I', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-1)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1eC0hoZVId69ve9hQbp-WxKmEnJp_z7zo', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-1)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1EhBd9miNy59DmnSOpt25SYa2s_2Ttss1', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-1)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1fWZaesPkHMvtwl2r55ZrrWhWIZzq6m5F', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-1)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1iyT5v2Ve_MTpTDlAltRDgxNdwVfBqqKv', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-1)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1juYSis7aC-etOD6Xi8ZFseo-d6jzw0sK', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-1)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1pQIGUn2DsX-tZrqKayrazONgphAQ8b0d', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-1)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1Psl0sy2oALk8HOB5CBnUSQcIaqxvtAy2', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-1)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1r2vd5yxF0X6i9ETnn1Kl8db0H9gtXZuU', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-1)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1R6MIpj4iQDDaRcTzdVfIW68kBqmyCm7i', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-1)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1ra1Aiphe9FJ2BLUVz98kATK3Zq1aH_p5', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-1)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1t8MIOBdhbfNaVJAPWQWUxL6KJvgPsECG', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-1)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1vcryqFlo1R7Oa02xwjCyCzuEwU8fDeZ5', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-1)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1x_IxqVoCJYZx3ewRHjEAVdvl85_BTvpa', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-1)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1Y_sduahA6Fxur_kQORg-GlT7K2-6St0_', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-1)', isVertical: false },
+      // --- 媛濡??ъ쭊 (議몄뾽?⑤쾾 3-2) ---
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1__isd5BIZrYb1_-ALySFreHrQ7Ee4c1M', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1_68VvzklhDcwoITB0OCXFfdYVIt5mgmO', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1_-qYG8i80elbdvgZxBO5N-Z43_sEwSsp', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=158twMr0Bf5UNG4nn0bRtseFFuXBg9QnD', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=15Fa9IJedYQXbKx08XNSp0wAknDp5_hAF', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=17bc0AEvxNVf9rggqhLspzzrEY9kG77L4', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=17XJFZnGwy-yXM5OVOeKUuXvEX5g2Snj7', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1aScxY22SU4g1bSlci7Qmecy9RGZHVmTf', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1AX4l9xfSsXsZq8JxX3-vIrrGEri4YfBq', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1Bmq1katAPWEWHXjxrdtSl9luejNjSFoF', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1CRV5CsGTdbJHOdqLaHAFtB4Dy6R7epa8', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1Cvt_ApB2QXNaUqxlMIRXOjmjrXgm57Kd', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1EsWsKxar1AlN-pybNGKChE_FnAwdfmWZ', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1f_CEqW5YQ7HtSQPLk7rAgX1rxw-okLDy', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1fToBb8zndIx5CqeIF3p7y2lYP9WDCQJ9', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1gDIqlmqgxoC66DCKL1BvfcPbjC55mH2d', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1gH-zGw9PS9m35gCaiKxjLH153xkk19ZG', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1GN-JivJYwyxlxelq8RDA5OXWSE_6PMUR', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1I6S1MvT6z9V1p7zV1saW30__3MXyB4iL', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1INy1x_DzfoxWuznxBMM33G5WRs-SUNnl', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1kP1VCPAjSk3cYg3HDmb6K0o5g2GEPH9-', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1l0rMaOAfNTPu8TB1yvSSCLrPau9BDSvy', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1ljFqE3uzIVetytHq7DTWGJMetd_fEZ_e', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1m3KoHcAgLmIPVXTauSy38MLvfu2RfmSp', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1nilOcRJgJ5EMb1fYO8cK62UgxSU7cG0A', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1OiSuyCLvrlQpO3rityZAipC4WdHJPOXZ', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1OYcSm_kwuWRgHdYhDX_oufSp6LAywpVn', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1p-4ppPdZFQqyGt9ayPuzk2a5MoohtiBM', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1Pkvi_fJCtfne5StrxTXfDoytzbksqIaX', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1q_lZgCxcFDLT5su90xLKEqVRjf3yf1Uo', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1qZcp_MgQKTcNs6N_KCuYco60vvWKJwIc', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1scxy2vNWWCxUnkjCOyWF1WLYJwwte4h6', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1TegOz5OZ95D2CjMG4Kz__8SsACNiaSgm', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1ti1Cfw8q0PpJC3sbVM6GS2j5iHohlA_T', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1tLFBUQAWfiRK9ypJskBXjiNvEC8EPFfr', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1TtoPFuh3SEo4zADgVffG2rOLWWud9fJB', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1TXiexz8J_fptDkC81b2E8aOaezsd3i8c', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1UowsGyUz2piPnZ9Sw4alqCVclmxpN6F1', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1VN2uIqEHAwmR8i9UoeTSwtcYUqU5ePPw', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1wIsZQkAueNKoBAWKpvFzwi3L0LEk3Glk', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1XjzwvYAVDkMHut-qA0-JbhZC1SGG5vaZ', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1-xVi1prvfba2u3dpoo71MshMA7WFVBYt', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1y96LaM5-QxKjz2uz7ReeabgjjnKyPpVz', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1ZbaNzT9Cc7XxL5268L-RsuvYKCTq60ph', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
+      { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1Ze-ApgF68FPrnP6HT5gp-df7XkwzATil', eventName: '260508 3?숇뀈 議몄뾽?⑤쾾 ?쇱쇅珥ъ쁺 (3-2)', isVertical: false },
     ];
 
     const FALLBACK_MEALS = {
       cal: '842 kcal',
       items: [
-        { name: '혼합잡곡밥', type: 'rice' },
-        { name: '얼큰순두부찌개', type: 'soup' },
-        { name: '수제돈가스 & 소스', type: 'meat' },
-        { name: '감자채베이컨볶음', type: 'veg' },
-        { name: '포기김치', type: 'veg' },
-        { name: '유기농 요구르트', type: 'dessert' }
+        { name: '?쇳빀?↔끝諛?, type: 'rice' },
+        { name: '?쇳겙?쒕몢遺李뚭컻', type: 'soup' },
+        { name: '?섏젣?덇???& ?뚯뒪', type: 'meat' },
+        { name: '媛먯옄梨꾨쿋?댁빻蹂띠쓬', type: 'veg' },
+        { name: '?ш린源移?, type: 'veg' },
+        { name: '?좉린???붽뎄瑜댄듃', type: 'dessert' }
       ]
     };
 
-    const ANNOUNCEMENTS = []; // 실제 데이터는 구글 드라이브 시트에서 실시간 로드됨
-
+    const ANNOUNCEMENTS = []; // ?ㅼ젣 ?곗씠?곕뒗 援ш? ?쒕씪?대툕 ?쒗듃?먯꽌 ?ㅼ떆媛?濡쒕뱶??
     const MEAL_ICONS = {
       rice:    { icon: 'fa-bowl-rice',       class: 'meal-rice' },
       soup:    { icon: 'fa-soup',             class: 'meal-soup' },
@@ -1319,15 +1341,13 @@
     };
 
     // ========================================================
-    // 1. 디지털 시계 (초단위 갱신)
+    // 1. ?붿????쒓퀎 (珥덈떒??媛깆떊)
     // ========================================================
-    let bgmMockTime = null; // { hour, min } - 정적 고정 mock (하위 호환)
-    // 오프셋 기반 mock: 실제 시간 + bgmMockOffsetMin 분으로 흐르는 가상 시간
-    // 현재 13:34, 목표: mock=14:29 → 1분 뒤 14:30(5교시 쉬는시간)로 전환 테스트
-    let bgmMockOffsetMin = null; // ← 테스트 완료 후 null로 변경
-    let is1MinIntervalTest = false; // ← 1분 주기 전환 테스트 플래그 (테스트 후 false로 변경)
+    let bgmMockTime = null; // { hour, min } - ?뺤쟻 怨좎젙 mock (?섏쐞 ?명솚)
+    // ?ㅽ봽??湲곕컲 mock: ?ㅼ젣 ?쒓컙 + bgmMockOffsetMin 遺꾩쑝濡??먮Ⅴ??媛???쒓컙
+    // ?꾩옱 13:34, 紐⑺몴: mock=14:29 ??1遺???14:30(5援먯떆 ?щ뒗?쒓컙)濡??꾪솚 ?뚯뒪??    let bgmMockOffsetMin = null; // ???뚯뒪???꾨즺 ??null濡?蹂寃?    let is1MinIntervalTest = false; // ??1遺?二쇨린 ?꾪솚 ?뚯뒪???뚮옒洹?(?뚯뒪????false濡?蹂寃?
 
-    // 유효 시간 반환 헬퍼
+    // ?좏슚 ?쒓컙 諛섑솚 ?ы띁
     function getEffectiveTime() {
       const now = new Date();
       if (bgmMockOffsetMin !== null && bgmMockOffsetMin !== undefined) {
@@ -1337,7 +1357,7 @@
       if (bgmMockTime) return bgmMockTime;
       return { hour: now.getHours(), min: now.getMinutes() };
     }
-    let current_weather_code = 0; // 날씨 BGM 연동을 위한 전역 날씨 코드
+    let current_weather_code = 0; // ?좎뵪 BGM ?곕룞???꾪븳 ?꾩뿭 ?좎뵪 肄붾뱶
     function updateClock() {
       const now = new Date();
       const eff = getEffectiveTime();
@@ -1351,17 +1371,17 @@
       document.getElementById('live-time').innerHTML = `${h}:${m}<span class="clock-sec" id="live-sec">${s}</span>`;
       const month = String(now.getMonth()+1).padStart(2,'0');
       const date  = String(now.getDate()).padStart(2,'0');
-      const days  = ['일','월','화','수','목','금','토'];
+      const days  = ['??,'??,'??,'??,'紐?,'湲?,'??];
       document.getElementById('live-date').textContent = `${month}.${date} (${days[now.getDay()]})`;
 
-      // 2사분면 파손 우회용 시간/날짜 갱신
+      // 2?щ텇硫??뚯넀 ?고쉶???쒓컙/?좎쭨 媛깆떊
       const damageTimeEl = document.getElementById('damage-time-text');
       const damageDateEl = document.getElementById('damage-date-text');
       if (damageTimeEl) damageTimeEl.textContent = `${h}:${m}:${s}`;
       if (damageDateEl) damageDateEl.textContent = `${month}.${date} (${days[now.getDay()]})`;
 
-      // 월요일 점심시간 (12:50 ~ 13:20) 예배 안내 오버라이드 (HTML 형식)
-      const worshipHtml = '<span style="color: var(--color-zone-a); font-weight: 800;">강당</span>에서 <span style="color: var(--color-zone-a); font-weight: 800;">13시 30분</span>부터 <span style="color: var(--color-zone-a); font-weight: 800;">예배</span>가 있습니다.<br>친구와 같이 와서 말씀도 듣고 간식도 받아가기 바랍니다.';
+      // ?붿슂???먯떖?쒓컙 (12:50 ~ 13:20) ?덈같 ?덈궡 ?ㅻ쾭?쇱씠??(HTML ?뺤떇)
+      const worshipHtml = '<span style="color: var(--color-zone-a); font-weight: 800;">媛뺣떦</span>?먯꽌 <span style="color: var(--color-zone-a); font-weight: 800;">13??30遺?/span>遺??<span style="color: var(--color-zone-a); font-weight: 800;">?덈같</span>媛 ?덉뒿?덈떎.<br>移쒓뎄? 媛숈씠 ???留먯????ｊ퀬 媛꾩떇??諛쏆븘媛湲?諛붾엻?덈떎.';
       const isWorship = (now.getDay() === 1 && ((hVal === 12 && mVal >= 50) || (hVal === 13 && mVal < 20)));
 
       const damageQuoteEl = document.getElementById('damage-quote-text');
@@ -1373,13 +1393,13 @@
           isWorshipOverridden = true;
           if (textEl) {
             textEl.classList.add('damage-quote-blink-effect');
-            textEl.style.fontSize = '3.7rem'; // 2x에서 10% 축소
+            textEl.style.fontSize = '3.7rem'; // 2x?먯꽌 10% 異뺤냼
             textEl.style.color = '#ffffff';
             textEl.style.webkitTextFillColor = '#ffffff';
             textEl.style.background = 'none';
           }
           if (damageQuoteEl) {
-            damageQuoteEl.style.fontSize = '2.6rem'; // 2x에서 10% 축소
+            damageQuoteEl.style.fontSize = '2.6rem'; // 2x?먯꽌 10% 異뺤냼
             damageQuoteEl.style.color = '#ffffff';
             damageQuoteEl.style.maxWidth = 'none';
             damageQuoteEl.style.whiteSpace = 'normal';
@@ -1397,25 +1417,25 @@
           isWorshipOverridden = false;
           if (textEl) {
             textEl.classList.remove('damage-quote-blink-effect');
-            textEl.style.fontSize = ''; // 복구
+            textEl.style.fontSize = ''; // 蹂듦뎄
             textEl.style.color = '';
             textEl.style.webkitTextFillColor = '';
             textEl.style.background = '';
           }
           if (damageQuoteEl) {
-            damageQuoteEl.style.fontSize = ''; // 복구
-            damageQuoteEl.style.color = ''; // 복구
-            damageQuoteEl.style.maxWidth = ''; // 복구
-            damageQuoteEl.style.whiteSpace = ''; // 복구
+            damageQuoteEl.style.fontSize = ''; // 蹂듦뎄
+            damageQuoteEl.style.color = ''; // 蹂듦뎄
+            damageQuoteEl.style.maxWidth = ''; // 蹂듦뎄
+            damageQuoteEl.style.whiteSpace = ''; // 蹂듦뎄
           }
-          if (authorEl) authorEl.style.display = ''; // 복구
+          if (authorEl) authorEl.style.display = ''; // 蹂듦뎄
           if (typeof showNextQuote === 'function') {
             showNextQuote();
           }
         }
       }
 
-      // 19:30 ~ 07:30 야간 절전 모드 또는 주말 절전 모드 (검은 화면 오버레이)
+      // 19:30 ~ 07:30 ?쇨컙 ?덉쟾 紐⑤뱶 ?먮뒗 二쇰쭚 ?덉쟾 紐⑤뱶 (寃? ?붾㈃ ?ㅻ쾭?덉씠)
       const realTv = now.getHours() * 100 + now.getMinutes();
       const isWeekend = (now.getDay() === 0 || now.getDay() === 6) && (bgmMockTime === null);
       let sleepOverlay = document.getElementById('sleep-overlay');
@@ -1446,15 +1466,15 @@
           sleepOverlay.style.justifyContent = 'center';
           sleepOverlay.style.color = '#333';
           if (isWeekend) {
-            sleepOverlay.innerHTML = '<i class="fa-solid fa-moon" style="font-size: 4rem; margin-bottom: 20px;"></i><h2 style="font-family: var(--font-noto);">주말 절전 모드입니다</h2>';
+            sleepOverlay.innerHTML = '<i class="fa-solid fa-moon" style="font-size: 4rem; margin-bottom: 20px;"></i><h2 style="font-family: var(--font-noto);">二쇰쭚 ?덉쟾 紐⑤뱶?낅땲??/h2>';
           } else {
-            sleepOverlay.innerHTML = '<i class="fa-solid fa-moon" style="font-size: 4rem; margin-bottom: 20px;"></i><h2 style="font-family: var(--font-noto);">야간 절전 모드입니다 (19:30 ~ 07:30)</h2>';
+            sleepOverlay.innerHTML = '<i class="fa-solid fa-moon" style="font-size: 4rem; margin-bottom: 20px;"></i><h2 style="font-family: var(--font-noto);">?쇨컙 ?덉쟾 紐⑤뱶?낅땲??(19:30 ~ 07:30)</h2>';
           }
         }
       } else {
         if (sleepOverlay) {
           sleepOverlay.remove();
-          // 평일 아침 절전 모드 해제 시 전체화면 요청
+          // ?됱씪 ?꾩묠 ?덉쟾 紐⑤뱶 ?댁젣 ???꾩껜?붾㈃ ?붿껌
           if (document.documentElement.requestFullscreen) {
             document.documentElement.requestFullscreen().catch(()=>{});
           }
@@ -1463,7 +1483,7 @@
     }
 
     // ========================================================
-    // 2. 뉴스 티커
+    // 2. ?댁뒪 ?곗빱
     // ========================================================
     function initTicker() {
       const box = document.getElementById('static-announcements-box');
@@ -1499,7 +1519,7 @@
     }
 
     // ========================================================
-    // Google OAuth 2.0 인증 엔진 (Identity Services)
+    // Google OAuth 2.0 ?몄쬆 ?붿쭊 (Identity Services)
     // ========================================================
     let tokenClient;
     let googleAccessToken = localStorage.getItem('google_access_token');
@@ -1522,8 +1542,7 @@
             
             updateAuthStatusUI(true);
             
-            // 데이터 재호출
-            fetchWorkspaceMedia();
+            // ?곗씠???ы샇異?            fetchWorkspaceMedia();
             loadNoticeBoard();
           }
         },
@@ -1537,12 +1556,12 @@
       const btn = document.getElementById('btn-google-login');
       if (!btn) return;
       if (isLoggedIn) {
-        btn.innerHTML = '<i class="fa-solid fa-lock-open"></i> 구글 인증 완료';
+        btn.innerHTML = '<i class="fa-solid fa-lock-open"></i> 援ш? ?몄쬆 ?꾨즺';
         btn.style.borderColor = '#4ade80';
         btn.style.color = '#4ade80';
         btn.style.background = 'rgba(74, 222, 128, 0.1)';
       } else {
-        btn.innerHTML = '<i class="fa-solid fa-lock"></i> 구글 계정 인증 필요';
+        btn.innerHTML = '<i class="fa-solid fa-lock"></i> 援ш? 怨꾩젙 ?몄쬆 ?꾩슂';
         btn.style.borderColor = '#f43f5e';
         btn.style.color = '#f43f5e';
         btn.style.background = 'rgba(244, 63, 94, 0.1)';
@@ -1553,12 +1572,12 @@
       if (tokenClient) {
         tokenClient.requestAccessToken({ prompt: 'consent' });
       } else {
-        alert('구글 인증 라이브러리가 로드 중입니다. 잠시 후 다시 시도해 주세요.');
+        alert('援ш? ?몄쬆 ?쇱씠釉뚮윭由ш? 濡쒕뱶 以묒엯?덈떎. ?좎떆 ???ㅼ떆 ?쒕룄??二쇱꽭??');
       }
     }
 
     // ========================================================
-    // 3. 미디어 연동 엔진
+    // 3. 誘몃뵒???곕룞 ?붿쭊
     // ========================================================
     let verticalList = [];
     let horizontalList = [];
@@ -1593,7 +1612,7 @@
               if (allMedia.length > 0) { analyzeAndClassifyMedia(allMedia); return; }
             }
           }
-        } catch(e) { console.warn('API 드라이브 스캔 실패, 시트 연동 시도'); }
+        } catch(e) { console.warn('API ?쒕씪?대툕 ?ㅼ틪 ?ㅽ뙣, ?쒗듃 ?곕룞 ?쒕룄'); }
       }
 
       try {
@@ -1605,7 +1624,7 @@
           const values = await fetchGoogleSheetValues(spreadsheetId, range);
           rows = convertSheetValuesToObjects(values);
         } catch (apiErr) {
-          console.warn('Sheets API v4 미디어 연동 실패, CSV export 폴백 시도:', apiErr);
+          console.warn('Sheets API v4 誘몃뵒???곕룞 ?ㅽ뙣, CSV export ?대갚 ?쒕룄:', apiErr);
           const res = await fetch(CONFIG.CREATIVE_SHEET_EXPORT_URL);
           if (res.ok) {
             const csv = await res.text();
@@ -1615,9 +1634,9 @@
 
         if (rows && rows.length > 0) {
             const sample = rows[0];
-            const mediaKeys = Object.keys(sample).filter(k => k.includes('사진')||k.includes('이미지')||k.includes('동영상')||k.includes('미디어')||k.includes('링크')||k.toLowerCase().includes('photo')||k.toLowerCase().includes('image')||k.toLowerCase().includes('link')||k.toLowerCase().includes('media'));
-            const dateKey  = Object.keys(sample).find(k => k.includes('날짜')||k.includes('일자')) || Object.keys(sample)[0];
-            const eventKey = Object.keys(sample).find(k => k.includes('주제')||k.includes('계획')||k.includes('활동')) || Object.keys(sample)[4];
+            const mediaKeys = Object.keys(sample).filter(k => k.includes('?ъ쭊')||k.includes('?대?吏')||k.includes('?숈쁺??)||k.includes('誘몃뵒??)||k.includes('留곹겕')||k.toLowerCase().includes('photo')||k.toLowerCase().includes('image')||k.toLowerCase().includes('link')||k.toLowerCase().includes('media'));
+            const dateKey  = Object.keys(sample).find(k => k.includes('?좎쭨')||k.includes('?쇱옄')) || Object.keys(sample)[0];
+            const eventKey = Object.keys(sample).find(k => k.includes('二쇱젣')||k.includes('怨꾪쉷')||k.includes('?쒕룞')) || Object.keys(sample)[4];
             const sheetMedia = [];
             if (mediaKeys.length > 0) {
               rows.forEach(row => {
@@ -1627,14 +1646,14 @@
                     let finalUrl = v;
                     const id = extractGoogleDriveFileId(v);
                     if (id) finalUrl = `https://docs.google.com/uc?export=download&id=${id}`;
-                    sheetMedia.push({ url: finalUrl, eventName: row[eventKey] ? `${row[dateKey].replace(/\d{4}년\s+/,'')} - ${row[eventKey]}` : '학교 교육 활동', type: v.toLowerCase().includes('.mp4')||v.toLowerCase().includes('.mov') ? 'video' : 'image' });
+                    sheetMedia.push({ url: finalUrl, eventName: row[eventKey] ? `${row[dateKey].replace(/\d{4}??s+/,'')} - ${row[eventKey]}` : '?숆탳 援먯쑁 ?쒕룞', type: v.toLowerCase().includes('.mp4')||v.toLowerCase().includes('.mov') ? 'video' : 'image' });
                   }
                 });
               });
             }
             if (sheetMedia.length > 0) { analyzeAndClassifyMedia(sheetMedia); return; }
           }
-      } catch(e) { console.warn('시트 연동 실패, 모의 데이터로 폴백'); }
+      } catch(e) { console.warn('?쒗듃 ?곕룞 ?ㅽ뙣, 紐⑥쓽 ?곗씠?곕줈 ?대갚'); }
 
       processMediaList(MOCK_MEDIA);
     }
@@ -1645,7 +1664,7 @@
       let completed = false;
 
       const safetyTimer = setTimeout(() => {
-        if (!completed) { completed = true; console.warn('타임아웃 — 강제 기동'); startMediaRotators(); }
+        if (!completed) { completed = true; console.warn('??꾩븘????媛뺤젣 湲곕룞'); startMediaRotators(); }
       }, 3500);
 
       mediaList.forEach(item => {
@@ -1660,7 +1679,7 @@
           }
         }
 
-        // isVertical이 이미 정의된 경우 즉시 분류
+        // isVertical???대? ?뺤쓽??寃쎌슦 利됱떆 遺꾨쪟
         if (typeof item.isVertical === 'boolean') { sortItem(item); return; }
 
         if (item.type === 'video') {
@@ -1689,7 +1708,7 @@
     }
 
     function processMediaList(list) {
-      // 원본 배열 복사 후 셔플하여 전체 미디어를 골고루 사용
+      // ?먮낯 諛곗뿴 蹂듭궗 ???뷀뵆?섏뿬 ?꾩껜 誘몃뵒?대? 怨④퀬猷??ъ슜
       const shuffled = shuffleArray([...list]);
       const verticals   = shuffled.filter(m => m.isVertical);
       const hVideos     = shuffled.filter(m => !m.isVertical && m.type === 'video');
@@ -1727,7 +1746,7 @@
       if (horizontalList.length === 0)
         horizontalList = MOCK_MEDIA.filter(m => !m.isVertical).map(m => ({ ...m, url: toProxyUrl(m) }));
 
-      // 미디어 목록 셔플
+      // 誘몃뵒??紐⑸줉 ?뷀뵆
       shuffleArray(verticalList);
       shuffleArray(horizontalList);
 
@@ -1739,7 +1758,7 @@
       const container = document.getElementById(containerId);
       if (!container || !list || list.length === 0) return;
 
-      // 기존 타이머 및 딜레이용 타임아웃이 존재하면 안전하게 해제하여 중복 실행 방지
+      // 湲곗〈 ??대㉧ 諛??쒕젅?댁슜 ??꾩븘?껋씠 議댁옱?섎㈃ ?덉쟾?섍쾶 ?댁젣?섏뿬 以묐났 ?ㅽ뻾 諛⑹?
       if (container.dataset.timerId) {
         clearInterval(parseInt(container.dataset.timerId));
         container.dataset.timerId = '';
@@ -1752,16 +1771,16 @@
       container.innerHTML = '';
       list.forEach((item, index) => {
         let el;
-        const finalUrl = item.url; // 이미 proxy URL로 변환됨
+        const finalUrl = item.url; // ?대? proxy URL濡?蹂?섎맖
 
         if (item.type === 'video') {
           el = document.createElement('video');
           el.referrerPolicy = 'no-referrer';
           el.src = finalUrl; 
-          el.autoplay = (index === 0); // 초기 0번째 요소만 자동 재생
+          el.autoplay = (index === 0); // 珥덇린 0踰덉㎏ ?붿냼留??먮룞 ?ъ깮
           el.muted = true; el.loop = true; el.playsInline = true;
           el.onerror = () => {
-            console.error(`[재생 실패] ${finalUrl}`);
+            console.error(`[?ъ깮 ?ㅽ뙣] ${finalUrl}`);
             el.classList.add('media-error');
             if (el.classList.contains('active')) {
               triggerNextSlide();
@@ -1772,7 +1791,7 @@
           el.referrerPolicy = 'no-referrer';
           el.src = finalUrl;
           el.onerror = () => {
-            console.error(`[로딩 실패] ${finalUrl}`);
+            console.error(`[濡쒕뵫 ?ㅽ뙣] ${finalUrl}`);
             el.classList.add('media-error');
             if (el.classList.contains('active')) {
               triggerNextSlide();
@@ -1809,7 +1828,7 @@
         } while (items[idx].classList.contains('media-error') && attempts < items.length);
 
         if (items[idx].classList.contains('media-error')) {
-          console.warn('모든 미디어 로드 실패');
+          console.warn('紐⑤뱺 誘몃뵒??濡쒕뱶 ?ㅽ뙣');
           return;
         }
 
@@ -1833,7 +1852,7 @@
     }
 
     // ========================================================
-    // 4. 급식 & 날씨 인포그래픽 (구역 E)
+    // 4. 湲됱떇 & ?좎뵪 ?명룷洹몃옒??(援ъ뿭 E)
     // ========================================================
     function getMealTargetDate() {
       const now = new Date();
@@ -1846,10 +1865,10 @@
       const yyyy = target.getFullYear();
       const mm = String(target.getMonth()+1).padStart(2,'0');
       const dd = String(target.getDate()).padStart(2,'0');
-      const days = ['일','월','화','수','목','금','토'];
+      const days = ['??,'??,'??,'??,'紐?,'湲?,'??];
       return {
         dateStr: `${yyyy}${mm}${dd}`,
-        label: isNext ? '내일의 웰빙 급식' : '오늘의 웰빙 급식',
+        label: isNext ? '?댁씪???곕튃 湲됱떇' : '?ㅻ뒛???곕튃 湲됱떇',
         badgeStr: `${target.getMonth()+1}/${target.getDate()} (${days[target.getDay()]})`
       };
     }
@@ -1877,10 +1896,10 @@
             let cleaned = item.replace(/\([0-9.]+\)|\[[0-9.]+\]|[0-9]+\./g,'').trim();
             if (!cleaned) return;
             let cfg = MEAL_ICONS.veg;
-            if (cleaned.includes('밥')||cleaned.includes('잡곡')||cleaned.includes('볶음밥')) cfg = MEAL_ICONS.rice;
-            else if (cleaned.includes('찌개')||cleaned.includes('국')||cleaned.includes('탕')) cfg = MEAL_ICONS.soup;
-            else if (cleaned.includes('돈가스')||cleaned.includes('고기')||cleaned.includes('구이')||cleaned.includes('볶음')||cleaned.includes('갈비')||cleaned.includes('치킨')||cleaned.includes('불고기')||cleaned.includes('스테이크')||cleaned.includes('탕수육')||cleaned.includes('까스')||cleaned.includes('닭')||cleaned.includes('오리')||cleaned.includes('훈제')||cleaned.includes('함박')||cleaned.includes('찜')||cleaned.includes('너비아니')||cleaned.includes('완자')||cleaned.includes('튀김')||cleaned.includes('카츠')||cleaned.includes('강정')) cfg = MEAL_ICONS.meat;
-            else if (cleaned.includes('케이크')||cleaned.includes('요구르트')||cleaned.includes('푸딩')||cleaned.includes('과일')||cleaned.includes('주스')||cleaned.includes('빵')||cleaned.includes('에이드')||cleaned.includes('식혜')||cleaned.includes('마카롱')||cleaned.includes('와플')||cleaned.includes('타르트')||cleaned.includes('아이스크림')||cleaned.includes('요플레')||cleaned.includes('음료')||cleaned.includes('티')) cfg = MEAL_ICONS.dessert;
+            if (cleaned.includes('諛?)||cleaned.includes('?↔끝')||cleaned.includes('蹂띠쓬諛?)) cfg = MEAL_ICONS.rice;
+            else if (cleaned.includes('李뚭컻')||cleaned.includes('援?)||cleaned.includes('??)) cfg = MEAL_ICONS.soup;
+            else if (cleaned.includes('?덇???)||cleaned.includes('怨좉린')||cleaned.includes('援ъ씠')||cleaned.includes('蹂띠쓬')||cleaned.includes('媛덈퉬')||cleaned.includes('移섑궓')||cleaned.includes('遺덇퀬湲?)||cleaned.includes('?ㅽ뀒?댄겕')||cleaned.includes('?뺤닔??)||cleaned.includes('源뚯뒪')||cleaned.includes('??)||cleaned.includes('?ㅻ━')||cleaned.includes('?덉젣')||cleaned.includes('?⑤컯')||cleaned.includes('李?)||cleaned.includes('?덈퉬?꾨땲')||cleaned.includes('?꾩옄')||cleaned.includes('?源')||cleaned.includes('移댁툩')||cleaned.includes('媛뺤젙')) cfg = MEAL_ICONS.meat;
+            else if (cleaned.includes('耳?댄겕')||cleaned.includes('?붽뎄瑜댄듃')||cleaned.includes('?몃뵫')||cleaned.includes('怨쇱씪')||cleaned.includes('二쇱뒪')||cleaned.includes('鍮?)||cleaned.includes('?먯씠??)||cleaned.includes('?앺삙')||cleaned.includes('留덉뭅濡?)||cleaned.includes('???)||cleaned.includes('?瑜댄듃')||cleaned.includes('?꾩씠?ㅽ겕由?)||cleaned.includes('?뷀뵆??)||cleaned.includes('?뚮즺')||cleaned.includes('??)) cfg = MEAL_ICONS.dessert;
             const card = document.createElement('div');
             card.className = `meal-grid-item ${cfg.class}`;
             card.innerHTML = `<i class="fa-solid ${cfg.icon}"></i>${cleaned}`;
@@ -1888,7 +1907,7 @@
           });
           return;
         }
-      } catch(e) { console.warn('급식 API 실패, 폴백'); }
+      } catch(e) { console.warn('湲됱떇 API ?ㅽ뙣, ?대갚'); }
 
       if (calEl) calEl.textContent = FALLBACK_MEALS.cal;
       grid.innerHTML = '';
@@ -1902,24 +1921,24 @@
     }
 
     // ========================================================
-    // 4-2. 날씨 그래픽 & API
+    // 4-2. ?좎뵪 洹몃옒??& API
     // ========================================================
     function getWeatherStatus(code) {
-      if (code === 0)                                         return { label: '맑음',    icon: 'fa-sun',         color: '#fee440' };
-      if (code === 1 || code === 2)                           return { label: '구름 조금', icon: 'fa-cloud-sun',   color: '#94a3b8' };
-      if (code === 3)                                         return { label: '흐림',    icon: 'fa-cloud',       color: '#64748b' };
-      if (code === 45 || code === 48)                         return { label: '안개',    icon: 'fa-smog',        color: '#94a3b8' };
-      if ([51,53,55,61,63,65,80,81,82].includes(code))       return { label: '비',      icon: 'fa-cloud-rain',  color: '#00bbf9' };
-      if ([71,73,75,85,86].includes(code))                   return { label: '눈',      icon: 'fa-snowflake',   color: '#f8fafc' };
-      if ([95,96,99].includes(code))                         return { label: '뇌우',    icon: 'fa-cloud-bolt',  color: '#ff007f' };
-      return { label: '맑음', icon: 'fa-sun', color: '#fee440' };
+      if (code === 0)                                         return { label: '留묒쓬',    icon: 'fa-sun',         color: '#fee440' };
+      if (code === 1 || code === 2)                           return { label: '援щ쫫 議곌툑', icon: 'fa-cloud-sun',   color: '#94a3b8' };
+      if (code === 3)                                         return { label: '?먮┝',    icon: 'fa-cloud',       color: '#64748b' };
+      if (code === 45 || code === 48)                         return { label: '?덇컻',    icon: 'fa-smog',        color: '#94a3b8' };
+      if ([51,53,55,61,63,65,80,81,82].includes(code))       return { label: '鍮?,      icon: 'fa-cloud-rain',  color: '#00bbf9' };
+      if ([71,73,75,85,86].includes(code))                   return { label: '??,      icon: 'fa-snowflake',   color: '#f8fafc' };
+      if ([95,96,99].includes(code))                         return { label: '?뚯슦',    icon: 'fa-cloud-bolt',  color: '#ff007f' };
+      return { label: '留묒쓬', icon: 'fa-sun', color: '#fee440' };
     }
 
     function getPm10Status(val) {
-      if (val <= 30)  return { label: '좋음',    color: '#4ade80' };
-      if (val <= 80)  return { label: '보통',    color: '#fbbf24' };
-      if (val <= 150) return { label: '나쁨',    color: '#ea580c' };
-      return              { label: '매우 나쁨', color: '#f43f5e' };
+      if (val <= 30)  return { label: '醫뗭쓬',    color: '#4ade80' };
+      if (val <= 80)  return { label: '蹂댄넻',    color: '#fbbf24' };
+      if (val <= 150) return { label: '?섏겏',    color: '#ea580c' };
+      return              { label: '留ㅼ슦 ?섏겏', color: '#f43f5e' };
     }
 
     function setWeatherGraphic(code) {
@@ -1937,9 +1956,9 @@
       } else if ([51,53,55,61,63,65,80,81,82].includes(code)) {
         html = `<div class="wx-rain-wrap"><div class="wx-cloud"></div><div class="wx-drops"><div class="wx-drop"></div><div class="wx-drop"></div><div class="wx-drop"></div><div class="wx-drop"></div></div></div>`;
       } else if ([71,73,75,85,86].includes(code)) {
-        html = `<div class="wx-snow-wrap"><div class="wx-cloud"></div><div class="wx-flakes"><span class="wx-flake">❄</span><span class="wx-flake">❄</span><span class="wx-flake">❄</span><span class="wx-flake">❄</span></div></div>`;
+        html = `<div class="wx-snow-wrap"><div class="wx-cloud"></div><div class="wx-flakes"><span class="wx-flake">??/span><span class="wx-flake">??/span><span class="wx-flake">??/span><span class="wx-flake">??/span></div></div>`;
       } else if ([95,96,99].includes(code)) {
-        html = `<div class="wx-thunder-wrap"><div class="wx-cloud"></div><div class="wx-drops" style="margin-top:2px;"><div class="wx-drop"></div><div class="wx-drop"></div><div class="wx-drop"></div></div><div class="wx-lightning">⚡</div></div>`;
+        html = `<div class="wx-thunder-wrap"><div class="wx-cloud"></div><div class="wx-drops" style="margin-top:2px;"><div class="wx-drop"></div><div class="wx-drop"></div><div class="wx-drop"></div></div><div class="wx-lightning">??/div></div>`;
       } else {
         html = `<div style="position:relative;display:flex;align-items:center;justify-content:center;width:70px;height:70px;"><div class="wx-sun"></div></div>`;
       }
@@ -1954,7 +1973,7 @@
       const pm10El     = document.getElementById('weather-pm10');
       const apparentEl = document.getElementById('weather-apparent');
 
-      // 부산시 서구 서대신동 좌표 (daily 데이터 요청 - 내일 날씨 반영)
+      // 遺?곗떆 ?쒓뎄 ?쒕??좊룞 醫뚰몴 (daily ?곗씠???붿껌 - ?댁씪 ?좎뵪 諛섏쁺)
       const weatherUrl = 'https://api.open-meteo.com/v1/forecast?latitude=35.1108&longitude=129.0119&daily=weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max,precipitation_probability_max,wind_speed_10m_max&timezone=Asia/Seoul';
       const airUrl     = 'https://air-quality-api.open-meteo.com/v1/air-quality?latitude=35.1108&longitude=129.0119&hourly=pm10&timezone=Asia/Seoul';
 
@@ -1969,7 +1988,7 @@
 
           const titleEl = document.getElementById('weather-card-title');
           if (titleEl) {
-            titleEl.textContent = isMorning ? '오늘 오후의 기상 예보' : '내일의 기상 예보';
+            titleEl.textContent = isMorning ? '?ㅻ뒛 ?ㅽ썑??湲곗긽 ?덈낫' : '?댁씪??湲곗긽 ?덈낫';
           }
 
           const tempMin = daily.temperature_2m_min[idx];
@@ -1978,10 +1997,9 @@
           const rainProb = daily.precipitation_probability_max[idx];
           const windMax = daily.wind_speed_10m_max[idx];
           const code = daily.weather_code[idx];
-          current_weather_code = code; // 날씨 코드 전역 변수에 저장
-
-          if (tempEl)     tempEl.textContent     = `${tempMin.toFixed(1)}°C / ${tempMax.toFixed(1)}°C`;
-          if (apparentEl) apparentEl.textContent = `${apparentMax.toFixed(1)}°C`;
+          current_weather_code = code; // ?좎뵪 肄붾뱶 ?꾩뿭 蹂?섏뿉 ???
+          if (tempEl)     tempEl.textContent     = `${tempMin.toFixed(1)}째C / ${tempMax.toFixed(1)}째C`;
+          if (apparentEl) apparentEl.textContent = `${apparentMax.toFixed(1)}째C`;
           if (humEl)      humEl.textContent      = `${rainProb}%`;
           if (windEl)     windEl.textContent     = `${windMax.toFixed(1)} m/s`;
           const st = getWeatherStatus(code);
@@ -1989,12 +2007,12 @@
           setWeatherGraphic(code);
         }
       } catch(e) {
-        console.warn('날씨 API 실패:', e);
-        if (tempEl) tempEl.textContent = '15.0°C / 24.5°C';
-        if (apparentEl) apparentEl.textContent = '23.8°C';
+        console.warn('?좎뵪 API ?ㅽ뙣:', e);
+        if (tempEl) tempEl.textContent = '15.0째C / 24.5째C';
+        if (apparentEl) apparentEl.textContent = '23.8째C';
         if (humEl) humEl.textContent = '20%';
         if (windEl) windEl.textContent = '3.5 m/s';
-        if (statusEl) statusEl.textContent = '맑음';
+        if (statusEl) statusEl.textContent = '留묒쓬';
         setWeatherGraphic(0);
       }
 
@@ -2011,21 +2029,21 @@
           if (pm10El) { pm10El.textContent = `${s.label} (${avgPm10.toFixed(0)})`; pm10El.style.color = s.color; }
         }
       } catch(e) {
-        if (pm10El) { pm10El.textContent = '좋음 (18)'; pm10El.style.color = '#4ade80'; }
+        if (pm10El) { pm10El.textContent = '醫뗭쓬 (18)'; pm10El.style.color = '#4ade80'; }
       }
     }
 
     // ========================================================
-    // 5. 창체 일정 (멀티카드 - 최대 3건)
+    // 5. 李쎌껜 ?쇱젙 (硫?곗뭅??- 理쒕? 3嫄?
     // ========================================================
-    const DAYS_KO = ['일','월','화','수','목','금','토'];
+    const DAYS_KO = ['??,'??,'??,'??,'紐?,'湲?,'??];
 
-    // 학생에게 의미 있는 일정인지 판단
+    // ?숈깮?먭쾶 ?섎? ?덈뒗 ?쇱젙?몄? ?먮떒
     function isStudentRelevant(title6, title7) {
       const boring = ['','undefined'];
       const t6 = (title6 || '').trim();
       const t7 = (title7 || '').trim();
-      // 둘 다 boring이거나 비어있으면 제외
+      // ????boring?닿굅??鍮꾩뼱?덉쑝硫??쒖쇅
       if (boring.includes(t6) && boring.includes(t7)) return false;
       if (!t6 && !t7) return false;
       return true;
@@ -2039,19 +2057,19 @@
         return;
       }
       container.style.display = 'flex';
-      const ev = events[0]; // 가장 가까운 1건만 표시
+      const ev = events[0]; // 媛??媛源뚯슫 1嫄대쭔 ?쒖떆
       
-      const dateLabelHtml = `<span class="vp-event-dday" style="color: var(--color-zone-e); font-size: 0.94rem; font-weight: 700; min-width: 148px; display: inline-block;">${ev.dateLabel || '수시'}</span>`;
+      const dateLabelHtml = `<span class="vp-event-dday" style="color: var(--color-zone-e); font-size: 0.94rem; font-weight: 700; min-width: 148px; display: inline-block;">${ev.dateLabel || '?섏떆'}</span>`;
         
-      const icon = ev.type === '문화예술' ? 'fa-palette'
-        : ev.type === '방학' ? 'fa-sun'
-        : ev.type === '체험' ? 'fa-bus'
-        : ev.type === '동아리' ? 'fa-users'
+      const icon = ev.type === '臾명솕?덉닠' ? 'fa-palette'
+        : ev.type === '諛⑺븰' ? 'fa-sun'
+        : ev.type === '泥댄뿕' ? 'fa-bus'
+        : ev.type === '?숈븘由? ? 'fa-users'
         : 'fa-chalkboard-user';
 
       container.innerHTML = `
         <div class="vp-event-inline-item" style="font-size: 1.15rem;">
-          <span class="vp-event-tag" style="background: rgba(254, 228, 64, 0.15); color: var(--color-zone-e); border: 1px solid rgba(254, 228, 64, 0.25); min-width: 65px; text-align: center;"><i class="fa-solid ${icon}"></i> 창체</span>
+          <span class="vp-event-tag" style="background: rgba(254, 228, 64, 0.15); color: var(--color-zone-e); border: 1px solid rgba(254, 228, 64, 0.25); min-width: 65px; text-align: center;"><i class="fa-solid ${icon}"></i> 李쎌껜</span>
           ${dateLabelHtml}
           <span class="vp-event-title">${ev.title}</span>
         </div>`;
@@ -2090,14 +2108,14 @@
       try {
         let rows = null;
         
-        // 1. Google Sheets API v4 시도
+        // 1. Google Sheets API v4 ?쒕룄
         try {
           if (!CONFIG.GOOGLE_API_KEY) throw new Error("No API Key");
           const values = await fetchGoogleSheetValues(spreadsheetId, range);
           rows = convertSheetValuesToObjects(values);
         } catch (apiErr) {
-          console.warn('Sheets API v4 실패, CSV export 폴백 시도:', apiErr);
-          // 2. CSV export 방식 폴백
+          console.warn('Sheets API v4 ?ㅽ뙣, CSV export ?대갚 ?쒕룄:', apiErr);
+          // 2. CSV export 諛⑹떇 ?대갚
           const res = await fetch(CONFIG.CREATIVE_SHEET_EXPORT_URL);
           if (!res.ok) throw new Error('fetch fail');
           const text = await res.text();
@@ -2110,21 +2128,21 @@
         today.setHours(0, 0, 0, 0);
         const upcoming = [];
 
-        // 데이터 컬럼 인덱스 매핑 찾기
+        // ?곗씠??而щ읆 ?몃뜳??留ㅽ븨 李얘린
         const sample = rows[0];
-        const dateKey = Object.keys(sample).find(k => k.includes('날짜')||k.includes('일자')) || Object.keys(sample)[0];
-        const gradeKey = Object.keys(sample).find(k => k.includes('학년') || k.includes('대상')) || Object.keys(sample)[1];
-        const title6Key = Object.keys(sample).find(k => k.includes('6교시') || k.includes('활동')) || Object.keys(sample)[4];
-        const title7Key = Object.keys(sample).find(k => k.includes('7교시')) || Object.keys(sample)[5];
-        const deptKey = Object.keys(sample).find(k => k.includes('부서') || k.includes('담당')) || Object.keys(sample)[6];
+        const dateKey = Object.keys(sample).find(k => k.includes('?좎쭨')||k.includes('?쇱옄')) || Object.keys(sample)[0];
+        const gradeKey = Object.keys(sample).find(k => k.includes('?숇뀈') || k.includes('???)) || Object.keys(sample)[1];
+        const title6Key = Object.keys(sample).find(k => k.includes('6援먯떆') || k.includes('?쒕룞')) || Object.keys(sample)[4];
+        const title7Key = Object.keys(sample).find(k => k.includes('7援먯떆')) || Object.keys(sample)[5];
+        const deptKey = Object.keys(sample).find(k => k.includes('遺??) || k.includes('?대떦')) || Object.keys(sample)[6];
 
         for (let i = 0; i < rows.length; i++) {
           const row = rows[i];
           const dateStr = row[dateKey] || '';
           if (!dateStr.trim()) continue;
           
-          // '2026년 6월 5일' 혹은 '2026년 6 5일' 둘다 파싱 가능하도록 매칭
-          const dm = dateStr.match(/(\d{4})년\s+(\d{1,2})[월\s]+\s*(\d{1,2})일/);
+          // '2026??6??5?? ?뱀? '2026??6 5?? ?섎떎 ?뚯떛 媛?ν븯?꾨줉 留ㅼ묶
+          const dm = dateStr.match(/(\d{4})??s+(\d{1,2})[??s]+\s*(\d{1,2})??);
           if (!dm) continue;
           
           const evDate = new Date(parseInt(dm[1]), parseInt(dm[2])-1, parseInt(dm[3]));
@@ -2143,20 +2161,20 @@
           if (!isStudentRelevant(title6, title7)) continue;
 
           const dday = Math.round((evDate - today) / 86400000);
-          const dateLabel = `${parseInt(dm[2])}월 ${parseInt(dm[3])}일 (${DAYS_KO[evDate.getDay()]})`;
+          const dateLabel = `${parseInt(dm[2])}??${parseInt(dm[3])}??(${DAYS_KO[evDate.getDay()]})`;
 
           const combinedTitle = title6 + title7;
-          const type = combinedTitle.includes('문화예술') ? '문화예술'
-            : combinedTitle.includes('방학') || combinedTitle.includes('종업') ? '방학'
-            : combinedTitle.includes('체험') ? '체험'
-            : combinedTitle.includes('동아리') ? '동아리' : '교육';
+          const type = combinedTitle.includes('臾명솕?덉닠') ? '臾명솕?덉닠'
+            : combinedTitle.includes('諛⑺븰') || combinedTitle.includes('醫낆뾽') ? '諛⑺븰'
+            : combinedTitle.includes('泥댄뿕') ? '泥댄뿕'
+            : combinedTitle.includes('?숈븘由?) ? '?숈븘由? : '援먯쑁';
 
-          const tag = grade1.includes('동아리') ? '동아리' 
-            : grade1.includes('봉사') ? '봉사활동'
-            : grade1.includes('자율') ? '자율활동' : '창체';
+          const tag = grade1.includes('?숈븘由?) ? '?숈븘由? 
+            : grade1.includes('遊됱궗') ? '遊됱궗?쒕룞'
+            : grade1.includes('?먯쑉') ? '?먯쑉?쒕룞' : '李쎌껜';
 
-          const displayTitle = [title6, title7].filter(t => t).map(t => t.trim() === '동아리 활동 내용 입력' ? '동아리 활동' : t).join(' / ');
-          const dept = deptVal ? deptVal + ' 주관' : '각 부서 주관';
+          const displayTitle = [title6, title7].filter(t => t).map(t => t.trim() === '?숈븘由??쒕룞 ?댁슜 ?낅젰' ? '?숈븘由??쒕룞' : t).join(' / ');
+          const dept = deptVal ? deptVal + ' 二쇨?' : '媛?遺??二쇨?';
 
           upcoming.push({ tag, dday, dateLabel, title: displayTitle, dept, type });
           if (upcoming.length >= 1) break;
@@ -2167,7 +2185,7 @@
           return;
         }
       } catch(e) {
-        console.warn('창체 시트 파싱 실패, 하드코딩 폴백 사용:', e);
+        console.warn('李쎌껜 ?쒗듃 ?뚯떛 ?ㅽ뙣, ?섎뱶肄붾뵫 ?대갚 ?ъ슜:', e);
       }
 
       buildCreativeInC(FALLBACK_EVENTS);
@@ -2197,52 +2215,52 @@
     }
 
     // ========================================================
-    // 7. 부서 전달사항 (티커)
+    // 7. 遺???꾨떖?ы빆 (?곗빱)
     // ========================================================
     // ========================================================
-    // 7. 부서 전달사항 (티커) 및 교감선생님 대표 행사 파싱
+    // 7. 遺???꾨떖?ы빆 (?곗빱) 諛?援먭컧?좎깮??????됱궗 ?뚯떛
     // ========================================================
     function extractVpEvents(rows) {
       if (!rows || rows.length === 0) return [];
       
       const sample = rows[0];
-      const deptK = Object.keys(sample).find(k => k.includes('부서')||k.includes('부')) || Object.keys(sample)[0];
-      const contK = Object.keys(sample).find(k => k.includes('전달')||k.includes('결의')||k.includes('내용')) || Object.keys(sample)[2];
+      const deptK = Object.keys(sample).find(k => k.includes('遺??)||k.includes('遺')) || Object.keys(sample)[0];
+      const contK = Object.keys(sample).find(k => k.includes('?꾨떖')||k.includes('寃곗쓽')||k.includes('?댁슜')) || Object.keys(sample)[2];
       
       const list = [];
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
-      // 교직원/행정 업무용 키워드 (제외 대상)
+      // 援먯쭅???됱젙 ?낅Т???ㅼ썙??(?쒖쇅 ???
       const staffKeywords = [
-        '출제', '나이스', '입력 완료', '마감', '제출', '결재', '기안', 
-        '인쇄', '연수', '교직원', '공문', '배부', '취합', '수령', 
-        '검토', '채점', '등록', '심사위원', '회의', '협의회'
+        '異쒖젣', '?섏씠??, '?낅젰 ?꾨즺', '留덇컧', '?쒖텧', '寃곗옱', '湲곗븞', 
+        '?몄뇙', '?곗닔', '援먯쭅??, '怨듬Ц', '諛곕?', '痍⑦빀', '?섎졊', 
+        '寃??, '梨꾩젏', '?깅줉', '?ъ궗?꾩썝', '?뚯쓽', '?묒쓽??
       ];
-      // 학생 중요 키워드 (가점 대상)
+      // ?숈깮 以묒슂 ?ㅼ썙??(媛?????
       const studentKeywords = [
-        '실시', '평가', '시험', '지필평가', '대회', '행사', '축제', 
-        '방학', '체험학습', '콘서트', '교육', '훈련', '안전', '출입 제한', '강연'
+        '?ㅼ떆', '?됯?', '?쒗뿕', '吏?꾪룊媛', '???, '?됱궗', '異뺤젣', 
+        '諛⑺븰', '泥댄뿕?숈뒿', '肄섏꽌??, '援먯쑁', '?덈젴', '?덉쟾', '異쒖엯 ?쒗븳', '媛뺤뿰'
       ];
-      const importantDepts = ['교무기획', '생활지도', '안전', '창의인성', '교감', '교장'];
+      const importantDepts = ['援먮Т湲고쉷', '?앺솢吏??, '?덉쟾', '李쎌쓽?몄꽦', '援먭컧', '援먯옣'];
 
       rows.forEach(row => {
         const content = (row[contK] || '').trim();
         const dept = (row[deptK] || '').trim();
         if (!content) return;
 
-        // 교사 행정 업무용 문구 차단
+        // 援먯궗 ?됱젙 ?낅Т??臾멸뎄 李⑤떒
         if (staffKeywords.some(k => content.includes(k))) return;
 
         let score = 0;
         if (importantDepts.some(d => dept.includes(d))) score += 10;
         if (studentKeywords.some(k => content.includes(k))) score += 15;
-        if (content.includes('교감') || dept.includes('교감')) score += 5;
+        if (content.includes('援먭컧') || dept.includes('援먭컧')) score += 5;
 
         let ddayNum = 0;
         let dateLabel = '';
         
-        const dateMatch = content.match(/(\d{1,2})월\s*(\d{1,2})일|(\d{1,2})[.\/](\d{1,2})/);
+        const dateMatch = content.match(/(\d{1,2})??s*(\d{1,2})??(\d{1,2})[.\/](\d{1,2})/);
         if (dateMatch) {
           const month = parseInt(dateMatch[1] || dateMatch[3]);
           const day = parseInt(dateMatch[2] || dateMatch[4]);
@@ -2254,21 +2272,21 @@
           const diffDays = Math.round(diffTime / 86400000);
           if (diffDays >= 0) {
             ddayNum = diffDays;
-            const daysKo = ['일','월','화','수','목','금','토'];
+            const daysKo = ['??,'??,'??,'??,'紐?,'湲?,'??];
             const dayOfWeek = daysKo[targetDate.getDay()];
-            dateLabel = `${month}월 ${day}일 (${dayOfWeek})`;
+            dateLabel = `${month}??${day}??(${dayOfWeek})`;
           } else {
-            // 과거 일정은 제외
+            // 怨쇨굅 ?쇱젙? ?쒖쇅
             return;
           }
         }
 
         list.push({
-          tag: dept.replace('부','').substring(0, 4) || '안내',
+          tag: dept.replace('遺','').substring(0, 4) || '?덈궡',
           title: content.length > 55 ? content.substring(0, 52) + '...' : content,
-          dept: dept ? `${dept} 주관` : '학교 주관',
+          dept: dept ? `${dept} 二쇨?` : '?숆탳 二쇨?',
           dday: ddayNum,
-          dateLabel: dateLabel || '수시 진행',
+          dateLabel: dateLabel || '?섏떆 吏꾪뻾',
           score: score
         });
       });
@@ -2290,12 +2308,12 @@
       }
       container.style.display = 'flex';
       container.innerHTML = events.map((ev, i) => {
-        const dateLabelHtml = `<span class="vp-event-dday" style="color: var(--color-zone-e); font-size: 0.94rem; font-weight: 700; min-width: 148px; display: inline-block;">${ev.dateLabel || '수시'}</span>`;
+        const dateLabelHtml = `<span class="vp-event-dday" style="color: var(--color-zone-e); font-size: 0.94rem; font-weight: 700; min-width: 148px; display: inline-block;">${ev.dateLabel || '?섏떆'}</span>`;
           
-        const icon = ev.title.includes('평가') || ev.title.includes('시험') ? 'fa-pen-clip'
-          : ev.title.includes('교육') ? 'fa-graduation-cap'
-          : ev.title.includes('대회') ? 'fa-trophy'
-          : ev.title.includes('안전') ? 'fa-shield-halved'
+        const icon = ev.title.includes('?됯?') || ev.title.includes('?쒗뿕') ? 'fa-pen-clip'
+          : ev.title.includes('援먯쑁') ? 'fa-graduation-cap'
+          : ev.title.includes('???) ? 'fa-trophy'
+          : ev.title.includes('?덉쟾') ? 'fa-shield-halved'
           : 'fa-bullhorn';
           
         return `
@@ -2320,10 +2338,10 @@
       };
 
       const FALLBACK_VP_EVENTS = [
-        { tag: '고사보안', dday: getFallbackDday(6, 4), dateLabel: '~06월 04일(목)', title: '2차 고사(기말고사) 출제 기간 중 학생 교무실 출입 금지', dept: '교육연구부 주관' },
-        { tag: '전교생', dday: getFallbackDday(6, 12), dateLabel: '06월 12일(금)', title: '올바른 디지털 생활! 정보통신윤리교육 실시 (외부 강사 초청)', dept: '교육정보부 주관' },
-        { tag: '1학년', dday: getFallbackDday(6, 25), dateLabel: '06월 25일(목)', title: '내 미래를 그리는 첫걸음! 1학년 코스 선택 설명회', dept: '교무기획부 주관' },
-        { tag: '게임과', dday: getFallbackDday(6, 27), dateLabel: '06월 27일(토)', title: '게임콘텐츠과 1학년 전원 GTQ 자격시험 단체 응시', dept: '전문교육부 주관' }
+        { tag: '怨좎궗蹂댁븞', dday: getFallbackDday(6, 4), dateLabel: '~06??04??紐?', title: '2李?怨좎궗(湲곕쭚怨좎궗) 異쒖젣 湲곌컙 以??숈깮 援먮Т??異쒖엯 湲덉?', dept: '援먯쑁?곌뎄遺 二쇨?' },
+        { tag: '?꾧탳??, dday: getFallbackDday(6, 12), dateLabel: '06??12??湲?', title: '?щ컮瑜??붿????앺솢! ?뺣낫?듭떊?ㅻ━援먯쑁 ?ㅼ떆 (?몃? 媛뺤궗 珥덉껌)', dept: '援먯쑁?뺣낫遺 二쇨?' },
+        { tag: '1?숇뀈', dday: getFallbackDday(6, 25), dateLabel: '06??25??紐?', title: '??誘몃옒瑜?洹몃━??泥リ구?? 1?숇뀈 肄붿뒪 ?좏깮 ?ㅻ챸??, dept: '援먮Т湲고쉷遺 二쇨?' },
+        { tag: '寃뚯엫怨?, dday: getFallbackDday(6, 27), dateLabel: '06??27????', title: '寃뚯엫肄섑뀗痢좉낵 1?숇뀈 ?꾩썝 GTQ ?먭꺽?쒗뿕 ?⑥껜 ?묒떆', dept: '?꾨Ц援먯쑁遺 二쇨?' }
       ];
 
       if (!apiKey && !isTokenValid) { 
@@ -2354,7 +2372,7 @@
         const data = await res.json();
         if (data.files && data.files.length > 0) {
           let target = data.files[0];
-          for (let term of [`${yy}.${mm}`,`${yy}년${mm}월`,`${yy}년${String(mm).padStart(2,'0')}월`,`${mm}월`]) {
+          for (let term of [`${yy}.${mm}`,`${yy}??{mm}??,`${yy}??{String(mm).padStart(2,'0')}??,`${mm}??]) {
             const found = data.files.find(f => f.name.includes(term));
             if (found) { target = found; break; }
           }
@@ -2369,10 +2387,10 @@
           const rows = parseCSV(await csvRes.text());
           if (rows && rows.length > 0) {
             const sample = rows[0];
-            const deptK = Object.keys(sample).find(k => k.includes('부서')||k.includes('부')) || Object.keys(sample)[0];
-            const contK = Object.keys(sample).find(k => k.includes('전달')||k.includes('결의')||k.includes('내용')) || Object.keys(sample)[2];
+            const deptK = Object.keys(sample).find(k => k.includes('遺??)||k.includes('遺')) || Object.keys(sample)[0];
+            const contK = Object.keys(sample).find(k => k.includes('?꾨떖')||k.includes('寃곗쓽')||k.includes('?댁슜')) || Object.keys(sample)[2];
             const newAnn = [];
-            rows.forEach(row => { if (row[contK]) newAnn.push({ text: `[${row[deptK]||'기타'}] ${row[contK]}`, critical: (row[deptK]||'').includes('기획')||(row[deptK]||'').includes('생활')||(row[deptK]||'').includes('안전') }); });
+            rows.forEach(row => { if (row[contK]) newAnn.push({ text: `[${row[deptK]||'湲고?'}] ${row[contK]}`, critical: (row[deptK]||'').includes('湲고쉷')||(row[deptK]||'').includes('?앺솢')||(row[deptK]||'').includes('?덉쟾') }); });
             if (newAnn.length > 0) { ANNOUNCEMENTS.length = 0; newAnn.forEach(a => ANNOUNCEMENTS.push(a)); }
             
             const vpEvents = extractVpEvents(rows);
@@ -2384,14 +2402,14 @@
           buildVpEventCards(FALLBACK_VP_EVENTS);
         }
       } catch(e) { 
-        console.warn('부서 전달사항 연동 실패'); 
+        console.warn('遺???꾨떖?ы빆 ?곕룞 ?ㅽ뙣'); 
         buildVpEventCards(FALLBACK_VP_EVENTS);
       }
       initTicker();
     }
 
     // ========================================================
-    // 8. 디버그 레이어 제어
+    // 8. ?붾쾭洹??덉씠???쒖뼱
     // ========================================================
     let isGridActive = false, isBlackoutDebugActive = false;
 
@@ -2420,7 +2438,7 @@
     }
 
     // ========================================================
-    // 9. 종합 구동 컨트롤러
+    // 9. 醫낇빀 援щ룞 而⑦듃濡ㅻ윭
     // ========================================================
     async function refreshAllData() {
       const mH = document.getElementById('meal-card-header');
@@ -2439,45 +2457,44 @@
       loadNoticeBoard();
     }
 
-    // 날씨에 맞게 세분화된 유튜브 BGM 플레이리스트
-    // 당신은 사랑받기 위해 태어난 사람(CCM Piano): RDDVFM4yvUg
-    // 혼자 걷지 않을게요(CCM Piano): R79PpyO_q14
+    // ?좎뵪??留욊쾶 ?몃텇?붾맂 ?좏뒠釉?BGM ?뚮젅?대━?ㅽ듃
+    // ?뱀떊? ?щ옉諛쏄린 ?꾪빐 ?쒖뼱???щ엺(CCM Piano): RDDVFM4yvUg
+    // ?쇱옄 嫄룹? ?딆쓣寃뚯슂(CCM Piano): R79PpyO_q14
     const BGM_PLAYLIST = {
-      // 맑음 / 구름 조금
+      // 留묒쓬 / 援щ쫫 議곌툑
       sunny: {
         welcome: [
-          { title: '당신은 사랑받기 위해 태어난 사람 (CCM Piano)', youtubeId: 'RDDVFM4yvUg' },
+          { title: '?뱀떊? ?щ옉諛쏄린 ?꾪빐 ?쒖뼱???щ엺 (CCM Piano)', youtubeId: 'RDDVFM4yvUg' },
           { title: 'Vivaldi - Spring (Allegro)', youtubeId: 'gT8Z07YV_oA' },
           { title: 'Mozart - Eine kleine Nachtmusik', youtubeId: 'H4H85jP_5yQ' },
           { title: 'Beethoven - Symphony No. 6 (Pastoral)', youtubeId: 'YyZlD8gP4sA' }
         ],
         break: [
           { title: 'Lofi Hip Hop - Chill Study Beats', youtubeId: '5qap5aO4i9A' },
-          { title: 'Erik Satie - Gymnopédie No. 1', youtubeId: '021wT1g4T5g' },
+          { title: 'Erik Satie - Gymnop챕die No. 1', youtubeId: '021wT1g4T5g' },
           { title: 'Chopin - Nocturne in E-flat Major', youtubeId: 'FCPdIvXo2rU' }
         ]
       },
-      // 비 / 흐림 / 안개 / 소나기 / 뇌우
+      // 鍮?/ ?먮┝ / ?덇컻 / ?뚮굹湲?/ ?뚯슦
       rainy: {
         welcome: [
-          { title: '혼자 걷지 않을게요 (CCM Piano)', youtubeId: 'R79PpyO_q14' },
+          { title: '?쇱옄 嫄룹? ?딆쓣寃뚯슂 (CCM Piano)', youtubeId: 'R79PpyO_q14' },
           { title: 'Chopin - Raindrop Prelude', youtubeId: '6gV9-fn9a98' }
         ],
         break: [
-          { title: '비 오는 날 듣기 좋은 Lofi Cafe', youtubeId: '5qap5aO4i9A' },
-          { title: 'Debussy - Clair de Lune (달빛)', youtubeId: '97_VJve7UVc' },
+          { title: '鍮??ㅻ뒗 ???ｊ린 醫뗭? Lofi Cafe', youtubeId: '5qap5aO4i9A' },
+          { title: 'Debussy - Clair de Lune (?щ튆)', youtubeId: '97_VJve7UVc' },
           { title: 'Chopin - Nocturne in E-flat Major', youtubeId: 'FCPdIvXo2rU' }
         ]
       },
-      // 눈
-      snowy: {
+      // ??      snowy: {
         welcome: [
-          { title: '당신은 사랑받기 위해 태어난 사람 (CCM Piano)', youtubeId: 'RDDVFM4yvUg' },
+          { title: '?뱀떊? ?щ옉諛쏄린 ?꾪빐 ?쒖뼱???щ엺 (CCM Piano)', youtubeId: 'RDDVFM4yvUg' },
           { title: 'Tchaikovsky - Waltz of the Flowers', youtubeId: 'QxHkBeG1l6M' }
         ],
         break: [
-          { title: '따뜻한 겨울 캐롤 Lofi Cafe', youtubeId: '5qap5aO4i9A' },
-          { title: 'Erik Satie - Gymnopédie No. 1', youtubeId: '021wT1g4T5g' },
+          { title: '?곕쑜??寃⑥슱 罹먮· Lofi Cafe', youtubeId: '5qap5aO4i9A' },
+          { title: 'Erik Satie - Gymnop챕die No. 1', youtubeId: '021wT1g4T5g' },
           { title: 'Chopin - Nocturne in E-flat Major', youtubeId: 'FCPdIvXo2rU' }
         ]
       }
@@ -2490,7 +2507,7 @@
     let currentBgmIndex = 0;
     let currentTrack = null;
 
-    // 유튜브 API가 로드되면 자동 호출
+    // ?좏뒠釉?API媛 濡쒕뱶?섎㈃ ?먮룞 ?몄텧
     window.onYouTubeIframeAPIReady = function() {
       ytPlayer = new YT.Player('yt-player', {
         height: '1',
@@ -2513,61 +2530,60 @@
       });
     };
 
-    // 학생 도파민 자극형 동기부여 명언 50선
-    const QUOTES = [
-      { text: "대학 가면 살 빠진다는 구라 믿지 마라. 성적 낮으면 살 뺄 시간도 없다.", author: "현실 자극" },
-      { text: "지금 자면 꿈을 꾸지만, 지금 공부하면 밤에 마라탕에 꿔바로우 시킬 수 있다.", author: "식탐 자극" },
-      { text: "네 미래는 네가 오늘 유튜브 쇼츠를 보며 낄낄댄 시간만큼 깎여 나간다.", author: "팩트 일침" },
-      { text: "공부하기 싫을 때마다 통장 잔고 0원을 상상해라. 잠이 싹 달아난다.", author: "현실 자극" },
-      { text: "남들 롤 승급할 때, 네 성적은 브론즈로 강등당하는 중이다.", author: "게임 비유" },
-      { text: "노력은 템빨을 이긴다. 네 머리에 진짜 지식 장비를 장착해라.", author: "RPG 비유" },
-      { text: "성공은 최고의 복수다. 너 무시하던 놈들이 네 밑에서 일하게 만들어라.", author: "야망 자극" },
-      { text: "포기하는 순간 편해지지만, 그 뒤엔 평생 불편하게 살아야 한다.", author: "인생 팩폭" },
-      { text: "노력하지 않는 천재보다, 악착같이 노력하는 빌런이 훨씬 강력하다.", author: "빌런 동기부여" },
-      { text: "오늘 걷지 않으면 내일은 배달 오토바이 뒤에 타서 달려야 한다.", author: "극단적 자극" },
-      { text: "시험 끝나고 코인 노래방에서 지를 목소리를 위해, 지금은 펜을 쥐어라.", author: "보상 자극" },
-      { text: "네 라이벌은 지금 이 순간에도 네 자리를 뺏으려고 스터디 카페에서 불태우는 중.", author: "경쟁 유도" },
-      { text: "행동 없는 생각은 망상이고, 노력 없는 꿈은 개꿈이다.", author: "직설 일침" },
-      { text: "성적표 나올 때 부모님 눈빛 피하고 싶지 않으면, 눈 똑바로 뜨고 책 봐라.", author: "가족 평화" },
-      { text: "미룰 수 있을 때까지 미루다 보면, 결국 네 인생 전체가 미뤄진다.", author: "시간 관리" },
-      { text: "게임 판수 늘릴 시간에 단어 개수를 늘려라. 진짜 인생 강화는 현실이다.", author: "현실 강화" },
-      { text: "머리 쥐어짜며 공부하는 고통은 순간이지만, 성적표 들고 하는 후회는 영원하다.", author: "후회 예방" },
-      { text: "세상은 구차한 핑계에 관심 없다. 그냥 결과로 싸대기를 때려라.", author: "결과 증명" },
-      { text: "성공한 사람들의 비결? 걔네도 너만 할 때 미친 듯이 버텨서 그런 거다.", author: "현실 직시" },
-      { text: "시험 점수로 증명해라. 혓바닥 긴 놈 치고 제대로 하는 놈 못 봤다.", author: "실력 증명" },
-      { text: "오늘 조금 힘들다고 누워버리면, 내일은 서 있을 자리조차 없어진다.", author: "위기 자극" },
-      { text: "너를 과소평가한 놈들에게 네 상승 곡선으로 확실한 참교육을 시전해라.", author: "참교육 밈" },
-      { text: "시험 잘 보고 해방감에 먹는 야식이 세상에서 가장 맛있는 도파민이다.", author: "도파민 보상" },
-      { text: "인생은 롤이 아니다. 트롤 짓 하면 리포트가 아니라 인생이 정지당한다.", author: "트롤 경고" },
-      { text: "귀찮음이라는 보스를 깨야 네 뇌의 레벨이 올라간다. 지금 퀘스트를 깨라.", author: "퀘스트 완료" },
-      { text: "내가 안 하면 남이 한다. 내 몫의 미래를 남한테 공짜로 뺏기지 마라.", author: "지분 확보" },
-      { text: "공부하는 척 노력하는 척 스스로를 속이지 마라. 시험지가 진실을 안다.", author: "팩트 체크" },
-      { text: "오늘 흘린 땀 한 방울 한 방울이 내일 네 슈퍼카 배기음이 된다.", author: "물질 자극" },
-      { text: "지금 공부 안 하면 나중에 남들 멋있게 휴가 갈 때 방구석에서 쇼츠 봐야 한다.", author: "현실 경고" },
-      { text: "오늘 공부로 머리 아픈 것은 뇌세포 데이터베이스가 확장되는 긍정적 버그다.", author: "IT 비유" },
-      { text: "하기 싫은 걸 이 악물고 해낼 때, 뇌에서 진짜 성공 도파민이 터져 나온다.", author: "뇌과학 자극" },
-      { text: "인생 강화 확률에 100%는 없지만, 시도조차 안 하면 무조건 0% 부러진다.", author: "강화 실패 방지" },
-      { text: "오늘 눈 딱 감고 자습실 의자에 엉덩이 붙여라. 미래의 네가 눈물 흘리며 고마워한다.", author: "미래의 편지" },
-      { text: "등골 브레이커로 늙을 것인가, 부모님께 최고의 효도 FLEX를 꽂아드릴 것인가.", author: "효도 플렉스" },
-      { text: "멋있게 사는 사람들은 남들이 잘 때 눈을 부릅뜨고 독기를 품었던 사람들이다.", author: "독기 충전" },
-      { text: "포기하지 마라. 지금 네가 겪는 답답함은 네 인생 영화의 빌드업 과정이다.", author: "주인공 버프" },
-      { text: "네 꿈을 허황되다고 쫑알거리던 놈들의 콧대를 박살 낼 방법은 성공뿐이다.", author: "참된 복수" },
-      { text: "독하게 공부해라. 세상은 착한 사람이 아니라 실력 있는 사람에게 고개를 숙인다.", author: "독기 자극" },
-      { text: "잠은 무덤에 가서 실컷 자라. 지금 졸면 평생 남 밑에서 굽신거리며 졸개로 산다.", author: "졸개 방지" },
-      { text: "인생에 치트키는 없다. 매일의 성실함이 시스템을 뚫는 유일한 버그다.", author: "해커 정신" },
-      { text: "지금 집중하는 1시간의 가치는, 10년 뒤 1년의 시간과 맞먹는다.", author: "골든 타임" },
-      { text: "네 한계의 임계점을 돌파하는 순간, 온몸을 짜릿하게 찌르는 도파민을 느껴봐라.", author: "임계점 돌파" },
-      { text: "스마트폰 전원을 끄는 순간, 네 평균 등급은 즉시 1단계 상승한다.", author: "폰 오프" },
-      { text: "공부는 머리로 하는 게 아니라 엉덩이 진득한 무게감과 깡다구로 하는 거다.", author: "근성 증명" },
-      { text: "남들 잘 때 밤새워 단어 외우면, 남들 밤새워 일할 때 꿀잠 잘 수 있다.", author: "꿀잠 미래" },
-      { text: "오늘 밤 침대에 누웠을 때 후회 한 점 없는 기분 좋은 피로를 위해, 지금 태워라.", author: "후회 제로" },
-      { text: "도전하지 않는 청춘은 그저 나이만 젊은 노인에 불과하다.", author: "청춘 예찬" },
-      { text: "성공이라는 압도적 쾌감을 맛보면, 그동안의 공부 고통은 뇌리에서 싹 씻겨간다.", author: "성취 도파민" },
-      { text: "네 인생 스쿼드의 메인 딜러이자 에이스는 너다. 이제 팀을 캐리할 시간이다.", author: "캐리 시점" },
-      { text: "네 미래 배우자의 얼굴이 바뀐다. 칠판 똑바로 보고 펜 굴려라.", author: "인생 역전" }
+    // ?숈깮 ?꾪뙆誘??먭레???숆린遺??紐낆뼵 50??    const QUOTES = [
+      { text: "???媛硫???鍮좎쭊?ㅻ뒗 援щ씪 誘우? 留덈씪. ?깆쟻 ??쑝硫???類??쒓컙???녿떎.", author: "?꾩떎 ?먭레" },
+      { text: "吏湲??먮㈃ 轅덉쓣 袁몄?留? 吏湲?怨듬??섎㈃ 諛ㅼ뿉 留덈씪?뺤뿉 轅붾컮濡쒖슦 ?쒗궗 ???덈떎.", author: "?앺깘 ?먭레" },
+      { text: "??誘몃옒???ㅺ? ?ㅻ뒛 ?좏뒠釉??쇱툩瑜?蹂대ŉ ?꾨굜???쒓컙留뚰겮 源롮뿬 ?섍컙??", author: "?⑺듃 ?쇱묠" },
+      { text: "怨듬??섍린 ?レ쓣 ?뚮쭏???듭옣 ?붽퀬 0?먯쓣 ?곸긽?대씪. ?좎씠 ???ъ븘?쒕떎.", author: "?꾩떎 ?먭레" },
+      { text: "?⑤뱾 濡??밴툒???? ???깆쟻? 釉뚮줎利덈줈 媛뺣벑?뱁븯??以묒씠??", author: "寃뚯엫 鍮꾩쑀" },
+      { text: "?몃젰? ?쒕묠???닿릿?? ??癒몃━??吏꾩쭨 吏???λ퉬瑜??μ갑?대씪.", author: "RPG 鍮꾩쑀" },
+      { text: "?깃났? 理쒓퀬??蹂듭닔?? ??臾댁떆?섎뜕 ?덈뱾????諛묒뿉???쇳븯寃?留뚮뱾?대씪.", author: "?쇰쭩 ?먭레" },
+      { text: "?ш린?섎뒗 ?쒓컙 ?명빐吏吏留? 洹??ㅼ뿏 ?됱깮 遺덊렪?섍쾶 ?댁븘???쒕떎.", author: "?몄깮 ?⑺룺" },
+      { text: "?몃젰?섏? ?딅뒗 泥쒖옱蹂대떎, ?낆갑媛숈씠 ?몃젰?섎뒗 鍮뚮윴???⑥뵮 媛뺣젰?섎떎.", author: "鍮뚮윴 ?숆린遺?? },
+      { text: "?ㅻ뒛 嫄룹? ?딆쑝硫??댁씪? 諛곕떖 ?ㅽ넗諛붿씠 ?ㅼ뿉 ????щ젮???쒕떎.", author: "洹밸떒???먭레" },
+      { text: "?쒗뿕 ?앸굹怨?肄붿씤 ?몃옒諛⑹뿉??吏瑜?紐⑹냼由щ? ?꾪빐, 吏湲덉? ?쒖쓣 伊먯뼱??", author: "蹂댁긽 ?먭레" },
+      { text: "???쇱씠踰뚯? 吏湲????쒓컙?먮룄 ???먮━瑜?類륁쑝?ㅺ퀬 ?ㅽ꽣??移댄럹?먯꽌 遺덊깭?곕뒗 以?", author: "寃쎌웳 ?좊룄" },
+      { text: "?됰룞 ?녿뒗 ?앷컖? 留앹긽?닿퀬, ?몃젰 ?녿뒗 轅덉? 媛쒓퓞?대떎.", author: "吏곸꽕 ?쇱묠" },
+      { text: "?깆쟻???섏삱 ??遺紐⑤떂 ?덈튆 ?쇳븯怨??띠? ?딆쑝硫? ???묐컮濡??④퀬 梨?遊먮씪.", author: "媛議??됲솕" },
+      { text: "誘몃０ ???덉쓣 ?뚭퉴吏 誘몃（??蹂대㈃, 寃곌뎅 ???몄깮 ?꾩껜媛 誘몃쨪吏꾨떎.", author: "?쒓컙 愿由? },
+      { text: "寃뚯엫 ?먯닔 ?섎┫ ?쒓컙???⑥뼱 媛쒖닔瑜??섎젮?? 吏꾩쭨 ?몄깮 媛뺥솕???꾩떎?대떎.", author: "?꾩떎 媛뺥솕" },
+      { text: "癒몃━ 伊먯뼱吏쒕ŉ 怨듬??섎뒗 怨좏넻? ?쒓컙?댁?留? ?깆쟻???ㅺ퀬 ?섎뒗 ?꾪쉶???곸썝?섎떎.", author: "?꾪쉶 ?덈갑" },
+      { text: "?몄긽? 援ъ감???묎퀎??愿???녿떎. 洹몃깷 寃곌낵濡??몃?湲곕? ?뚮젮??", author: "寃곌낵 利앸챸" },
+      { text: "?깃났???щ엺?ㅼ쓽 鍮꾧껐? 嫄붾꽕???덈쭔 ????誘몄튇 ??씠 踰꾪뀲??洹몃윴 嫄곕떎.", author: "?꾩떎 吏곸떆" },
+      { text: "?쒗뿕 ?먯닔濡?利앸챸?대씪. ?볥컮??湲???移섍퀬 ?쒕?濡??섎뒗 ??紐?遊ㅻ떎.", author: "?ㅻ젰 利앸챸" },
+      { text: "?ㅻ뒛 議곌툑 ?섎뱾?ㅺ퀬 ?꾩썙踰꾨━硫? ?댁씪? ???덉쓣 ?먮━議곗감 ?놁뼱吏꾨떎.", author: "?꾧린 ?먭레" },
+      { text: "?덈? 怨쇱냼?됯????덈뱾?먭쾶 ???곸듅 怨≪꽑?쇰줈 ?뺤떎??李멸탳?≪쓣 ?쒖쟾?대씪.", author: "李멸탳??諛? },
+      { text: "?쒗뿕 ??蹂닿퀬 ?대갑媛먯뿉 癒밸뒗 ?쇱떇???몄긽?먯꽌 媛??留쏆엳???꾪뙆誘쇱씠??", author: "?꾪뙆誘?蹂댁긽" },
+      { text: "?몄깮? 濡ㅼ씠 ?꾨땲?? ?몃· 吏??섎㈃ 由ы룷?멸? ?꾨땲???몄깮???뺤??뱁븳??", author: "?몃· 寃쎄퀬" },
+      { text: "洹李?쓬?대씪??蹂댁뒪瑜?源⑥빞 ???뚯쓽 ?덈꺼???щ씪媛꾨떎. 吏湲??섏뒪?몃? 源⑤씪.", author: "?섏뒪???꾨즺" },
+      { text: "?닿? ???섎㈃ ?⑥씠 ?쒕떎. ??紐レ쓽 誘몃옒瑜??⑦븳??怨듭쭨濡?類뤾린吏 留덈씪.", author: "吏遺??뺣낫" },
+      { text: "怨듬??섎뒗 泥??몃젰?섎뒗 泥??ㅼ뒪濡쒕? ?띿씠吏 留덈씪. ?쒗뿕吏媛 吏꾩떎???덈떎.", author: "?⑺듃 泥댄겕" },
+      { text: "?ㅻ뒛 ?섎┛ ? ??諛⑹슱 ??諛⑹슱???댁씪 ???덊띁移?諛곌린?뚯씠 ?쒕떎.", author: "臾쇱쭏 ?먭레" },
+      { text: "吏湲?怨듬? ???섎㈃ ?섏쨷???⑤뱾 硫뗭엳寃??닿? 媛???諛⑷뎄?앹뿉???쇱툩 遊먯빞 ?쒕떎.", author: "?꾩떎 寃쎄퀬" },
+      { text: "?ㅻ뒛 怨듬?濡?癒몃━ ?꾪뵂 寃껋? ?뚯꽭???곗씠?곕쿋?댁뒪媛 ?뺤옣?섎뒗 湲띿젙??踰꾧렇??", author: "IT 鍮꾩쑀" },
+      { text: "?섍린 ?レ? 嫄????낅Ъ怨??대궪 ?? ?뚯뿉??吏꾩쭨 ?깃났 ?꾪뙆誘쇱씠 ?곗졇 ?섏삩??", author: "?뚭낵???먭레" },
+      { text: "?몄깮 媛뺥솕 ?뺣쪧??100%???놁?留? ?쒕룄議곗감 ???섎㈃ 臾댁“嫄?0% 遺?ъ쭊??", author: "媛뺥솕 ?ㅽ뙣 諛⑹?" },
+      { text: "?ㅻ뒛 ????媛먭퀬 ?먯뒿???섏옄???됰뜦??遺숈뿬?? 誘몃옒???ㅺ? ?덈Ъ ?섎━硫?怨좊쭏?뚰븳??", author: "誘몃옒???몄?" },
+      { text: "?깃낏 釉뚮젅?댁빱濡??숈쓣 寃껋씤媛, 遺紐⑤떂猿?理쒓퀬???⑤룄 FLEX瑜?苑귥븘?쒕┫ 寃껋씤媛.", author: "?⑤룄 ?뚮젆?? },
+      { text: "硫뗭엳寃??щ뒗 ?щ엺?ㅼ? ?⑤뱾???????덉쓣 遺由낅쑉怨??낃린瑜??덉뿀???щ엺?ㅼ씠??", author: "?낃린 異⑹쟾" },
+      { text: "?ш린?섏? 留덈씪. 吏湲??ㅺ? 寃る뒗 ?듬떟?⑥? ???몄깮 ?곹솕??鍮뚮뱶??怨쇱젙?대떎.", author: "二쇱씤怨?踰꾪봽" },
+      { text: "??轅덉쓣 ?덊솴?섎떎怨?已묒븣嫄곕━???덈뱾??肄㏓?瑜?諛뺤궡 ??諛⑸쾿? ?깃났肉먯씠??", author: "李몃맂 蹂듭닔" },
+      { text: "?낇븯寃?怨듬??대씪. ?몄긽? 李⑺븳 ?щ엺???꾨땲???ㅻ젰 ?덈뒗 ?щ엺?먭쾶 怨좉컻瑜??숈씤??", author: "?낃린 ?먭레" },
+      { text: "?좎? 臾대뜡??媛???ㅼ뻔 ?먮씪. 吏湲?議몃㈃ ?됱깮 ??諛묒뿉??援쎌떊嫄곕━硫?議멸컻濡??곕떎.", author: "議멸컻 諛⑹?" },
+      { text: "?몄깮??移섑듃?ㅻ뒗 ?녿떎. 留ㅼ씪???깆떎?⑥씠 ?쒖뒪?쒖쓣 ?ル뒗 ?좎씪??踰꾧렇??", author: "?댁빱 ?뺤떊" },
+      { text: "吏湲?吏묒쨷?섎뒗 1?쒓컙??媛移섎뒗, 10????1?꾩쓽 ?쒓컙怨?留욌㉨?붾떎.", author: "怨⑤뱺 ??? },
+      { text: "???쒓퀎???꾧퀎?먯쓣 ?뚰뙆?섎뒗 ?쒓컙, ?⑤じ??吏쒕┸?섍쾶 李뚮Ⅴ???꾪뙆誘쇱쓣 ?먭뺨遊먮씪.", author: "?꾧퀎???뚰뙆" },
+      { text: "?ㅻ쭏?명룿 ?꾩썝???꾨뒗 ?쒓컙, ???됯퇏 ?깃툒? 利됱떆 1?④퀎 ?곸듅?쒕떎.", author: "???ㅽ봽" },
+      { text: "怨듬???癒몃━濡??섎뒗 寃??꾨땲???됰뜦??吏꾨뱷??臾닿쾶媛먭낵 源〓떎援щ줈 ?섎뒗 嫄곕떎.", author: "洹쇱꽦 利앸챸" },
+      { text: "?⑤뱾 ????諛ㅼ깉???⑥뼱 ?몄슦硫? ?⑤뱾 諛ㅼ깉???쇳븷 ??轅???????덈떎.", author: "轅??誘몃옒" },
+      { text: "?ㅻ뒛 諛?移⑤????꾩썱?????꾪쉶 ?????녿뒗 湲곕텇 醫뗭? ?쇰줈瑜??꾪빐, 吏湲??쒖썙??", author: "?꾪쉶 ?쒕줈" },
+      { text: "?꾩쟾?섏? ?딅뒗 泥?텣? 洹몄? ?섏씠留??딆? ?몄씤??遺덇낵?섎떎.", author: "泥?텣 ?덉갔" },
+      { text: "?깃났?대씪???뺣룄??苡뚭컧??留쏅낫硫? 洹몃룞?덉쓽 怨듬? 怨좏넻? ?뚮━?먯꽌 ???산꺼媛꾨떎.", author: "?깆랬 ?꾪뙆誘? },
+      { text: "???몄깮 ?ㅼ옘?쒖쓽 硫붿씤 ?쒕윭?댁옄 ?먯씠?ㅻ뒗 ?덈떎. ?댁젣 ???罹먮━???쒓컙?대떎.", author: "罹먮━ ?쒖젏" },
+      { text: "??誘몃옒 諛곗슦?먯쓽 ?쇨뎬??諛붾먮떎. 移좏뙋 ?묐컮濡?蹂닿퀬 ??援대젮??", author: "?몄깮 ??쟾" }
     ];
 
-    // 날짜 기반 시드 셔플 — 오늘은 오늘의 순서, 매일 다름
+    // ?좎쭨 湲곕컲 ?쒕뱶 ?뷀뵆 ???ㅻ뒛? ?ㅻ뒛???쒖꽌, 留ㅼ씪 ?ㅻ쫫
     function getDailyShuffledQuotes() {
       const today = new Date();
       const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
@@ -2584,26 +2600,6 @@
     let currentQuoteIndex = -1;
     let lastScheduleKey = '';
 
-    function adjustQuoteFontSize() {
-      const quoteEl = document.getElementById('damage-quote-text');
-      if (!quoteEl) return;
-      
-      // 초기 상태: 폰트 크기를 1.25rem으로 설정
-      quoteEl.style.fontSize = '1.25rem';
-      
-      // 부모 컨테이너의 가로 너비 (패딩 감안)
-      const parentWidth = quoteEl.parentElement.clientWidth - 48; // padding left/right 24px씩 총 48px
-      if (parentWidth <= 0) return;
-      
-      // 글자 길이가 부모 영역을 넘으면 폰트 크기를 서서히 줄임 (최소 0.65rem까지)
-      let fontSize = 1.25;
-      while (quoteEl.scrollWidth > parentWidth && fontSize > 0.65) {
-        fontSize -= 0.05;
-        quoteEl.style.fontSize = fontSize + 'rem';
-      }
-    }
-    window.addEventListener('resize', adjustQuoteFontSize);
-
     function showNextQuote() {
       if (typeof isWorshipOverridden !== 'undefined' && isWorshipOverridden) return;
       currentQuoteIndex = (currentQuoteIndex + 1) % dailyQuoteOrder.length;
@@ -2613,18 +2609,17 @@
       const authorEl = document.getElementById('quote-author');
       if (!container || !textEl || !authorEl) return;
 
-      // fade out → 텍스트 교체 → fade in
+      // fade out ???띿뒪??援먯껜 ??fade in
       container.classList.add('fade-out');
       setTimeout(() => {
         textEl.textContent   = q.text;
-        authorEl.textContent = `— ${q.author} —`;
+        authorEl.textContent = `??${q.author} ??;
         container.classList.remove('fade-out');
         
-        // 2사분면 파손 우회용 상태 바 명언 갱신
+        // 2?щ텇硫??뚯넀 ?고쉶???곹깭 諛?紐낆뼵 媛깆떊
         const damageQuoteEl = document.getElementById('damage-quote-text');
         if (damageQuoteEl) {
           damageQuoteEl.textContent = q.text;
-          adjustQuoteFontSize(); // 폰트 크기 자동 조절 호출
         }
       }, 520);
     }
@@ -2635,21 +2630,21 @@
     }
 
     function onPlayerStateChange(event) {
-      // 재생 종료(YT.PlayerState.ENDED === 0) 시 다음 트랙
+      // ?ъ깮 醫낅즺(YT.PlayerState.ENDED === 0) ???ㅼ쓬 ?몃옓
       if (event.data === 0) {
         playNextTrack();
       }
     }
 
     function onPlayerError(event) {
-      console.warn('유튜브 플레이어 에러:', event.data);
+      console.warn('?좏뒠釉??뚮젅?댁뼱 ?먮윭:', event.data);
       setTimeout(playNextTrack, 2000);
     }
 
     function getWeatherCategory(code) {
-      // 0,1,2,3: 맑음/흐림 -> sunny
-      // 71,73,75,77,85,86: 눈 -> snowy
-      // 그 외: 비/안개 -> rainy
+      // 0,1,2,3: 留묒쓬/?먮┝ -> sunny
+      // 71,73,75,77,85,86: ??-> snowy
+      // 洹??? 鍮??덇컻 -> rainy
       if ([0, 1, 2, 3].includes(code)) {
         return 'sunny';
       } else if ([71, 73, 75, 77, 85, 86].includes(code)) {
@@ -2663,7 +2658,7 @@
       if (isSoundActivated) return;
       isSoundActivated = true;
       
-      // 전역 리스너 제거
+      // ?꾩뿭 由ъ뒪???쒓굅
       ['click', 'touchstart', 'mousemove', 'keydown', 'scroll'].forEach(evt => {
         document.removeEventListener(evt, activateSoundSystem);
       });
@@ -2719,66 +2714,63 @@
     }
 
     // ========================================================
-    // 나이스 시간표 API 및 블랙아웃 대시보드 제어 시스템
-    // ========================================================
+    // ?섏씠???쒓컙??API 諛?釉붾옓?꾩썐 ??쒕낫???쒖뼱 ?쒖뒪??    // ========================================================
     let nisTimetableData = null;
-    let nisApiStatus = "대기중";
-    let blackoutSelectedPeriod = null; // 사용자가 수동 선택한 교시
+    let nisApiStatus = "?湲곗쨷";
+    let blackoutSelectedPeriod = null; // ?ъ슜?먭? ?섎룞 ?좏깮??援먯떆
     let blackoutClockInterval = null;
 
-    // 요일/시간 기반 일과 및 교시 판정
+    // ?붿씪/?쒓컙 湲곕컲 ?쇨낵 諛?援먯떆 ?먯젙
     function getBlackoutPeriodInfo(hour, min, dayVal) {
       const timeVal = hour * 100 + min;
       
-      // 월~금 공통 스케줄
-      if (timeVal >= 730 && timeVal < 830) {
-        return { statusText: "현재 등교 맞이 시간입니다.", period: 1 };
+      // ??湲?怨듯넻 ?ㅼ?以?      if (timeVal >= 730 && timeVal < 830) {
+        return { statusText: "?꾩옱 ?깃탳 留욎씠 ?쒓컙?낅땲??", period: 1 };
       } else if (timeVal >= 830 && timeVal < 850) {
-        return { statusText: "학급 조례 및 아침 체인지 시간입니다.", period: 1 };
+        return { statusText: "?숆툒 議곕? 諛??꾩묠 泥댁씤吏 ?쒓컙?낅땲??", period: 1 };
       } else if (timeVal >= 850 && timeVal < 900) {
-        return { statusText: "1교시 준비 시간입니다.", period: 1 };
+        return { statusText: "1援먯떆 以鍮??쒓컙?낅땲??", period: 1 };
       } else if (timeVal >= 900 && timeVal < 950) {
-        return { statusText: "현재 1교시 수업 진행 중입니다.", period: 1 };
+        return { statusText: "?꾩옱 1援먯떆 ?섏뾽 吏꾪뻾 以묒엯?덈떎.", period: 1 };
       } else if (timeVal >= 950 && timeVal < 1000) {
-        return { statusText: "1교시 쉬는 시간입니다.", period: 1 };
+        return { statusText: "1援먯떆 ?щ뒗 ?쒓컙?낅땲??", period: 1 };
       } else if (timeVal >= 1000 && timeVal < 1050) {
-        return { statusText: "현재 2교시 수업 진행 중입니다.", period: 2 };
+        return { statusText: "?꾩옱 2援먯떆 ?섏뾽 吏꾪뻾 以묒엯?덈떎.", period: 2 };
       } else if (timeVal >= 1050 && timeVal < 1100) {
-        return { statusText: "2교시 쉬는 시간입니다.", period: 2 };
+        return { statusText: "2援먯떆 ?щ뒗 ?쒓컙?낅땲??", period: 2 };
       } else if (timeVal >= 1100 && timeVal < 1150) {
-        return { statusText: "현재 3교시 수업 진행 중입니다.", period: 3 };
+        return { statusText: "?꾩옱 3援먯떆 ?섏뾽 吏꾪뻾 以묒엯?덈떎.", period: 3 };
       } else if (timeVal >= 1150 && timeVal < 1200) {
-        return { statusText: "3교시 쉬는 시간입니다.", period: 3 };
+        return { statusText: "3援먯떆 ?щ뒗 ?쒓컙?낅땲??", period: 3 };
       } else if (timeVal >= 1200 && timeVal < 1250) {
-        return { statusText: "현재 4교시 수업 진행 중입니다.", period: 4 };
+        return { statusText: "?꾩옱 4援먯떆 ?섏뾽 吏꾪뻾 以묒엯?덈떎.", period: 4 };
       } else if (timeVal >= 1250 && timeVal < 1340) {
-        return { statusText: "즐거운 점심 시간입니다.", period: 4 };
+        return { statusText: "利먭굅???먯떖 ?쒓컙?낅땲??", period: 4 };
       } else if (timeVal >= 1340 && timeVal < 1430) {
-        return { statusText: "현재 5교시 수업 진행 중입니다.", period: 5 };
+        return { statusText: "?꾩옱 5援먯떆 ?섏뾽 吏꾪뻾 以묒엯?덈떎.", period: 5 };
       } else if (timeVal >= 1430 && timeVal < 1440) {
-        return { statusText: "5교시 쉬는 시간입니다.", period: 5 };
+        return { statusText: "5援먯떆 ?щ뒗 ?쒓컙?낅땲??", period: 5 };
       } else if (timeVal >= 1440 && timeVal < 1530) {
-        return { statusText: "현재 6교시 수업 진행 중입니다.", period: 6 };
+        return { statusText: "?꾩옱 6援먯떆 ?섏뾽 吏꾪뻾 以묒엯?덈떎.", period: 6 };
       }
       
-      // 6교시 이후 요일별 특화
+      // 6援먯떆 ?댄썑 ?붿씪蹂??뱁솕
       if (dayVal === 1 || dayVal === 5) {
-        // 월, 금 (7교시)
+        // ?? 湲?(7援먯떆)
         if (timeVal >= 1530 && timeVal < 1540) {
-          return { statusText: "6교시 쉬는 시간입니다.", period: 6 };
+          return { statusText: "6援먯떆 ?щ뒗 ?쒓컙?낅땲??", period: 6 };
         } else if (timeVal >= 1540 && timeVal < 1630) {
-          return { statusText: "현재 7교시 수업 진행 중입니다.", period: 7 };
+          return { statusText: "?꾩옱 7援먯떆 ?섏뾽 吏꾪뻾 以묒엯?덈떎.", period: 7 };
         } else if (timeVal >= 1630 && timeVal < 1640) {
-          return { statusText: "청소 및 학급 종례 시간입니다.", period: 7 };
+          return { statusText: "泥?냼 諛??숆툒 醫낅? ?쒓컙?낅땲??", period: 7 };
         } else {
-          return { statusText: "방과후 수업 및 야간 자율 학습 시간입니다.", period: 7 };
+          return { statusText: "諛⑷낵???섏뾽 諛??쇨컙 ?먯쑉 ?숈뒿 ?쒓컙?낅땲??", period: 7 };
         }
       } else {
-        // 화, 수, 목
-        if (timeVal >= 1530 && timeVal < 1540) {
-          return { statusText: "청소 및 학급 종례 시간입니다.", period: 6 };
+        // ?? ?? 紐?        if (timeVal >= 1530 && timeVal < 1540) {
+          return { statusText: "泥?냼 諛??숆툒 醫낅? ?쒓컙?낅땲??", period: 6 };
         } else {
-          return { statusText: "방과후 수업 및 야간 자율 학습 시간입니다.", period: 6 };
+          return { statusText: "諛⑷낵???섏뾽 諛??쇨컙 ?먯쑉 ?숈뒿 ?쒓컙?낅땲??", period: 6 };
         }
       }
     }
@@ -2793,7 +2785,7 @@
         const schoolCode = '7150429';
         const url = `https://open.neis.go.kr/hub/hisTimetable?KEY=${key}&Type=json&ATPT_OFCDC_SC_CODE=${officeCode}&SD_SCHUL_CODE=${schoolCode}&ALL_TI_YMD=${ymd}&pSize=250`;
         
-        nisApiStatus = "데이터 동기화 중...";
+        nisApiStatus = "?곗씠???숆린??以?..";
         updateBlackoutStatusText();
         
         const response = await fetch(url);
@@ -2804,7 +2796,7 @@
             ymd: ymd,
             data: json.hisTimetable[1].row
           };
-          nisApiStatus = "동기화 완료 (정상)";
+          nisApiStatus = "?숆린???꾨즺 (?뺤긽)";
           return json.hisTimetable[1].row;
         } else {
           let errCode = "API_ERROR";
@@ -2814,8 +2806,8 @@
           throw new Error(errCode);
         }
       } catch (e) {
-        console.error("나이스 API 조회 실패:", e);
-        nisApiStatus = `동기화 실패 (${e.message || '오류'})`;
+        console.error("?섏씠??API 議고쉶 ?ㅽ뙣:", e);
+        nisApiStatus = `?숆린???ㅽ뙣 (${e.message || '?ㅻ쪟'})`;
         return null;
       } finally {
         updateBlackoutStatusText();
@@ -2825,10 +2817,10 @@
     function updateBlackoutStatusText() {
       const statusEl = document.getElementById('blackout-api-status');
       if (statusEl) {
-        statusEl.textContent = `나이스 API 상태: ${nisApiStatus}`;
-        if (nisApiStatus.includes("완료") || nisApiStatus.includes("정상")) {
+        statusEl.textContent = `?섏씠??API ?곹깭: ${nisApiStatus}`;
+        if (nisApiStatus.includes("?꾨즺") || nisApiStatus.includes("?뺤긽")) {
           statusEl.style.color = "var(--emerald)";
-        } else if (nisApiStatus.includes("실패") || nisApiStatus.includes("오류")) {
+        } else if (nisApiStatus.includes("?ㅽ뙣") || nisApiStatus.includes("?ㅻ쪟")) {
           statusEl.style.color = "var(--accent-magenta)";
         } else {
           statusEl.style.color = "var(--accent-cyan)";
@@ -2836,11 +2828,11 @@
       }
     }
 
-    // 교시 수동 선택 시 처리
+    // 援먯떆 ?섎룞 ?좏깮 ??泥섎━
     function selectBlackoutPeriod(period) {
       blackoutSelectedPeriod = period;
       
-      // 버튼 활성화 클래스 처리
+      // 踰꾪듉 ?쒖꽦???대옒??泥섎━
       const btns = document.querySelectorAll('.tab-btn');
       btns.forEach(btn => {
         if (parseInt(btn.getAttribute('data-period')) === period) {
@@ -2850,15 +2842,14 @@
         }
       });
       
-      // 대시보드 다시 렌더링
-      renderBlackoutTimetable();
+      // ??쒕낫???ㅼ떆 ?뚮뜑留?      renderBlackoutTimetable();
     }
 
-    // 실제 HTML 그리드 구성 및 데이터 매핑
+    // ?ㅼ젣 HTML 洹몃━??援ъ꽦 諛??곗씠??留ㅽ븨
     function renderBlackoutTimetable() {
       const timetableList = nisTimetableData ? nisTimetableData.data : [];
       
-      // 데이터 로딩 중 스피너 처리
+      // ?곗씠??濡쒕뵫 以??ㅽ뵾??泥섎━
       if (timetableList.length === 0) {
         for (let grade = 1; grade <= 3; grade++) {
           const container = document.getElementById(`grade-${grade}-cards`);
@@ -2866,7 +2857,7 @@
             container.innerHTML = `
               <div style="grid-column: span 2; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 15px; color: var(--accent-cyan); min-height: 250px;">
                 <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 2.2rem; filter: drop-shadow(0 0 8px rgba(0, 242, 254, 0.4));"></i>
-                <span style="font-size: 1rem; font-weight: 600; letter-spacing: 0.5px;">시간표 데이터를 가져오는 중...</span>
+                <span style="font-size: 1rem; font-weight: 600; letter-spacing: 0.5px;">?쒓컙???곗씠?곕? 媛?몄삤??以?..</span>
               </div>
             `;
           }
@@ -2874,19 +2865,16 @@
         return;
       }
       
-      // 현재 교시 구하기
-      const now = new Date();
+      // ?꾩옱 援먯떆 援ы븯湲?      const now = new Date();
       const eff2 = getEffectiveTime();
       const currentHour = eff2.hour;
       const currentMin = eff2.min;
       const day = (bgmMockTime !== null) ? 1 : now.getDay();
       const info = getBlackoutPeriodInfo(currentHour, currentMin, day);
       
-      // 만약 수동 선택이 없으면 현재 시각 기준 교시를 기본 활성화
-      const targetPeriod = blackoutSelectedPeriod || info.period;
+      // 留뚯빟 ?섎룞 ?좏깮???놁쑝硫??꾩옱 ?쒓컖 湲곗? 援먯떆瑜?湲곕낯 ?쒖꽦??      const targetPeriod = blackoutSelectedPeriod || info.period;
       
-      // 교시 탭 활성화 상태 동기화
-      const btns = document.querySelectorAll('.tab-btn');
+      // 援먯떆 ???쒖꽦???곹깭 ?숆린??      const btns = document.querySelectorAll('.tab-btn');
       btns.forEach(btn => {
         if (parseInt(btn.getAttribute('data-period')) === targetPeriod) {
           btn.classList.add('active');
@@ -2895,14 +2883,14 @@
         }
       });
 
-      // 학년별 1~6반 카드 생성
+      // ?숇뀈蹂?1~6諛?移대뱶 ?앹꽦
       for (let grade = 1; grade <= 3; grade++) {
         const container = document.getElementById(`grade-${grade}-cards`);
         if (!container) continue;
         
         let html = '';
         for (let classNum = 1; classNum <= 6; classNum++) {
-          // timetableList에서 해당 학년, 반, 교시에 맞는 데이터 찾기
+          // timetableList?먯꽌 ?대떦 ?숇뀈, 諛? 援먯떆??留욌뒗 ?곗씠??李얘린
           const matched = timetableList.find(row => 
             parseInt(row.GRADE) === grade && 
             (row.CLASS_NM === String(classNum) || parseInt(row.CLASS_NM) === classNum) && 
@@ -2912,19 +2900,19 @@
           let subject = '';
           if (matched) {
             subject = matched.ITRT_CNTNT.trim();
-            // 사용자의 요청 3번: "창체 동아리 활동 내용 입력으로 되어 있으면 그냥 동아리 활동으로 띄워쥬"
-            if (subject.includes("창체 동아리 활동 내용 입력") || subject === "창체 동아리 활동") {
-              subject = "동아리 활동";
+            // ?ъ슜?먯쓽 ?붿껌 3踰? "李쎌껜 ?숈븘由??쒕룞 ?댁슜 ?낅젰?쇰줈 ?섏뼱 ?덉쑝硫?洹몃깷 ?숈븘由??쒕룞?쇰줈 ?꾩썙伊?
+            if (subject.includes("李쎌껜 ?숈븘由??쒕룞 ?댁슜 ?낅젰") || subject === "李쎌껜 ?숈븘由??쒕룞") {
+              subject = "?숈븘由??쒕룞";
             }
           }
           
           const isSubjectEmpty = !subject || subject === '-';
-          const displaySubject = isSubjectEmpty ? '<span class="subject-empty">공강 / 자율</span>' : subject;
+          const displaySubject = isSubjectEmpty ? '<span class="subject-empty">怨듦컯 / ?먯쑉</span>' : subject;
           
           html += `
             <div class="class-row-item">
               <div class="class-info-left">
-                <span class="class-num-badge">${classNum}반</span>
+                <span class="class-num-badge">${classNum}諛?/span>
               </div>
               <div class="class-subject-right">${displaySubject}</div>
             </div>
@@ -2933,10 +2921,10 @@
         container.innerHTML = html;
       }
 
-      // 헤더 타이틀에 현재 교시 정보 동적 업데이트
+      // ?ㅻ뜑 ??댄????꾩옱 援먯떆 ?뺣낫 ?숈쟻 ?낅뜲?댄듃
       const titleEl = document.querySelector('.blackout-title-area h2');
       if (titleEl) {
-        titleEl.innerHTML = `경성전자고등학교 &nbsp;<span style="background: linear-gradient(90deg, #ff6b2b, #ffcc00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-size: 3.2rem; font-weight: 900; filter: drop-shadow(0 0 12px rgba(255,140,0,0.7));">현재 ${targetPeriod}교시</span>&nbsp; <span class="accent-text">수업 현황</span>`;
+        titleEl.innerHTML = `寃쎌꽦?꾩옄怨좊벑?숆탳 &nbsp;<span style="background: linear-gradient(90deg, #ff6b2b, #ffcc00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-size: 3.2rem; font-weight: 900; filter: drop-shadow(0 0 12px rgba(255,140,0,0.7));">?꾩옱 ${targetPeriod}援먯떆</span>&nbsp; <span class="accent-text">?섏뾽 ?꾪솴</span>`;
       }
     }
 
@@ -2948,12 +2936,12 @@
       const ymd = `${year}${month}${date}`;
       const day = (bgmMockTime !== null) ? 1 : now.getDay();
       
-      // 1. 시간 및 날짜 표시 갱신
+      // 1. ?쒓컙 諛??좎쭨 ?쒖떆 媛깆떊
       const dateEl = document.getElementById('blackout-date-text');
       const timeEl = document.getElementById('blackout-time-text');
       
       if (dateEl) {
-        const days = ['일', '월', '화', '수', '목', '금', '토'];
+        const days = ['??, '??, '??, '??, '紐?, '湲?, '??];
         dateEl.textContent = `${year}-${month}-${date} (${days[day]})`;
       }
       
@@ -2965,7 +2953,7 @@
         timeEl.textContent = `${hh}:${mm}:${ss}`;
       }
       
-      // 2. 일과 상태 텍스트 갱신
+      // 2. ?쇨낵 ?곹깭 ?띿뒪??媛깆떊
       const effC = getEffectiveTime();
       const currentHour = effC.hour;
       const currentMin = effC.min;
@@ -2973,14 +2961,12 @@
       
       const statusTextEl = document.getElementById('blackout-status-text');
       if (statusTextEl) {
-        statusTextEl.textContent = is1MinIntervalTest ? "1분 테스트 가동 중 (수업중 화면)" : info.statusText;
+        statusTextEl.textContent = is1MinIntervalTest ? "1遺??뚯뒪??媛??以?(?섏뾽以??붾㈃)" : info.statusText;
       }
       
-      // 3. 나이스 API로부터 시간표 정보 가져오기
-      await fetchNisTimetable(ymd);
+      // 3. ?섏씠??API濡쒕????쒓컙???뺣낫 媛?몄삤湲?      await fetchNisTimetable(ymd);
       
-      // 4. 시간표 렌더링
-      renderBlackoutTimetable();
+      // 4. ?쒓컙???뚮뜑留?      renderBlackoutTimetable();
     }
 
     function startBlackoutClock() {
@@ -3006,84 +2992,83 @@
       const currentMin = effBgm.min;
       const timeVal = currentHour * 100 + currentMin;
 
-      // 주말(토, 일)은 화면/음악 모두 Off
+      // 二쇰쭚(?? ??? ?붾㈃/?뚯븙 紐⑤몢 Off
       let isOff = (day === 0 || day === 6);
       let matchedSchedule = null;
 
-      // 1분 주기 전환 테스트 플래그 적용
+      // 1遺?二쇨린 ?꾪솚 ?뚯뒪???뚮옒洹??곸슜
       if (typeof is1MinIntervalTest !== 'undefined' && is1MinIntervalTest) {
-        const currentRealMin = currentMin; // 가상 시각의 분을 기준으로 판정
-        isOff = (currentRealMin % 2 === 0); // 짝수 분: 수업중 (블랙아웃 ON), 홀수 분: 쉬는시간 (화면 ON, BGM 재생)
-        matchedSchedule = isOff ? null : { name: '1분 테스트 Lofi BGM', type: 'break' };
+        const currentRealMin = currentMin; // 媛???쒓컖??遺꾩쓣 湲곗??쇰줈 ?먯젙
+        isOff = (currentRealMin % 2 === 0); // 吏앹닔 遺? ?섏뾽以?(釉붾옓?꾩썐 ON), ???遺? ?щ뒗?쒓컙 (?붾㈃ ON, BGM ?ъ깮)
+        matchedSchedule = isOff ? null : { name: '1遺??뚯뒪??Lofi BGM', type: 'break' };
       } else if (!isOff) {
-        // 월~금 공통 스케줄 판단
+        // ??湲?怨듯넻 ?ㅼ?以??먮떒
         if (timeVal >= 730 && timeVal < 830) {
-          // 아침 등교: ON
-          matchedSchedule = { name: '등교 맞이 피아노 클래식', type: 'welcome' };
+          // ?꾩묠 ?깃탳: ON
+          matchedSchedule = { name: '?깃탳 留욎씠 ?쇱븘???대옒??, type: 'welcome' };
         } else if (timeVal >= 830 && timeVal < 850) {
-          // 조례 시간: OFF
+          // 議곕? ?쒓컙: OFF
           isOff = true;
         } else if (timeVal >= 850 && timeVal < 900) {
-          // 조례 후 정규수업 전: ON
-          matchedSchedule = { name: '1교시 준비 시간 BGM', type: 'welcome' };
+          // 議곕? ???뺢퇋?섏뾽 ?? ON
+          matchedSchedule = { name: '1援먯떆 以鍮??쒓컙 BGM', type: 'welcome' };
         } else if (timeVal >= 900 && timeVal < 950) {
-          // 1교시 수업: OFF
+          // 1援먯떆 ?섏뾽: OFF
           isOff = true;
         } else if (timeVal >= 950 && timeVal < 1000) {
-          // 1교시 쉬는시간: ON
-          matchedSchedule = { name: '1교시 쉬는시간 Lofi', type: 'break' };
+          // 1援먯떆 ?щ뒗?쒓컙: ON
+          matchedSchedule = { name: '1援먯떆 ?щ뒗?쒓컙 Lofi', type: 'break' };
         } else if (timeVal >= 1000 && timeVal < 1050) {
-          // 2교시 수업: OFF
+          // 2援먯떆 ?섏뾽: OFF
           isOff = true;
         } else if (timeVal >= 1050 && timeVal < 1100) {
-          // 2교시 쉬는시간: ON
-          matchedSchedule = { name: '2교시 쉬는시간 Lofi', type: 'break' };
+          // 2援먯떆 ?щ뒗?쒓컙: ON
+          matchedSchedule = { name: '2援먯떆 ?щ뒗?쒓컙 Lofi', type: 'break' };
         } else if (timeVal >= 1100 && timeVal < 1150) {
-          // 3교시 수업: OFF
+          // 3援먯떆 ?섏뾽: OFF
           isOff = true;
         } else if (timeVal >= 1150 && timeVal < 1200) {
-          // 3교시 쉬는시간: ON
-          matchedSchedule = { name: '3교시 쉬는시간 Lofi', type: 'break' };
+          // 3援먯떆 ?щ뒗?쒓컙: ON
+          matchedSchedule = { name: '3援먯떆 ?щ뒗?쒓컙 Lofi', type: 'break' };
         } else if (timeVal >= 1200 && timeVal < 1250) {
-          // 4교시 수업: OFF
+          // 4援먯떆 ?섏뾽: OFF
           isOff = true;
         } else if (timeVal >= 1250 && timeVal < 1340) {
-          // 점심시간: ON
-          matchedSchedule = { name: '즐거운 점심시간 Lofi', type: 'break' };
+          // ?먯떖?쒓컙: ON
+          matchedSchedule = { name: '利먭굅???먯떖?쒓컙 Lofi', type: 'break' };
         } else if (timeVal >= 1340 && timeVal < 1430) {
-          // 5교시 수업: OFF
+          // 5援먯떆 ?섏뾽: OFF
           isOff = true;
         } else if (timeVal >= 1430 && timeVal < 1440) {
-          // 5교시 쉬는시간: ON
-          matchedSchedule = { name: '5교시 쉬는시간 Lofi', type: 'break' };
+          // 5援먯떆 ?щ뒗?쒓컙: ON
+          matchedSchedule = { name: '5援먯떆 ?щ뒗?쒓컙 Lofi', type: 'break' };
         } else if (timeVal >= 1440 && timeVal < 1530) {
-          // 6교시 수업: OFF
+          // 6援먯떆 ?섏뾽: OFF
           isOff = true;
         } else {
-          // 6교시 이후 요일별 특화 스케줄
-          if (day === 1 || day === 5) {
-            // 월, 금 (7교시 있음)
+          // 6援먯떆 ?댄썑 ?붿씪蹂??뱁솕 ?ㅼ?以?          if (day === 1 || day === 5) {
+            // ?? 湲?(7援먯떆 ?덉쓬)
             if (timeVal >= 1530 && timeVal < 1540) {
-              matchedSchedule = { name: '6교시 쉬는시간 Lofi', type: 'break' };
+              matchedSchedule = { name: '6援먯떆 ?щ뒗?쒓컙 Lofi', type: 'break' };
             } else if (timeVal >= 1540 && timeVal < 1630) {
-              isOff = true; // 7교시 수업중: OFF
+              isOff = true; // 7援먯떆 ?섏뾽以? OFF
             } else if (timeVal >= 1630 && timeVal < 1640) {
-              matchedSchedule = { name: '하교 및 종례 시간 Lofi', type: 'break' };
+              matchedSchedule = { name: '?섍탳 諛?醫낅? ?쒓컙 Lofi', type: 'break' };
             } else {
-              isOff = true; // 그 외 방과후: OFF
+              isOff = true; // 洹???諛⑷낵?? OFF
             }
           } else {
-            // 화, 수, 목 (7교시 없음)
+            // ?? ?? 紐?(7援먯떆 ?놁쓬)
             if (timeVal >= 1530 && timeVal < 1540) {
-              matchedSchedule = { name: '하교 및 종례 시간 Lofi', type: 'break' };
+              matchedSchedule = { name: '?섍탳 諛?醫낅? ?쒓컙 Lofi', type: 'break' };
             } else {
-              isOff = true; // 그 외 방과후: OFF
+              isOff = true; // 洹???諛⑷낵?? OFF
             }
           }
         }
       }
 
-      // 1. 화면 On/Off 제어
+      // 1. ?붾㈃ On/Off ?쒖뼱
       const blackoutEl = document.getElementById('fullscreen-blackout');
       if (blackoutEl) {
         const wasOff = (blackoutEl.style.display === 'flex');
@@ -3098,7 +3083,7 @@
         }
       }
 
-      // 2. 사운드(BGM) 제어
+      // 2. ?ъ슫??BGM) ?쒖뼱
       const tagEl = document.getElementById('bgm-tag');
       const titleEl = document.getElementById('bgm-title');
       const visualizer = document.getElementById('bgm-visualizer');
@@ -3131,16 +3116,16 @@
           if (matchedSchedule.type === 'break') showNextQuote();
         }
       } else {
-        // Off 상태이거나 수업 중일 때는 사운드를 중지하고 대기 상태로 전환
+        // Off ?곹깭?닿굅???섏뾽 以묒씪 ?뚮뒗 ?ъ슫?쒕? 以묒??섍퀬 ?湲??곹깭濡??꾪솚
         if (tagEl) {
-          tagEl.textContent = isOff ? '화면/소리 꺼짐' : '사운드 대기';
+          tagEl.textContent = isOff ? '?붾㈃/?뚮━ 爰쇱쭚' : '?ъ슫???湲?;
           tagEl.style.color = 'var(--color-text-muted)';
         }
         if (titleEl) {
           if (typeof is1MinIntervalTest !== 'undefined' && is1MinIntervalTest) {
-            titleEl.textContent = isOff ? '1분 테스트 가동 중 (수업중 무음)' : '1분 테스트 가동 중 (쉬는시간 BGM)';
+            titleEl.textContent = isOff ? '1遺??뚯뒪??媛??以?(?섏뾽以?臾댁쓬)' : '1遺??뚯뒪??媛??以?(?щ뒗?쒓컙 BGM)';
           } else {
-            titleEl.textContent = isOff ? '화면 꺼짐 및 무음 모드' : '일과 정규 수업 중';
+            titleEl.textContent = isOff ? '?붾㈃ 爰쇱쭚 諛?臾댁쓬 紐⑤뱶' : '?쇨낵 ?뺢퇋 ?섏뾽 以?;
           }
         }
         if (visualizer) {
@@ -3154,7 +3139,7 @@
         }
       }
 
-      // 화면 On/Off 상태 전환 감지 및 명언 순차 교체
+      // ?붾㈃ On/Off ?곹깭 ?꾪솚 媛먯? 諛?紐낆뼵 ?쒖감 援먯껜
       if (!isOff && wasSystemOff) {
         if (typeof showNextQuote === 'function') {
           showNextQuote();
@@ -3180,7 +3165,7 @@
         }
         ytPlayer.loadVideoById(track.youtubeId);
         
-        // 사운드가 아직 비활성화 상태여도, 무음으로 비디오를 재생시키고 비주얼라이저를 동작시킵니다.
+        // ?ъ슫?쒓? ?꾩쭅 鍮꾪솢?깊솕 ?곹깭?щ룄, 臾댁쓬?쇰줈 鍮꾨뵒?ㅻ? ?ъ깮?쒗궎怨?鍮꾩＜?쇰씪?댁?瑜??숈옉?쒗궢?덈떎.
         if (visualizer) {
           visualizer.classList.add('playing');
         }
@@ -3196,7 +3181,7 @@
       }
     }
 
-    // 제어패널 토글 함수 (새로고침 상태 보존)
+    // ?쒖뼱?⑤꼸 ?좉? ?⑥닔 (?덈줈怨좎묠 ?곹깭 蹂댁〈)
     function toggleControlPanel() {
       const panel = document.querySelector('.control-panel');
       const toggleIcon = document.getElementById('panel-toggle-icon');
@@ -3233,7 +3218,7 @@
       }
     }
 
-    // 가상 시뮬레이터 시간 제어 함수
+    // 媛???쒕??덉씠???쒓컙 ?쒖뼱 ?⑥닔
     function setBgmSimTime(hour, min, btnElement) {
       bgmMockTime = { hour, min };
       
@@ -3256,7 +3241,7 @@
       checkBgmSchedule();
     }
 
-    // 전체화면 요청 함수
+    // ?꾩껜?붾㈃ ?붿껌 ?⑥닔
     function requestFullscreen() {
       const docEl = document.documentElement;
       if (docEl.requestFullscreen) {
@@ -3268,7 +3253,7 @@
       }
     }
 
-    // 전체화면 변경 이벤트 감지 및 버튼 보임/숨김 제어
+    // ?꾩껜?붾㈃ 蹂寃??대깽??媛먯? 諛?踰꾪듉 蹂댁엫/?④? ?쒖뼱
     function handleFullscreenChange() {
       const isFullscreen = !!(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
       const btnBreak = document.getElementById('btn-fullscreen-break');
@@ -3287,14 +3272,13 @@
     document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
     document.addEventListener('msfullscreenchange', handleFullscreenChange);
 
-    // 주기적 갱신
+    // 二쇨린??媛깆떊
     setInterval(checkBgmSchedule, 10000);
 
     // ========================================================
-    // 10. 4사분면 파손 우회 레이아웃 설정
+    // 10. 4?щ텇硫??뚯넀 ?고쉶 ?덉씠?꾩썐 ?ㅼ젙
     // ========================================================
-    let damageMode = true; // 기본값: 파손 중
-    let isWorshipOverridden = false; // 월요일 예배 안내 오버라이드 여부
+    let damageMode = true; // 湲곕낯媛? ?뚯넀 以?    let isWorshipOverridden = false; // ?붿슂???덈같 ?덈궡 ?ㅻ쾭?쇱씠???щ?
 
     function updateMonitorLayout() {
       const blackoutOverlay = document.getElementById('damage-blackout-overlay');
@@ -3305,14 +3289,14 @@
         if (blackoutOverlay) blackoutOverlay.style.display = 'block';
         if (statusBar) statusBar.style.display = 'flex';
         if (statusBtn) {
-          statusBtn.innerHTML = '<i class="fa-solid fa-screwdriver-wrench"></i> 모니터 수리 완료 처리';
+          statusBtn.innerHTML = '<i class="fa-solid fa-screwdriver-wrench"></i> 紐⑤땲???섎━ ?꾨즺 泥섎━';
           statusBtn.classList.remove('active');
         }
       } else {
         if (blackoutOverlay) blackoutOverlay.style.display = 'none';
         if (statusBar) statusBar.style.display = 'none';
         if (statusBtn) {
-          statusBtn.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> 모니터 파손 모드 전환';
+          statusBtn.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> 紐⑤땲???뚯넀 紐⑤뱶 ?꾪솚';
           statusBtn.classList.add('active');
         }
       }
@@ -3324,13 +3308,12 @@
     }
 
     async function initSystem() {
-      updateMonitorLayout(); // 모니터 상태 레이아웃 적용
+      updateMonitorLayout(); // 紐⑤땲???곹깭 ?덉씠?꾩썐 ?곸슜
       updateClock();
       setInterval(updateClock, 1000);
       initGoogleAuth();
-      initControlPanelState(); // 제어패널 로컬상태 초기화
-      
-      // 다양한 사용자 상호작용(터치, 클릭, 움직임, 키, 스크롤 등) 감지 시 즉시 사운드가 켜지도록 리스너 등록
+      initControlPanelState(); // ?쒖뼱?⑤꼸 濡쒖뺄?곹깭 珥덇린??      
+      // ?ㅼ뼇???ъ슜???곹샇?묒슜(?곗튂, ?대┃, ?吏곸엫, ?? ?ㅽ겕濡??? 媛먯? ??利됱떆 ?ъ슫?쒓? 耳쒖??꾨줉 由ъ뒪???깅줉
       ['click', 'touchstart', 'mousemove', 'keydown', 'scroll'].forEach(evt => {
         document.addEventListener(evt, activateSoundSystem, { passive: true });
       });
@@ -3338,8 +3321,8 @@
       await refreshAllData();
       await fetchWorkspaceMedia();
       setInterval(refreshAllData, CONFIG.DATA_REFRESH_INTERVAL);
-      setInterval(fetchWorkspaceMedia, CONFIG.MEDIA_REFRESH_INTERVAL); // 3시간마다 구글 드라이브 리프레시
-      // 시작 시 첫 명언 표시
+      setInterval(fetchWorkspaceMedia, CONFIG.MEDIA_REFRESH_INTERVAL); // 3?쒓컙留덈떎 援ш? ?쒕씪?대툕 由ы봽?덉떆
+      // ?쒖옉 ??泥?紐낆뼵 ?쒖떆
       showNextQuote();
     }
 

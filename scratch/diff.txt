@@ -1,0 +1,743 @@
+﻿diff --git a/index.html b/index.html
+index 57ad453..38b0197 100644
+--- a/index.html
++++ b/index.html
+@@ -58,53 +58,52 @@
+        ========================================== */
+     .viewport-canvas { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+ 
+-    /* 구역 A: 1,3사분면 세로 숏폼 (9:16 고정) */
++    /* 구역 A: 1사분면 좌측 세로 숏폼 (50vh 전체 높이 복구) */
+     .zone-a {
+       position: absolute; left: 0; top: 0;
+-      height: 100vh; width: 56.25vh;
++      height: 50vh; width: 28.125vh;
+       border-right: 2px solid rgba(0, 245, 212, 0.3);
+       background: #020617; z-index: 5; overflow: hidden;
+     }
+ 
+-    /* 구역 B: 1사분면 우측 + 2사분면 통합 와이드 */
++    /* 구역 B: 1사분면 가운데 가로 미디어 (50vh 전체 높이 복구) */
+     .zone-b {
+-      position: absolute; left: 56.25vh; top: 0;
+-      width: calc(100vw - 56.25vh); height: 50vh;
+-      border-bottom: 2px solid rgba(0, 187, 249, 0.3);
++      position: absolute; left: 28.125vh; top: 0;
++      width: 88.89vh; height: 50vh;
++      border-right: 2px solid rgba(0, 187, 249, 0.3);
+       background: #020617; z-index: 4; overflow: hidden;
++      transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+     }
+ 
+-    /* 구역 C: 4사분면 하단 (시계 + 일과상태 + 교감대표행사) */
++    /* 구역 C: 2사분면 전체 (우측 종합 대시보드 - 시계, 날짜, 일정, BGM) */
+     .zone-c {
+-      position: absolute; left: 50vw; top: 60vh;
+-      width: 50vw; height: 25vh;
+-      border-bottom: 2px solid rgba(255, 0, 127, 0.3);
++      position: absolute; left: 50vw; top: 0;
++      width: 50vw; height: 50vh;
+       border-left: 2px solid rgba(255, 0, 127, 0.2);
+       background: linear-gradient(135deg, rgba(13,27,42,0.95) 0%, rgba(2,6,23,0.95) 100%);
+       z-index: 6;
+       display: flex;
+       flex-direction: column;
+-      justify-content: space-between;
++      justify-content: flex-start;
+       align-items: stretch;
+-      padding: 12px 24px;
++      padding: 20px 24px;
+       overflow: hidden;
+     }
+ 
+-    /* 구역 D: 4사분면 하단 파손 블랙아웃 */
+-    .zone-d {
+-      position: absolute; left: 50vw; top: 85vh;
+-      width: 50vw; height: 15vh;
+-      background-color: #000000; z-index: 10; pointer-events: none;
++    /* 하단 3,4사분면 모니터 상시 암흑 처리 오버레이 */
++    .zone-blackout-bottom {
++      position: absolute; left: 0; top: 50vh;
++      width: 100vw; height: 50vh;
++      background-color: #000000; z-index: 99999;
++      pointer-events: none;
+     }
+ 
+-    /* 구역 F: 4사분면 상단 학습동기 부여 명언 영역 (절반인 10vh로 축소) */
++    /* 구역 F: 1사분면 좌측 상단 학습동기 부여 명언 영역 (미디어 위에 투명 오버레이로 얹음) */
+     .zone-f {
+-      position: absolute; left: 50vw; top: 50vh;
+-      width: 50vw; height: 10vh;
+-      border-bottom: 2px solid rgba(245, 158, 11, 0.4);
+-      border-left: 2px solid rgba(245, 158, 11, 0.2);
+-      background: linear-gradient(135deg, rgba(13,27,42,0.96) 0%, rgba(2,6,23,0.96) 100%);
+-      z-index: 6;
++      position: absolute; left: 0; top: 0;
++      width: 117.015vh; height: 10vh;
++      background: linear-gradient(to bottom, rgba(2, 6, 23, 0.85) 0%, rgba(2, 6, 23, 0.3) 70%, rgba(2, 6, 23, 0) 100%);
++      z-index: 10;
+       display: flex;
+       flex-direction: column;
+       justify-content: center;
+@@ -112,8 +111,9 @@
+       padding: 6px 20px;
+       overflow: hidden;
+       box-sizing: border-box;
+-      box-shadow: inset 0 0 20px rgba(245, 158, 11, 0.06);
+-      animation: breathingGlow 5s ease-in-out infinite alternate;
++      box-shadow: none;
++      animation: breathingGlowText 5s ease-in-out infinite alternate;
++      transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+     }
+ 
+     @keyframes breathingGlow {
+@@ -127,6 +127,15 @@
+       }
+     }
+ 
++    @keyframes breathingGlowText {
++      0% {
++        filter: drop-shadow(0 0 4px rgba(254, 240, 138, 0.25));
++      }
++      100% {
++        filter: drop-shadow(0 0 14px rgba(254, 240, 138, 0.6));
++      }
++    }
++
+     /* 명언 텍스트 스타일 */
+     .quote-container {
+       display: flex;
+@@ -195,14 +204,15 @@
+       opacity: 0.85;
+     }
+ 
+-    /* 구역 E: 3사분면 하단 인포그래픽 */
++    /* 구역 E: 1사분면 우측 급식/날씨 인포그래픽 */
+     .zone-e {
+-      position: absolute; left: 56.25vh; top: 50vh;
+-      width: calc(50vw - 56.25vh); height: 50vh;
++      position: absolute; left: 93.61vh; top: 0;
++      width: calc(50vw - 93.61vh); height: 50vh;
+       background: linear-gradient(135deg, rgba(13,27,42,0.95) 0%, rgba(2,6,23,0.95) 100%);
+-      border-right: 2px solid rgba(254, 228, 64, 0.2);
+-      padding: 24px; z-index: 4;
+-      display: flex; flex-direction: column; gap: 14px; overflow: hidden;
++      border-right: 2px solid rgba(254, 228, 64, 0.25);
++      padding: 16px; z-index: 4;
++      display: flex; flex-direction: column; gap: 10px; overflow: hidden;
++      transition: left 0.4s cubic-bezier(0.16, 1, 0.3, 1), width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+     }
+ 
+     /* ==========================================
+@@ -230,6 +240,7 @@
+     .zone-b .event-overlay { border: 1px solid rgba(0,187,249,0.25); box-shadow: 0 0 15px 0 rgba(0,187,249,0.15); width: auto; max-width: 500px; }
+     .zone-b .media-content {
+       object-fit: contain;
++      object-position: left center !important;
+       background: #000000;
+     }
+ 
+@@ -562,14 +573,20 @@
+     .blackout-dashboard {
+       width: 100%;
+       max-width: 100%;
+-      height: 47vh;
+-      max-height: 47vh;
++      height: 46vh;
++      max-height: 46vh;
+       display: flex;
+       flex-direction: column;
+       justify-content: space-between;
+       color: var(--text-main);
+       animation: blackoutFadeIn 0.5s ease-in-out;
+       overflow: hidden;
++      background: linear-gradient(135deg, rgba(13, 27, 42, 0.95) 0%, rgba(2, 6, 23, 0.95) 100%);
++      border: 1px solid rgba(0, 242, 254, 0.25);
++      border-radius: 16px;
++      padding: 16px 24px;
++      box-shadow: 0 10px 45px rgba(0, 0, 0, 0.7);
++      box-sizing: border-box;
+     }
+ 
+     .blackout-header {
+@@ -839,17 +856,6 @@
+ 
+   <div class="viewport-canvas">
+ 
+-    <!-- 4사분면 파손 우회용 한줄 상태 바 (명언 + 날짜 + 시간) - 1사분면부터 길게 연장 및 10% 축소(1.3rem) -->
+-    <div class="damage-status-bar" id="damage-status-bar" style="position: absolute; left: 16px; top: 16px; right: 16px; z-index: 10000; display: flex; align-items: center; justify-content: space-between; background: rgba(13, 27, 42, 0.85); backdrop-filter: blur(8px); border: 1px solid rgba(0, 245, 212, 0.3); padding: 12px 28px; border-radius: 40px; color: #ffffff; font-size: 1.3rem; font-weight: 600; box-shadow: 0 4px 15px rgba(0,0,0,0.5); transition: all 0.3s ease;">
+-      <span id="damage-quote-text" class="damage-quote-blink-effect" style="color: var(--color-zone-a); flex-grow: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 24px;">공부하기 싫을 때마다 통장 잔고 0원을 상상해라.</span>
+-      <div style="display: flex; align-items: center; gap: 22px; flex-shrink: 0;">
+-        <span style="color: rgba(255,255,255,0.3); font-weight: 300;">|</span>
+-        <span id="damage-date-text" style="color: var(--color-zone-b);">06.01 (월)</span>
+-        <span style="color: rgba(255,255,255,0.3); font-weight: 300;">|</span>
+-        <span id="damage-time-text" style="font-family: 'Outfit', sans-serif; color: var(--color-zone-c); font-weight: 800; min-width: 120px; text-align: center;">11:05:34</span>
+-      </div>
+-    </div>
+-
+     <!-- 2x2 물리 모니터 경계선 (디버그용) -->
+     <div class="guide-line-x" id="guide-x"></div>
+     <div class="guide-line-y" id="guide-y"></div>
+@@ -857,7 +863,7 @@
+     <span class="guide-line-label" id="label-vertical">2x2 모니터 세로 물리 경계선 (50vw)</span>
+ 
+     <!-- 수업/조례/방과후 시간 전체 화면 블랙아웃 오버레이 -->
+-    <div id="fullscreen-blackout" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #070318; z-index: 99999; display: none; pointer-events: all; align-items: flex-start; justify-content: flex-start; padding: 16px 32px 0 32px; box-sizing: border-box;">
++    <div id="fullscreen-blackout" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000000; z-index: 99999; display: none; pointer-events: all; align-items: flex-start; justify-content: flex-start; padding: 2vh 32px 0 32px; box-sizing: border-box;">
+       <div class="blackout-dashboard">
+         <div class="blackout-header">
+           <div class="blackout-title-area">
+@@ -905,123 +911,134 @@
+       </button>
+     </div>
+ 
+-    <!-- [구역 A: 1,3사분면 세로 숏폼/사진 (9:16 고정)] -->
++    <!-- [援ъ뿭 A: 1?щ텇硫?醫뚯륫 ?몃줈 誘몃뵒??(50vh ?꾩껜 ?믪씠 蹂듦뎄)] -->
+     <div class="zone-a">
+       <div class="media-container" id="vertical-container">
+         <!-- JS dynamically inserts vertical 9:16 media contents -->
+       </div>
+     </div>
+ 
+-    <!-- [구역 B: 1사분면 우측 + 2사분면 통합 와이드] -->
++    <!-- [援ъ뿭 B: 1?щ텇硫?媛?대뜲 媛濡?誘몃뵒??(50vh ?꾩껜 ?믪씠 蹂듦뎄)] -->
+     <div class="zone-b">
+       <div class="media-container" id="horizontal-container">
+         <!-- JS dynamically inserts horizontal media contents -->
+       </div>
++    </div>
+ 
++    <!-- [援ъ뿭 F: 1?щ텇硫?醫뚯륫 ?곷떒 ?숈뒿?숆린 遺??紐낆뼵 ?곸뿭 (誘몃뵒???꾩뿉 ?щ챸 ?ㅻ쾭?덉씠濡??뱀쓬)] -->
++    <div class="zone-f" id="quote-zone">
++      <div class="quote-container" id="quote-container">
++        <div class="quote-text" id="quote-text">?됰룞? 紐⑤뱺 ?깃났??湲곗큹媛 ?쒕떎.</div>
++        <div class="quote-author" id="quote-author" style="display: none;">- ?뚮툝濡??쇱뭅??-</div>
++      </div>
+     </div>
+ 
+-    <!-- [구역 C: 4사분면 하단 시계+일과상태 + 교감대표행사] -->
++    <!-- [援ъ뿭 C: 2?щ텇硫??꾩껜 ?곗륫 醫낇빀 ??쒕낫?? -->
+     <div class="zone-c">
+-      <!-- 교감선생님 행사 일정 4개 가로로 길게 나열 (시계 위에 배치) -->
+-      <div class="vp-events-list" id="vp-events-list">
+-        <div style="text-align: center; color: var(--color-text-secondary); font-size: 0.95rem; width: 100%;">
+-          <i class="fa-solid fa-spinner fa-spin"></i> 대표 행사를 불러오는 중...
++      <!-- 상단 우측 정보 바 (학교명 | 날짜 | 대형 시계) -->
++      <div style="display: flex; justify-content: flex-end; align-items: center; gap: 20px; width: 100%; margin-bottom: 16px; flex-shrink: 0; padding-bottom: 8px; border-bottom: 1px solid rgba(255, 0, 127, 0.15);">
++        <!-- 학교명 -->
++        <div class="clock-cal-day" id="live-year" style="font-size: 1.1rem; color: var(--color-zone-c); font-weight: 800; white-space: nowrap; letter-spacing: 0.5px;">경성전자고등학교</div>
++        <div style="width: 1px; height: 16px; background: rgba(255, 0, 127, 0.3); flex-shrink: 0;"></div>
++        <!-- 날짜 -->
++        <div class="clock-cal-date" id="live-date" style="font-size: 1.2rem; font-weight: 700; color: #ffffff; white-space: nowrap;">05.28 (목)</div>
++        <div style="width: 1px; height: 16px; background: rgba(255, 0, 127, 0.3); flex-shrink: 0;"></div>
++        <!-- 시계 -->
++        <div class="clock-digital" id="live-time" style="font-size: 3.2rem; text-shadow: 0 0 20px rgba(255,0,127,0.45); font-weight: 900; line-height: 1; display: flex; align-items: baseline;">
++          00:00<span class="clock-sec" id="live-sec" style="font-size: 1.6rem; color: var(--color-zone-c); margin-left: 4px; min-width: 32px;">00</span>
+         </div>
+       </div>
+-      <!-- 창체 일정 1건 (Zone C 내) -->
+-      <div id="creative-in-c" style="width: 100%; display: none; align-items: center; justify-content: start; gap: 8px; box-sizing: border-box; margin-bottom: 2px; padding-left: 19px;">
+-      </div>
+-      <!-- 구분 가로선 -->
+-      <div style="width: 100%; height: 1px; background: rgba(255,0,127,0.15); margin-bottom: 8px;"></div>
+-      <!-- 학교명 | 일과상태 | 날짜 | 시계 | BGM -->
+-      <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+-        <div style="display: flex; align-items: center; gap: 16px;">
+-          <!-- 학교명 -->
+-          <div class="clock-cal-day" id="live-year" style="font-size: 0.95rem; color: var(--color-zone-c); font-weight: 800; white-space: nowrap; letter-spacing: 0.5px;">경성전자고등학교</div>
+-          <!-- 구분선 -->
+-          <div style="width: 1px; height: 14px; background: rgba(255,0,127,0.3);"></div>
+-          <!-- 일과 상태 (BGM title 인라인) -->
+-          <span id="bgm-title" style="font-size: 0.85rem; font-weight: 700; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;">-</span>
+-          <!-- 구분선 -->
+-          <div style="width: 1px; height: 14px; background: rgba(255,0,127,0.3);"></div>
+-          <!-- 날짜 -->
+-          <div class="clock-cal-date" id="live-date" style="font-size: 1.05rem; white-space: nowrap;">05.28 (목)</div>
+-          <!-- 구분선 -->
+-          <div style="width: 1px; height: 14px; background: rgba(255,0,127,0.3);"></div>
+-          <!-- 시계 -->
+-          <div class="clock-digital" id="live-time" style="font-size: 2.2rem; text-shadow: 0 0 15px rgba(255,0,127,0.35);">
+-            00:00<span class="clock-sec" id="live-sec">00</span>
++
++      <!-- 하단/좌측 정보 그리드 (BGM 패널 대신 급식 배치 + 일정 안내) -->
++      <div style="display: grid; grid-template-columns: 1fr 1.15fr; gap: 16px; flex-grow: 1; align-items: stretch; overflow: hidden; width: 100%;">
++        <!-- 오늘의 웰빙 급식 패널 (기존 Zone E에서 2사분면 Zone C로 이동) -->
++        <div style="display: flex; flex-direction: column; gap: 10px; justify-content: flex-start; overflow-y: auto; padding-right: 4px; box-sizing: border-box;">
++          <div id="meal-card-header" class="section-title">
++            <i class="fa-solid fa-salad"></i> <span id="meal-card-title">오늘의 웰빙 급식</span>
++          </div>
++          <div id="meal-card-content" class="infographic-meal" style="display: flex; flex-direction: column; gap: 8px; flex-grow: 1; justify-content: flex-start;">
++            <div class="meal-meta-row" style="padding: 8px 12px;">
++              <div class="calories-radial-box">
++                <div class="calories-icon-wrap" style="width: 32px; height: 32px; font-size: 0.9rem;">
++                  <i class="fa-solid fa-fire-flame-curved"></i>
++                </div>
++                <div class="calories-data">
++                  <span class="calories-title" style="font-size: 0.65rem;">총 열량</span>
++                  <span class="calories-value" id="meal-cal" style="font-size: 1.0rem;">--- kcal</span>
++                </div>
++              </div>
++              <span class="meal-date-badge" id="meal-date" style="padding: 2px 8px; font-size: 0.7rem;">---</span>
++            </div>
++            <div class="meal-grid" id="meal-grid-box" style="gap: 5px;">
++              <div style="grid-column: span 2; text-align: center; color: var(--color-text-secondary); font-size: 0.8rem;">
++                <i class="fa-solid fa-spinner fa-spin"></i> 식단 데이터를 가져오는 중...
++              </div>
++            </div>
+           </div>
+         </div>
+-        <!-- BGM 위젯 (비주얼라이저 + 버튼) -->
+-        <div class="bgm-widget" id="bgm-widget" style="display: flex; align-items: center; gap: 10px; flex-shrink: 0;">
+-          <div class="bgm-visualizer" id="bgm-visualizer" style="display: flex; align-items: flex-end; gap: 2px; height: 18px; width: 24px;">
+-            <div class="bar" style="width: 3px; height: 100%; background: var(--color-zone-c); border-radius: 2px;"></div>
+-            <div class="bar" style="width: 3px; height: 60%; background: var(--color-zone-c); border-radius: 2px;"></div>
+-            <div class="bar" style="width: 3px; height: 80%; background: var(--color-zone-c); border-radius: 2px;"></div>
+-            <div class="bar" style="width: 3px; height: 40%; background: var(--color-zone-c); border-radius: 2px;"></div>
++
++        <!-- [실시간 BGM 패널 - 주석 처리] -->
++        <!--
++        <div style="background: rgba(255, 255, 255, 0.015); border: 1px solid rgba(255, 0, 127, 0.15); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; box-sizing: border-box;">
++          <div style="display: flex; flex-direction: column; gap: 6px; overflow: hidden;">
++            <span style="font-size: 0.72rem; font-weight: 800; color: var(--color-zone-c); text-transform: uppercase; letter-spacing: 1px; flex-shrink: 0;">📻 실시간 BGM 방송</span>
++            <span id="bgm-title" style="font-size: 0.88rem; font-weight: 700; color: #ffffff; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4; word-break: keep-all;">-</span>
+           </div>
+-          <div style="display: flex; flex-direction: column; gap: 1px;">
+-            <span id="bgm-tag" style="font-family: var(--font-outfit); font-size: 0.55rem; font-weight: 800; color: var(--color-zone-c); text-transform: uppercase; letter-spacing: 0.5px;">사운드 대기</span>
++          
++          <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px; border-top: 1px solid rgba(255,0,127,0.15); padding-top: 10px; flex-shrink: 0;">
++            <div class="bgm-widget" id="bgm-widget" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
++              <div class="bgm-visualizer" id="bgm-visualizer" style="display: flex; align-items: flex-end; gap: 2px; height: 18px; width: 24px; flex-shrink: 0;">
++                <div class="bar" style="width: 3px; height: 100%; background: var(--color-zone-c); border-radius: 2px;"></div>
++                <div class="bar" style="width: 3px; height: 60%; background: var(--color-zone-c); border-radius: 2px;"></div>
++                <div class="bar" style="width: 3px; height: 80%; background: var(--color-zone-c); border-radius: 2px;"></div>
++                <div class="bar" style="width: 3px; height: 40%; background: var(--color-zone-c); border-radius: 2px;"></div>
++              </div>
++              <div style="display: flex; gap: 6px; flex-shrink: 0;">
++                <button class="bgm-ctrl-btn" id="bgm-ctrl-btn" onclick="toggleBgmPlay()" style="background: rgba(255,0,127,0.12); border: 1px solid rgba(255,0,127,0.25); color: var(--color-zone-c); width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; outline: none;">
++                  <i class="fa-solid fa-volume-xmark" id="bgm-ctrl-icon" style="font-size: 0.75rem;"></i>
++                </button>
++                <button class="bgm-ctrl-btn" id="bgm-next-btn" onclick="playNextTrack()" style="background: rgba(255,0,127,0.12); border: 1px solid rgba(255,0,127,0.25); color: var(--color-zone-c); width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; outline: none;" title="다음 곡 재생">
++                  <i class="fa-solid fa-forward" style="font-size: 0.7rem;"></i>
++                </button>
++              </div>
++            </div>
++            <span id="bgm-tag" style="font-family: var(--font-outfit); font-size: 0.58rem; font-weight: 800; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.5px; text-align: center; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">사운드 대기</span>
++          </div>
++        </div>
++        -->
++        
++        <!-- 학사 일정 및 교감선생님 행사 패널 -->
++        <div style="display: flex; flex-direction: column; gap: 10px; justify-content: flex-start; overflow-y: auto; padding-right: 4px; box-sizing: border-box;">
++          <span style="font-size: 0.75rem; font-weight: 800; color: var(--color-zone-e); text-transform: uppercase; letter-spacing: 1px; flex-shrink: 0; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-calendar-days"></i> 주요 학사 및 일과 안내</span>
++          
++          <!-- 교감선생님 행사 일정 목록 (세로형) -->
++          <div class="vp-events-list" id="vp-events-list" style="border: 1px solid rgba(255, 0, 127, 0.12); border-radius: 8px; display: flex; flex-direction: column; gap: 4px; padding: 6px 12px; background: rgba(255,255,255,0.01); flex-shrink: 0; box-sizing: border-box;">
++            <div style="text-align: center; color: var(--color-text-secondary); font-size: 0.85rem; padding: 6px 0;">
++              <i class="fa-solid fa-spinner fa-spin"></i> 대표 행사를 불러오는 중...
++            </div>
++          </div>
++          
++          <!-- 창체 일정 1건 -->
++          <div id="creative-in-c" style="display: none; align-items: center; justify-content: start; gap: 8px; box-sizing: border-box; border: 1px solid rgba(254, 228, 64, 0.15); border-radius: 8px; padding: 6px 12px; background: rgba(254,228,64,0.02); flex-shrink: 0;">
+           </div>
+-          <button class="bgm-ctrl-btn" id="bgm-ctrl-btn" onclick="toggleBgmPlay()" style="background: rgba(255,0,127,0.15); border: 1px solid rgba(255,0,127,0.3); color: var(--color-zone-c); width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; outline: none;">
+-            <i class="fa-solid fa-volume-xmark" id="bgm-ctrl-icon" style="font-size: 0.75rem;"></i>
+-          </button>
+-          <button class="bgm-ctrl-btn" id="bgm-next-btn" onclick="playNextTrack()" style="background: rgba(255,0,127,0.15); border: 1px solid rgba(255,0,127,0.3); color: var(--color-zone-c); width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; outline: none;" title="다음 곡 재생">
+-            <i class="fa-solid fa-forward" style="font-size: 0.7rem;"></i>
+-          </button>
+         </div>
+       </div>
+       <!-- 공지사항 숨김 -->
+       <div id="static-announcements-box" style="display: none;"></div>
+     </div>
+ 
+-    <!-- [구역 F: 4사분면 중단 학습동기 부여 명언] (10vh로 절반 축소) -->
+-    <div class="zone-f" id="quote-zone">
+-      <div class="quote-container" id="quote-container">
+-        <div class="quote-text" id="quote-text">행동은 모든 성공의 기초가 된다.</div>
+-        <div class="quote-author" id="quote-author" style="display: none;">- 파블로 피카소 -</div>
+-      </div>
+-    </div>
+-
+-    <!-- [구역 D: 4사분면 하단 파손 블랙아웃] -->
+-    <div class="zone-d" id="blackout-zone"></div>
+-    <!-- 4사분면 파손 시 완전 암흑 처리용 오버레이 -->
+-    <div id="damage-blackout-overlay" style="position: absolute; left: 50vw; top: 50vh; width: 50vw; height: 50vh; background: #000000; z-index: 9999; border-left: 2px solid rgba(255,255,255,0.05); border-top: 2px solid rgba(255,255,255,0.05); box-sizing: border-box; display: none;"></div>
++    <!-- [하단 3,4사분면 모니터 상시 암흑 처리 오버레이] -->
++    <div class="zone-blackout-bottom" id="blackout-bottom-zone"></div>
+ 
+     <!-- [구역 E: 3사분면 하단 실시간 인포그래픽] -->
+     <div class="zone-e">
+ 
+-      <!-- E-1: 오늘의 웰빙 급식 (13:20 이전) -->
+-      <div id="meal-card-header" class="section-title">
+-        <i class="fa-solid fa-salad"></i> <span id="meal-card-title">오늘의 웰빙 급식</span>
+-      </div>
+-      <div id="meal-card-content" class="infographic-meal">
+-        <div class="meal-meta-row">
+-          <div class="calories-radial-box">
+-            <div class="calories-icon-wrap">
+-              <i class="fa-solid fa-fire-flame-curved"></i>
+-            </div>
+-            <div class="calories-data">
+-              <span class="calories-title">총 열량</span>
+-              <span class="calories-value" id="meal-cal">--- kcal</span>
+-            </div>
+-          </div>
+-          <span class="meal-date-badge" id="meal-date">---</span>
+-        </div>
+-        <div class="meal-grid" id="meal-grid-box">
+-          <div style="grid-column: span 2; text-align: center; color: var(--color-text-secondary);">
+-            <i class="fa-solid fa-spinner fa-spin"></i> 식단 데이터를 가져오는 중...
+-          </div>
+-        </div>
+-      </div>
+-
+-      <!-- E-1 대체: 내일 날씨 (13:20 이후) -->
+-      <div id="weather-card-header" class="section-title" style="display: none; border-bottom: 1px solid rgba(0,187,249,0.15); color: var(--color-zone-b);">
++      <!-- 기상 예보 단독 고정 노출 (13:20 교대 분기 제거) -->
++      <div id="weather-card-header" class="section-title" style="border-bottom: 1px solid rgba(0,187,249,0.15); color: var(--color-zone-b);">
+         <i class="fa-solid fa-cloud-sun" style="text-shadow: 0 0 10px rgba(0,187,249,0.4);"></i>
+         <span id="weather-card-title">내일의 기상 예보</span>
+       </div>
+-      <div id="weather-card-content" class="infographic-weather" style="display: none; flex-direction: column; gap: 8px; flex-grow: 1; justify-content: center;">
++      <div id="weather-card-content" class="infographic-weather" style="display: flex; flex-direction: column; gap: 8px; flex-grow: 1; justify-content: center;">
+         <!-- 날씨 그래픽 + 기온 메인 행 -->
+         <div style="display: flex; align-items: center; gap: 14px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 10px 14px;">
+           <div class="weather-graphic-wrap" id="weather-graphic">
+@@ -1072,6 +1089,29 @@
+           </div>
+         </div>
+       </div>
++    </div><!-- /zone-e -->isplay: flex; justify-content: space-between; align-items: center;">
++            <div style="display: flex; align-items: center; gap: 8px;">
++              <i class="fa-solid fa-wind" style="color: #94a3b8; font-size: 0.85rem;"></i>
++              <span>최대 풍속</span>
++            </div>
++            <span id="weather-wind" style="font-family: var(--font-outfit); color: #ffffff;">-- m/s</span>
++          </div>
++          <div class="weather-grid-item" style="color: var(--color-text-primary); display: flex; justify-content: space-between; align-items: center;">
++            <div style="display: flex; align-items: center; gap: 8px;">
++              <i class="fa-solid fa-smog" style="color: #fbbf24; font-size: 0.85rem;"></i>
++              <span>미세먼지</span>
++            </div>
++            <span id="weather-pm10" style="font-family: var(--font-noto); color: #ffffff;">좋음</span>
++          </div>
++          <div class="weather-grid-item" style="color: var(--color-text-primary); display: flex; justify-content: space-between; align-items: center;">
++            <div style="display: flex; align-items: center; gap: 8px;">
++              <i class="fa-solid fa-location-dot" style="color: #00bbf9; font-size: 0.85rem;"></i>
++              <span>위치</span>
++            </div>
++            <span style="font-family: var(--font-noto); color: #ffffff; font-size: 0.78rem;">부산 서구</span>
++          </div>
++        </div>
++      </div>
+ 
+ 
+ 
+@@ -1091,13 +1131,7 @@
+       <i class="fa-solid fa-eye-slash"></i> 파손구역 음영 제거 (검토용)
+     </button>
+     <div class="view-info-banner">
+-      4사분면 파손 우회 레이아웃 및 13:20 식단 타임 시프트가 가동 중입니다.
+-    </div>
+-    <div style="border-top: 1px solid rgba(0,245,212,0.15); padding-top: 10px; margin-top: 4px; display: flex; flex-direction: column; gap: 6px;">
+-      <div style="font-size: 0.7rem; font-weight: 800; color: var(--color-zone-a); text-transform: uppercase; letter-spacing: 1px;">🔧 4사분면 모니터 상태</div>
+-      <button class="btn-toggle" id="btn-monitor-status" onclick="toggleMonitorStatus()">
+-        <i class="fa-solid fa-screwdriver-wrench"></i> 모니터 수리 완료 처리
+-      </button>
++      3,4분면(하단) 모니터 오프 레이아웃 및 13:20 급식/날씨 전환 시스템이 작동 중입니다.
+     </div>
+     <div style="border-top: 1px solid rgba(255,0,127,0.15); padding-top: 10px; margin-top: 4px; display: flex; flex-direction: column; gap: 6px;">
+       <div style="font-size: 0.7rem; font-weight: 800; color: var(--color-zone-c); text-transform: uppercase; letter-spacing: 1px;">📻 BGM 일과 시뮬레이터</div>
+@@ -1140,8 +1174,8 @@
+       SD_SCH_CODE: '7150429',
+       NEIS_API_KEY: '31ca8d4d17274275b155ae2e5cabba40',
+       CREATIVE_SHEET_EXPORT_URL: 'https://docs.google.com/spreadsheets/d/1iqMpHw9VW7Xz6hwTFr7WUC36v4ibtZRuUHfsKVpexr8/export?format=csv',
+-      MEDIA_CYCLE_INTERVAL_V: 6000,
+-      MEDIA_CYCLE_INTERVAL_H: 2000,
++      MEDIA_CYCLE_INTERVAL_V: 3000,
++      MEDIA_CYCLE_INTERVAL_H: 3000,
+       DATA_REFRESH_INTERVAL: 1800000,
+       MEDIA_REFRESH_INTERVAL: 10800000 // 3시간 (오전/오후 각 2회 분량)
+     };
+@@ -1377,17 +1411,10 @@
+       const days  = ['일','월','화','수','목','금','토'];
+       document.getElementById('live-date').textContent = `${month}.${date} (${days[now.getDay()]})`;
+ 
+-      // 2사분면 파손 우회용 시간/날짜 갱신
+-      const damageTimeEl = document.getElementById('damage-time-text');
+-      const damageDateEl = document.getElementById('damage-date-text');
+-      if (damageTimeEl) damageTimeEl.textContent = `${h}:${m}:${s}`;
+-      if (damageDateEl) damageDateEl.textContent = `${month}.${date} (${days[now.getDay()]})`;
+-
+       // 월요일 점심시간 (12:50 ~ 13:20) 예배 안내 오버라이드 (HTML 형식)
+       const worshipHtml = '<span style="color: var(--color-zone-a); font-weight: 800;">강당</span>에서 <span style="color: var(--color-zone-a); font-weight: 800;">13시 30분</span>부터 <span style="color: var(--color-zone-a); font-weight: 800;">예배</span>가 있습니다.<br>친구와 같이 와서 말씀도 듣고 간식도 받아가기 바랍니다.';
+       const isWorship = (now.getDay() === 1 && ((hVal === 12 && mVal >= 50) || (hVal === 13 && mVal < 20)));
+ 
+-      const damageQuoteEl = document.getElementById('damage-quote-text');
+       const textEl = document.getElementById('quote-text');
+       const authorEl = document.getElementById('quote-author');
+ 
+@@ -1401,17 +1428,8 @@
+             textEl.style.webkitTextFillColor = '#ffffff';
+             textEl.style.background = 'none';
+           }
+-          if (damageQuoteEl) {
+-            damageQuoteEl.style.fontSize = '2.6rem'; // 2x에서 10% 축소
+-            damageQuoteEl.style.color = '#ffffff';
+-            damageQuoteEl.style.maxWidth = 'none';
+-            damageQuoteEl.style.whiteSpace = 'normal';
+-          }
+           if (authorEl) authorEl.style.display = 'none';
+         }
+-        if (damageQuoteEl && damageQuoteEl.innerHTML !== worshipHtml) {
+-          damageQuoteEl.innerHTML = worshipHtml;
+-        }
+         if (textEl && textEl.innerHTML !== worshipHtml) {
+           textEl.innerHTML = worshipHtml;
+         }
+@@ -1425,12 +1443,6 @@
+             textEl.style.webkitTextFillColor = '';
+             textEl.style.background = '';
+           }
+-          if (damageQuoteEl) {
+-            damageQuoteEl.style.fontSize = ''; // 복구
+-            damageQuoteEl.style.color = ''; // 복구
+-            damageQuoteEl.style.maxWidth = ''; // 복구
+-            damageQuoteEl.style.whiteSpace = ''; // 복구
+-          }
+           if (authorEl) authorEl.style.display = ''; // 복구
+           if (typeof showNextQuote === 'function') {
+             showNextQuote();
+@@ -1684,19 +1696,35 @@
+         }
+ 
+         // isVertical이 이미 정의된 경우 즉시 분류
+-        if (typeof item.isVertical === 'boolean') { sortItem(item); return; }
++        if (typeof item.isVertical === 'boolean') { 
++          item.ratio = item.isVertical ? (9/16) : (16/9); // 기본 비율 부여
++          sortItem(item); 
++          return; 
++        }
+ 
+         if (item.type === 'video') {
+           const v = document.createElement('video');
+           v.referrerPolicy = 'no-referrer';
+           v.src = finalUrl;
+-          v.addEventListener('loadedmetadata', () => { if (!completed) { item.isVertical = v.videoHeight > v.videoWidth; sortItem(item); } });
++          v.addEventListener('loadedmetadata', () => { 
++            if (!completed) { 
++              item.isVertical = v.videoHeight > v.videoWidth; 
++              item.ratio = v.videoWidth / v.videoHeight;
++              sortItem(item); 
++            } 
++          });
+           v.addEventListener('error', () => { if (!completed) { loadedCount++; checkComplete(); } });
+         } else {
+           const img = new Image();
+           img.referrerPolicy = 'no-referrer';
+           img.src = finalUrl;
+-          img.onload  = () => { if (!completed) { item.isVertical = img.naturalHeight > img.naturalWidth; sortItem(item); } };
++          img.onload  = () => { 
++            if (!completed) { 
++              item.isVertical = img.naturalHeight > img.naturalWidth; 
++              item.ratio = img.naturalWidth / img.naturalHeight;
++              sortItem(item); 
++            } 
++          };
+           img.onerror = () => { if (!completed) { loadedCount++; checkComplete(); } };
+         }
+       });
+@@ -1758,6 +1786,69 @@
+       renderMediaRotator('horizontal-container', horizontalList, 'hmedia', 1500, CONFIG.MEDIA_CYCLE_INTERVAL_H);
+     }
+ 
++    // ========================================================
++    // 동적 가변 레이아웃 조절 함수 (Zone B 비율 연동)
++    // ========================================================
++    function updateFlexibleLayout(item) {
++      if (!item || item.isVertical) return;
++      
++      const vh = window.innerHeight / 100;
++      const vw = window.innerWidth / 100;
++      const height = 50 * vh; // 50vh 고정
++      
++      const ratio = item.ratio || (16/9);
++      let zoneBWidth = height * ratio;
++      
++      const zoneAWidth = 28.125 * vh;
++      const minZoneEWidth = 30 * vh; // Zone E 최소 너비 보장
++      const maxZoneBWidth = (50 * vw) - zoneAWidth - minZoneEWidth;
++      
++      if (zoneBWidth > maxZoneBWidth) {
++        zoneBWidth = maxZoneBWidth;
++      }
++      if (zoneBWidth < 30 * vh) {
++        zoneBWidth = 30 * vh; // 최소 너비 보장
++      }
++      
++      // Zone B 가로폭 업데이트
++      const zoneBEl = document.querySelector('.zone-b');
++      if (zoneBEl) {
++        zoneBEl.style.width = `${zoneBWidth}px`;
++      }
++      
++      // Zone E 시작 좌표 및 너비 연동
++      const zoneEEl = document.querySelector('.zone-e');
++      if (zoneEEl) {
++        const zoneELeft = zoneAWidth + zoneBWidth;
++        zoneEEl.style.left = `${zoneELeft}px`;
++        zoneEEl.style.width = `calc(50vw - ${zoneELeft}px)`;
++      }
++      
++      // Zone F 명언 오버레이 배너 너비 동기화 (Zone A + Zone B 전체 덮음)
++      const zoneFEl = document.querySelector('.zone-f');
++      if (zoneFEl) {
++        const zoneFWidth = zoneAWidth + zoneBWidth;
++        zoneFEl.style.width = `${zoneFWidth}px`;
++      }
++    }
++
++    // 창 크기 변경 시 레이아웃 자동 보정 리스너
++    window.addEventListener('resize', () => {
++      const container = document.getElementById('horizontal-container');
++      if (!container || !horizontalList || horizontalList.length === 0) return;
++      const items = container.querySelectorAll('.hmedia-item');
++      let activeIdx = 0;
++      for (let i = 0; i < items.length; i++) {
++        if (items[i].classList.contains('active')) {
++          activeIdx = i;
++          break;
++        }
++      }
++      if (horizontalList[activeIdx]) {
++        updateFlexibleLayout(horizontalList[activeIdx]);
++      }
++    });
++
+     function renderMediaRotator(containerId, list, typeClass, delay = 0, interval = 6000) {
+       const container = document.getElementById(containerId);
+       if (!container || !list || list.length === 0) return;
+@@ -1808,15 +1899,22 @@
+ 
+       const overlay = document.createElement('div');
+       overlay.className = 'event-overlay';
++      overlay.style.bottom = '12px';
++      overlay.style.left = '12px';
++      overlay.style.right = '12px';
++      overlay.style.padding = '6px 12px';
+       overlay.innerHTML = `
+-        <i class="fa-solid fa-circle-play event-icon"></i>
+-        <div class="event-details">
+-          <span class="event-label">Live Campus Story</span>
+-          <span class="event-title" id="${containerId}-event-title">${list[0].eventName}</span>
++        <div class="event-details" style="width: 100%;">
++          <span class="event-title" id="${containerId}-event-title" style="font-size: 0.85rem; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; text-align: center;">${list[0].eventName}</span>
+         </div>`;
+       container.appendChild(overlay);
+ 
+       let idx = 0;
++      
++      // 최초 가로폭 레이아웃 동적 갱신
++      if (typeClass === 'hmedia') {
++        updateFlexibleLayout(list[0]);
++      }
+ 
+       function triggerNextSlide() {
+         const items = container.querySelectorAll(`.${typeClass}-item`);
+@@ -1841,6 +1939,11 @@
+         
+         const titleEl = document.getElementById(`${containerId}-event-title`);
+         if (titleEl) titleEl.textContent = list[idx].eventName;
++        
++        // 슬라이드 변경 시 레이아웃 동적 가변 조절 연동
++        if (typeClass === 'hmedia') {
++          updateFlexibleLayout(list[idx]);
++        }
+       }
+ 
+       if (delay > 0) {
+@@ -2451,10 +2554,22 @@
+       const wH = document.getElementById('weather-card-header');
+       const wC = document.getElementById('weather-card-content');
+ 
+-      if (mH) mH.style.display = 'flex';
+-      if (mC) mC.style.display = 'flex';
+-      if (wH) wH.style.display = 'flex';
+-      if (wC) wC.style.display = 'flex';
++      const eff = getEffectiveTime();
++      const timeVal = eff.hour * 100 + eff.min;
++
++      if (timeVal < 1320) {
++        // 13:20 이전: 오늘의 급식 노출, 기상 예보 숨김
++        if (mH) mH.style.display = 'flex';
++        if (mC) mC.style.display = 'flex';
++        if (wH) wH.style.display = 'none';
++        if (wC) wC.style.display = 'none';
++      } else {
++        // 13:20 이후: 내일의 기상 예보 노출, 급식 정보 숨김
++        if (mH) mH.style.display = 'none';
++        if (mC) mC.style.display = 'none';
++        if (wH) wH.style.display = 'flex';
++        if (wC) wC.style.display = 'flex';
++      }
+       
+       loadInfographicMeal();
+       loadInfographicWeather();
+@@ -2622,12 +2737,6 @@
+         textEl.textContent   = q.text;
+         authorEl.textContent = `— ${q.author} —`;
+         container.classList.remove('fade-out');
+-        
+-        // 2사분면 파손 우회용 상태 바 명언 갱신
+-        const damageQuoteEl = document.getElementById('damage-quote-text');
+-        if (damageQuoteEl) {
+-          damageQuoteEl.textContent = q.text;
+-        }
+       }, 520);
+     }
+ 
+@@ -3293,40 +3402,11 @@
+     setInterval(checkBgmSchedule, 10000);
+ 
+     // ========================================================
+-    // 10. 4사분면 파손 우회 레이아웃 설정
++    // 10. 초기화 및 기동 설정
+     // ========================================================
+-    let damageMode = true; // 기본값: 파손 중
+     let isWorshipOverridden = false; // 월요일 예배 안내 오버라이드 여부
+ 
+-    function updateMonitorLayout() {
+-      const blackoutOverlay = document.getElementById('damage-blackout-overlay');
+-      const statusBar = document.getElementById('damage-status-bar');
+-      const statusBtn = document.getElementById('btn-monitor-status');
+-
+-      if (damageMode) {
+-        if (blackoutOverlay) blackoutOverlay.style.display = 'block';
+-        if (statusBar) statusBar.style.display = 'flex';
+-        if (statusBtn) {
+-          statusBtn.innerHTML = '<i class="fa-solid fa-screwdriver-wrench"></i> 모니터 수리 완료 처리';
+-          statusBtn.classList.remove('active');
+-        }
+-      } else {
+-        if (blackoutOverlay) blackoutOverlay.style.display = 'none';
+-        if (statusBar) statusBar.style.display = 'none';
+-        if (statusBtn) {
+-          statusBtn.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> 모니터 파손 모드 전환';
+-          statusBtn.classList.add('active');
+-        }
+-      }
+-    }
+-
+-    function toggleMonitorStatus() {
+-      damageMode = !damageMode;
+-      updateMonitorLayout();
+-    }
+-
+     async function initSystem() {
+-      updateMonitorLayout(); // 모니터 상태 레이아웃 적용
+       updateClock();
+       setInterval(updateClock, 1000);
+       initGoogleAuth();
