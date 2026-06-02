@@ -875,28 +875,46 @@
       <!-- 1사분면 (좌상단 50vw, 50vh) - 구글 드라이브 드론 영상 -->
       <div id="test-quad-1" style="position: absolute; left: 0; top: 0; width: 50vw; height: 50vh; background: #000; overflow: hidden; border-right: 2px dashed rgba(0, 245, 212, 0.4); border-bottom: 2px dashed rgba(0, 245, 212, 0.4);">
         <video id="test-drone-video" style="width: 100%; height: 100%; object-fit: cover;" autoplay loop muted playsinline></video>
+        <!-- 에러 로그 오버레이 패널 -->
+        <div id="test-drone-error-log" style="position: absolute; inset: 0; background: rgba(15, 23, 42, 0.96); border: 2px dashed #f43f5e; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 24px; box-sizing: border-box; z-index: 99; color: #f8fafc; font-family: var(--font-noto); gap: 12px;">
+          <div style="font-size: 2.2rem; color: #ef4444; animation: alertBlink 1s infinite;"><i class="fa-solid fa-triangle-exclamation"></i></div>
+          <div style="font-size: 1.1rem; font-weight: 800; color: #ef4444; letter-spacing: -0.5px;">구글 드라이브 연동 에러 리포트</div>
+          <div id="test-drone-error-text" style="font-family: monospace; font-size: 0.8rem; background: #020617; border: 1px solid #334155; padding: 12px; border-radius: 6px; width: 100%; max-height: 150px; overflow-y: auto; text-align: left; line-height: 1.4; color: #cbd5e1; word-break: break-all; white-space: pre-wrap;"></div>
+          <div style="font-size: 0.72rem; color: var(--color-text-secondary); text-align: center;">조치 방법: CONFIG.GOOGLE_API_KEY 유효성 및 Drive API 허용 여부를 검토하세요.</div>
+        </div>
         <div style="position: absolute; top: 16px; left: 16px; background: rgba(13,27,42,0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: var(--color-zone-a); padding: 8px 16px; border-radius: 8px; font-size: 0.9rem; font-weight: 800; border: 1px solid rgba(0,245,212,0.3); font-family: var(--font-noto); display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(0,245,212,0.25);">
           <i class="fa-solid fa-cloud-arrow-up"></i>
           <span>1사분면: 구글 드라이브 연동 영상 테스트</span>
         </div>
       </div>
       
-      <!-- 2사분면 (우상단 50vw, 50vh) - 범고래 입체 영상 -->
-      <div id="test-quad-2" style="position: absolute; left: 50vw; top: 0; width: 50vw; height: 50vh; background: radial-gradient(circle at center, #0a0f24 0%, #020617 100%); overflow: hidden; border-left: 2px dashed rgba(255, 0, 127, 0.4); border-bottom: 2px dashed rgba(255, 0, 127, 0.4); display: flex; align-items: center; justify-content: center;">
-        <!-- 3D 입체 홀로그램 그리드 배경 -->
-        <div style="position: absolute; inset: 0; background-image: linear-gradient(rgba(255,0,127,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,0,127,0.05) 1px, transparent 1px); background-size: 30px 30px; opacity: 0.8; transform: perspective(500px) rotateX(60deg) translateY(-30px); transform-origin: top; pointer-events: none;"></div>
+      <!-- 2사분면 (우상단 50vw, 50vh) - L자 3D 무안경 입체 전광판 (범고래) -->
+      <div id="test-quad-2" style="position: absolute; left: 50vw; top: 0; width: 50vw; height: 50vh; background: radial-gradient(circle at center, #0f172a 0%, #020617 100%); overflow: hidden; border-left: 2px dashed rgba(255, 0, 127, 0.4); border-bottom: 2px dashed rgba(255, 0, 127, 0.4); display: flex; align-items: center; justify-content: center; perspective: 1200px; box-sizing: border-box;">
         
-        <!-- 유튜브 범고래 입체 크로마키 영상 -->
-        <div style="position: relative; width: 100%; height: 100%; filter: url(#chromakey-filter); display: flex; align-items: center; justify-content: center; transform: scale(1.15);">
-          <iframe id="test-tiger-iframe" style="width: 100%; height: 100%; border: none; pointer-events: none;" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <!-- L자 3D 입체 광고판 내부 구조 프레임 -->
+        <div class="l-billboard-frame" style="position: relative; width: 85%; height: 80%; transform-style: preserve-3d; transform: rotateX(16deg) rotateY(-22deg); display: flex; align-items: center; justify-content: center;">
+          <!-- 왼쪽 측면 스크린 (Left Wall) -->
+          <div style="position: absolute; left: 0; width: 50%; height: 85%; background: #000; border: 3px solid var(--color-zone-c); box-shadow: 0 0 25px rgba(255,0,127,0.3); transform: rotateY(45deg) translateZ(60px); transform-origin: right; overflow: hidden; box-sizing: border-box;">
+            <video id="l-billboard-left-video" style="width: 200%; height: 100%; object-fit: cover; position: absolute; left: 0; top: 0; filter: brightness(0.95) contrast(1.1);" autoplay loop muted playsinline></video>
+            <div style="position: absolute; inset: 0; background: linear-gradient(90deg, rgba(255,0,127,0.2) 0%, transparent 60%); pointer-events: none;"></div>
+          </div>
+          <!-- 오른쪽 정면 스크린 (Right Wall) -->
+          <div style="position: absolute; right: 0; width: 50%; height: 85%; background: #000; border: 3px solid var(--color-zone-c); box-shadow: 0 0 25px rgba(255,0,127,0.3); transform: rotateY(-45deg) translateZ(60px); transform-origin: left; overflow: hidden; box-sizing: border-box;">
+            <video id="l-billboard-right-video" style="width: 200%; height: 100%; object-fit: cover; position: absolute; right: 0; top: 0; filter: brightness(0.95) contrast(1.1);" autoplay loop muted playsinline></video>
+            <div style="position: absolute; inset: 0; background: linear-gradient(-90deg, rgba(255,0,127,0.2) 0%, transparent 60%); pointer-events: none;"></div>
+          </div>
+          <!-- 스크린 밖으로 튀어나오는 3D 범고래 돌출 레이어 -->
+          <div style="position: absolute; width: 70%; height: 80%; transform: translateZ(120px) scale(1.15); pointer-events: none; overflow: visible; display: flex; align-items: center; justify-content: center;">
+            <video id="l-billboard-float-video" style="width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 15px 30px rgba(0,0,0,0.85)) brightness(1.2) contrast(1.15);" autoplay loop muted playsinline></video>
+          </div>
         </div>
-        
-        <!-- 입체 하이라이트 발판 이펙트 -->
-        <div style="position: absolute; width: 300px; height: 100px; background: radial-gradient(ellipse, rgba(255, 0, 127, 0.25) 0%, transparent 70%); bottom: 20px; border-radius: 50%; pointer-events: none; filter: blur(10px); animation: breathingGlow 2s infinite alternate;"></div>
+
+        <!-- 3D 입체 하이라이트 원형 이펙트 -->
+        <div style="position: absolute; width: 450px; height: 120px; background: radial-gradient(ellipse, rgba(255, 0, 127, 0.28) 0%, transparent 75%); bottom: 10px; border-radius: 50%; pointer-events: none; filter: blur(15px); animation: breathingGlow 2s infinite alternate;"></div>
         
         <div style="position: absolute; top: 16px; left: 16px; background: rgba(13,27,42,0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: var(--color-zone-c); padding: 8px 16px; border-radius: 8px; font-size: 0.9rem; font-weight: 800; border: 1px solid rgba(255,0,127,0.3); font-family: var(--font-noto); display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(255,0,127,0.25);">
           <i class="fa-solid fa-cube fa-bounce"></i>
-          <span>2사분면: 범고래 3D 입체 시뮬레이션 (Chroma Key)</span>
+          <span>2사분면: L자 광고판 무안경 3D 입체 영상 (범고래)</span>
         </div>
       </div>
       
@@ -2599,43 +2617,107 @@
       }
     }
 
+    function showTestDroneError(message) {
+      const logBox = document.getElementById('test-drone-error-log');
+      const logText = document.getElementById('test-drone-error-text');
+      if (logBox && logText) {
+        logText.textContent = message;
+        logBox.style.display = 'flex';
+      }
+    }
+
+    function hideTestDroneError() {
+      const logBox = document.getElementById('test-drone-error-log');
+      if (logBox) {
+        logBox.style.display = 'none';
+      }
+    }
+
+    // 에러 리포팅을 위한 비디오 이벤트 바인딩
+    window.addEventListener('DOMContentLoaded', () => {
+      const droneVideo = document.getElementById('test-drone-video');
+      if (droneVideo) {
+        droneVideo.addEventListener('error', () => {
+          const err = droneVideo.error;
+          let msg = "알 수 없는 비디오 로드 에러가 발생했습니다.";
+          if (err) {
+            switch (err.code) {
+              case err.MEDIA_ERR_ABORTED: msg = "비디오 로드가 사용자에 의해 취소되었습니다."; break;
+              case err.MEDIA_ERR_NETWORK: msg = "네트워크 장애로 비디오 다운로드에 실패했습니다."; break;
+              case err.MEDIA_ERR_DECODE: msg = "비디오 디코딩 실패 (지원하지 않는 파일 포맷이거나 코덱입니다)."; break;
+              case err.MEDIA_ERR_SRC_NOT_SUPPORTED: msg = "비디오 URL을 불러오지 못했습니다. (권한 없음, 존재하지 않는 파일 혹은 CORS 차단)"; break;
+            }
+            msg += `\n[에러 코드: ${err.code}] 상세: ${err.message || '없음'}`;
+          }
+          showTestDroneError(msg + `\n\n[비디오 재생 실패 URL]\n${droneVideo.src}`);
+        });
+      }
+    });
+
     let isTestScreenActive = false;
     async function toggleTestScreen() {
       const overlay = document.getElementById('test-screen-overlay');
       const btn = document.getElementById('btn-test-screen-toggle');
       const droneVideo = document.getElementById('test-drone-video');
-      const tigerIframe = document.getElementById('test-tiger-iframe');
+      
+      // L자 광고판 비디오 엘리먼트들
+      const leftV = document.getElementById('l-billboard-left-video');
+      const rightV = document.getElementById('l-billboard-right-video');
+      const floatV = document.getElementById('l-billboard-float-video');
+      
+      // 범고래 헤엄치는 바다 수중 영상 (VideoJS CDN 리소스 활용)
+      const billboardSrc = "https://vjs.zencdn.net/v/oceans.mp4";
       
       isTestScreenActive = !isTestScreenActive;
       
       if (isTestScreenActive) {
         if (overlay) overlay.style.display = 'block';
         if (btn) btn.classList.add('active');
+        hideTestDroneError(); // 기존 에러 패널 리셋
         
-        // Find a video directly from Google Drive folder or fallback
-        const videoUrl = await getTestScreenVideoUrl();
+        // 구글 드라이브 비디오 동적 탐색
+        let videoUrl = "";
+        try {
+          videoUrl = await getTestScreenVideoUrl();
+        } catch (err) {
+          showTestDroneError(`[API Request Error]\n구글 드라이브 폴더 스캔 도중 오류가 발생했습니다.\n${err.message}`);
+        }
+        
         if (droneVideo) {
+          // 만약 드라이브 탐색에 실패하여 믹스킷 폴백으로 돌아갔을 시 에러 띄우기
+          if (!videoUrl || videoUrl.includes('assets.mixkit.co')) {
+            showTestDroneError(`[Drive Sync Error] 구글 드라이브(14ThjsFnG5tjFM_cp3wrOv2sIHhArdVkb) 내에서 영상 파일을 성공적으로 찾지 못했습니다.\n\n대체(믹스킷) 비디오 재생을 시도합니다.\nCONFIG.GOOGLE_API_KEY 권한 및 파일 가시성을 확인해 주세요.`);
+          }
           droneVideo.src = videoUrl;
-          droneVideo.play().catch(e => console.warn("Test video play blocked:", e));
+          droneVideo.play().catch(e => {
+            showTestDroneError(`[Playback Blocked] 자동 재생이 차단되었습니다:\n${e.message}`);
+          });
         }
         
-        // Load the 3D Orca green screen video (autoplays, loops, mutes)
-        // Video ID: VgvM7av1o1Q (Green Screen Orca Killer Whale 3D Animation by PixelBoom)
-        if (tigerIframe) {
-          tigerIframe.src = "https://www.youtube.com/embed/VgvM7av1o1Q?autoplay=1&loop=1&playlist=VgvM7av1o1Q&mute=1&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3";
-        }
+        // L자 광고판 3D 비디오 재생 및 동기화
+        [leftV, rightV, floatV].forEach(v => {
+          if (v) {
+            v.src = billboardSrc;
+            v.play().catch(e => console.warn("L-billboard play blocked:", e));
+          }
+        });
+        
       } else {
         if (overlay) overlay.style.display = 'none';
         if (btn) btn.classList.remove('active');
+        hideTestDroneError();
         
-        // Stop playing
+        // 재생 중지 및 리소스 해제
         if (droneVideo) {
           droneVideo.pause();
           droneVideo.src = "";
         }
-        if (tigerIframe) {
-          tigerIframe.src = "";
-        }
+        [leftV, rightV, floatV].forEach(v => {
+          if (v) {
+            v.pause();
+            v.src = "";
+          }
+        });
       }
     }
 
