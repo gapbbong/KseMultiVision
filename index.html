@@ -888,25 +888,22 @@
         </div>
       </div>
       
-      <!-- 2사분면 (우상단 50vw, 50vh) - L자 3D 무안경 입체 전광판 (범고래) -->
-      <div id="test-quad-2" style="position: absolute; left: 50vw; top: 0; width: 50vw; height: 50vh; background: radial-gradient(circle at center, #0f172a 0%, #020617 100%); overflow: hidden; border-left: 2px dashed rgba(255, 0, 127, 0.4); border-bottom: 2px dashed rgba(255, 0, 127, 0.4); display: flex; align-items: center; justify-content: center; perspective: 1200px; box-sizing: border-box;">
+      <!-- 2사분면 (우상단 50vw, 50vh) - 3D 범고래 입체 시뮬레이션 -->
+      <div id="test-quad-2" style="position: absolute; left: 50vw; top: 0; width: 50vw; height: 50vh; background: radial-gradient(circle at center, #0a102d 0%, #020617 100%); overflow: hidden; border-left: 2px dashed rgba(255, 0, 127, 0.4); border-bottom: 2px dashed rgba(255, 0, 127, 0.4); display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
         
-        <!-- L자 3D 입체 광고판 내부 구조 프레임 -->
-        <div class="l-billboard-frame" style="position: relative; width: 85%; height: 80%; transform-style: preserve-3d; transform: rotateX(16deg) rotateY(-22deg); display: flex; align-items: center; justify-content: center;">
-          <!-- 왼쪽 측면 스크린 (Left Wall) -->
-          <div style="position: absolute; left: 0; width: 50%; height: 85%; background: #000; border: 3px solid var(--color-zone-c); box-shadow: 0 0 25px rgba(255,0,127,0.3); transform: rotateY(45deg) translateZ(60px); transform-origin: right; overflow: hidden; box-sizing: border-box;">
-            <video id="l-billboard-left-video" style="width: 200%; height: 100%; object-fit: cover; position: absolute; left: 0; top: 0; filter: brightness(0.95) contrast(1.1);" autoplay loop muted playsinline></video>
-            <div style="position: absolute; inset: 0; background: linear-gradient(90deg, rgba(255,0,127,0.2) 0%, transparent 60%); pointer-events: none;"></div>
+        <!-- 하이테크 3D 격자선 배경 (공간감 제공) -->
+        <div style="position: absolute; inset: 0; background-image: linear-gradient(rgba(255,0,127,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,0,127,0.05) 1px, transparent 1px); background-size: 40px 40px; opacity: 0.65; pointer-events: none;"></div>
+        
+        <!-- 홀로그램 가상 포탈/프레임 (범고래가 이 테두리 앞으로 튀어나오는 효과) -->
+        <div style="position: relative; width: 75%; height: 75%; border: 3px solid rgba(255,0,127,0.3); background: rgba(13,27,42,0.4); box-shadow: inset 0 0 35px rgba(255,0,127,0.25), 0 0 25px rgba(255,0,127,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+          
+          <!-- 범고래 영상 컨테이너: 프레임을 침범하여 튀어나오도록 overflow 무력화(visible) 및 scale 확대 -->
+          <div style="position: absolute; width: 130%; height: 130%; filter: url(#chromakey-filter); pointer-events: none; display: flex; align-items: center; justify-content: center; transform: scale(1.15);">
+            <iframe id="test-tiger-iframe" style="width: 100%; height: 100%; border: none; pointer-events: none;" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
           </div>
-          <!-- 오른쪽 정면 스크린 (Right Wall) -->
-          <div style="position: absolute; right: 0; width: 50%; height: 85%; background: #000; border: 3px solid var(--color-zone-c); box-shadow: 0 0 25px rgba(255,0,127,0.3); transform: rotateY(-45deg) translateZ(60px); transform-origin: left; overflow: hidden; box-sizing: border-box;">
-            <video id="l-billboard-right-video" style="width: 200%; height: 100%; object-fit: cover; position: absolute; right: 0; top: 0; filter: brightness(0.95) contrast(1.1);" autoplay loop muted playsinline></video>
-            <div style="position: absolute; inset: 0; background: linear-gradient(-90deg, rgba(255,0,127,0.2) 0%, transparent 60%); pointer-events: none;"></div>
-          </div>
-          <!-- 스크린 밖으로 튀어나오는 3D 범고래 돌출 레이어 -->
-          <div style="position: absolute; width: 70%; height: 80%; transform: translateZ(120px) scale(1.15); pointer-events: none; overflow: visible; display: flex; align-items: center; justify-content: center;">
-            <video id="l-billboard-float-video" style="width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 15px 30px rgba(0,0,0,0.85)) brightness(1.2) contrast(1.15);" autoplay loop muted playsinline></video>
-          </div>
+          
+          <!-- 프레임 전면 네온 레이어링 가이드 -->
+          <div style="position: absolute; inset: -3px; border: 3px solid transparent; border-top-color: rgba(255,0,127,0.75); border-left-color: rgba(255,0,127,0.75); border-radius: 12px; pointer-events: none; filter: drop-shadow(0 0 10px rgba(255,0,127,0.95));"></div>
         </div>
 
         <!-- 3D 입체 하이라이트 원형 이펙트 -->
@@ -914,7 +911,7 @@
         
         <div style="position: absolute; top: 16px; left: 16px; background: rgba(13,27,42,0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: var(--color-zone-c); padding: 8px 16px; border-radius: 8px; font-size: 0.9rem; font-weight: 800; border: 1px solid rgba(255,0,127,0.3); font-family: var(--font-noto); display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(255,0,127,0.25);">
           <i class="fa-solid fa-cube fa-bounce"></i>
-          <span>2사분면: L자 광고판 무안경 3D 입체 영상 (범고래)</span>
+          <span>2사분면: 범고래 3D 입체 시뮬레이션 (Chroma Key)</span>
         </div>
       </div>
       
@@ -2660,13 +2657,8 @@
       const btn = document.getElementById('btn-test-screen-toggle');
       const droneVideo = document.getElementById('test-drone-video');
       
-      // L자 광고판 비디오 엘리먼트들
-      const leftV = document.getElementById('l-billboard-left-video');
-      const rightV = document.getElementById('l-billboard-right-video');
-      const floatV = document.getElementById('l-billboard-float-video');
-      
-      // 범고래 헤엄치는 바다 수중 영상 (VideoJS CDN 리소스 활용)
-      const billboardSrc = "https://vjs.zencdn.net/v/oceans.mp4";
+      // 유튜브 범고래 크로마키 입체 영상 프레임
+      const tigerIframe = document.getElementById('test-tiger-iframe');
       
       isTestScreenActive = !isTestScreenActive;
       
@@ -2686,7 +2678,7 @@
         if (droneVideo) {
           // 만약 드라이브 탐색에 실패하여 믹스킷 폴백으로 돌아갔을 시 에러 띄우기
           if (!videoUrl || videoUrl.includes('assets.mixkit.co')) {
-            showTestDroneError(`[Drive Sync Error] 구글 드라이브(14ThjsFnG5tjFM_cp3wrOv2sIHhArdVkb) 내에서 영상 파일을 성공적으로 찾지 못했습니다.\n\n대체(믹스킷) 비디오 재생을 시도합니다.\nCONFIG.GOOGLE_API_KEY 권한 및 파일 가시성을 확인해 주세요.`);
+            showTestDroneError(`[Drive Sync Error] 구글 드라이브(14ThjsFnG5tjFM_cp3wrOv2sIHhArdVkb) 내에서 직접 영상 파일을 성공적으로 찾지 못했습니다.\n\n대체(믹스킷) 비디오 재생을 시도합니다.\nCONFIG.GOOGLE_API_KEY 권한 및 파일 가시성을 확인해 주세요.`);
           }
           droneVideo.src = videoUrl;
           droneVideo.play().catch(e => {
@@ -2694,13 +2686,10 @@
           });
         }
         
-        // L자 광고판 3D 비디오 재생 및 동기화
-        [leftV, rightV, floatV].forEach(v => {
-          if (v) {
-            v.src = billboardSrc;
-            v.play().catch(e => console.warn("L-billboard play blocked:", e));
-          }
-        });
+        // 3D 범고래 크로마키 유튜브 영상 로드 (루프, 자동재생, 음소거)
+        if (tigerIframe) {
+          tigerIframe.src = "https://www.youtube.com/embed/VgvM7av1o1Q?autoplay=1&loop=1&playlist=VgvM7av1o1Q&mute=1&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3";
+        }
         
       } else {
         if (overlay) overlay.style.display = 'none';
@@ -2712,12 +2701,9 @@
           droneVideo.pause();
           droneVideo.src = "";
         }
-        [leftV, rightV, floatV].forEach(v => {
-          if (v) {
-            v.pause();
-            v.src = "";
-          }
-        });
+        if (tigerIframe) {
+          tigerIframe.src = "";
+        }
       }
     }
 
@@ -2733,7 +2719,8 @@
             const data = await res.json();
             if (data.files && data.files.length > 0) {
               const f = data.files[0];
-              return f.webContentLink || `https://docs.google.com/uc?export=download&id=${f.id}`;
+              const url = f.webContentLink || `https://docs.google.com/uc?export=download&id=${f.id}`;
+              return toProxyUrl({ url: url, type: 'video' }); // 토큰 바인딩 처리
             }
           }
           
@@ -2748,7 +2735,8 @@
                   const subData = await resSubFiles.json();
                   if (subData.files && subData.files.length > 0) {
                     const f = subData.files[0];
-                    return f.webContentLink || `https://docs.google.com/uc?export=download&id=${f.id}`;
+                    const url = f.webContentLink || `https://docs.google.com/uc?export=download&id=${f.id}`;
+                    return toProxyUrl({ url: url, type: 'video' }); // 토큰 바인딩 처리
                   }
                 }
               }
