@@ -3001,7 +3001,7 @@
          // 1~3개 슬라이딩 윈도우 캐싱 트리거 (하드디스크 공간 세이브)
          // 캐싱 트리거는 첫번째 폴더 ID를 기준으로 호출하되, keep_ids를 셋팅해 보냅니다.
          const idsToCache = [];
-         for (let i = 0; i < Math.min(3, allVideos.length); i++) {
+         for (let i = 0; i < Math.min(5, allVideos.length); i++) {
            const targetIdx = (currentIndex + i) % allVideos.length;
            idsToCache.push(allVideos[targetIdx].id);
          }
