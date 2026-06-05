@@ -2736,7 +2736,7 @@
           });
         }
         
-        // 10분마다 구글 드라이브 비디오 싱크 및 플레이리스트 백그라운드 갱신
+        // 30분마다 구글 드라이브 비디오 싱크 및 플레이리스트 백그라운드 갱신
         if (testDroneInterval) clearInterval(testDroneInterval);
         testDroneInterval = setInterval(async () => {
           if (!isTestScreenActive) return;
@@ -2757,7 +2757,7 @@
           } catch (e) {
             console.warn('[Test Screen] Failed to periodically sync playlist:', e);
           }
-        }, 600000); // 10분 (600,000ms)
+        }, 1800000); // 30분 (1,800,000ms)
         
       } else {
         if (testDroneInterval) {
