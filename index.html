@@ -870,32 +870,31 @@
       </defs>
     </svg>
 
-    <!-- 테스트 화면 모드 전용 오버레이 (1사분면: 범고래 입체 영상, 2사분면: 드라이브 영상) -->
+    <!-- 테스트 화면 모드 전용 오버레이 (1사분면: 동기부여 영상, 2사분면: 드론 영상) -->
     <div id="test-screen-overlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #020617; z-index: 100010; display: none; pointer-events: all; box-sizing: border-box;">
-      <!-- 1사분면 (좌상단 50vw, 50vh) - 3D 범고래 입체 시뮬레이션 -->
-      <div id="test-quad-1" style="position: absolute; left: 0; top: 0; width: 50vw; height: 50vh; background: #000000; overflow: hidden; border-right: 2px dashed rgba(255, 0, 127, 0.4); border-bottom: 2px dashed rgba(255, 0, 127, 0.4); display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
-        
-        <!-- 하이테크 3D 격자선 배경 (공간감 제공) -->
-        <div style="position: absolute; inset: 0; background-image: linear-gradient(rgba(255,0,127,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,0,127,0.05) 1px, transparent 1px); background-size: 40px 40px; opacity: 0.65; pointer-events: none; display: none;"></div>
-        
-        <!-- 홀로그램 가상 포탈/프레임 (범고래가 이 테두리 앞으로 튀어나오는 효과) -->
-        <div style="position: relative; width: 75%; height: 75%; border: 3px solid rgba(255,0,127,0.3); background: rgba(13,27,42,0.4); box-shadow: inset 0 0 35px rgba(255,0,127,0.25), 0 0 25px rgba(255,0,127,0.2); border-radius: 12px; display: none; align-items: center; justify-content: center; box-sizing: border-box;">
-          
-          <!-- 범고래 영상 컨테이너: 프레임을 침범하여 튀어나오도록 overflow 무력화(visible) 및 scale 확대 -->
-          <div style="position: absolute; width: 130%; height: 130%; filter: url(#chromakey-filter); pointer-events: none; display: flex; align-items: center; justify-content: center; transform: scale(1.15);">
-            <iframe id="test-tiger-iframe" style="width: 100%; height: 100%; border: none; pointer-events: none; display: none;" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-          </div>
-          
-          <!-- 프레임 전면 네온 레이어링 가이드 -->
-          <div style="position: absolute; inset: -3px; border: 3px solid transparent; border-top-color: rgba(255,0,127,0.75); border-left-color: rgba(255,0,127,0.75); border-radius: 12px; pointer-events: none; filter: drop-shadow(0 0 10px rgba(255,0,127,0.95));"></div>
+      <!-- 1사분면 (좌상단 50vw, 50vh) - 구글 드라이브 동기부여 영상 -->
+      <div id="test-quad-1" style="position: absolute; left: 0; top: 0; width: 50vw; height: 50vh; background: #000; overflow: hidden; border-right: 2px dashed rgba(0, 245, 212, 0.4); border-bottom: 2px dashed rgba(0, 245, 212, 0.4);">
+        <video id="test-movie-video" style="width: 100%; height: 100%; object-fit: cover;" autoplay muted playsinline></video>
+        <!-- 재생 시간 표시 패널 (현재재생시간 / 전체재생시간) -->
+        <div id="test-movie-time-display" style="position: absolute; bottom: 16px; right: 16px; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #ffffff; padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; font-family: var(--font-outfit), monospace; font-weight: 700; border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 4px 12px rgba(0,0,0,0.5); z-index: 10; display: flex; align-items: center; gap: 6px; letter-spacing: 0.5px;">
+          <span style="display: inline-block; width: 6px; height: 6px; background: #10b981; border-radius: 50%; animation: alertBlink 1.5s infinite;"></span>
+          <span id="test-movie-time-text">00:00 / 00:00</span>
         </div>
-
-        <!-- 3D 입체 하이라이트 원형 이펙트 -->
-        <div style="position: absolute; width: 450px; height: 120px; background: radial-gradient(ellipse, rgba(255, 0, 127, 0.28) 0%, transparent 75%); bottom: 10px; border-radius: 50%; pointer-events: none; filter: blur(15px); animation: breathingGlow 2s infinite alternate; display: none;"></div>
-        
-        <div style="position: absolute; top: 16px; left: 16px; background: rgba(13,27,42,0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: var(--color-zone-c); padding: 8px 16px; border-radius: 8px; font-size: 0.9rem; font-weight: 800; border: 1px solid rgba(255,0,127,0.3); font-family: var(--font-noto); display: none; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(255,0,127,0.25);">
-          <i class="fa-solid fa-cube fa-bounce"></i>
-          <span>1사분면: 범고래 3D 입체 시뮬레이션 (Chroma Key)</span>
+        <!-- 로딩 스피너 오버레이 (비디오 다운로드 및 버퍼링용) -->
+        <div id="test-movie-loading" style="position: absolute; inset: 0; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); display: none; flex-direction: column; align-items: center; justify-content: center; gap: 16px; z-index: 5; color: #ffffff; font-family: var(--font-noto);">
+          <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 3rem; color: #00f5d4; filter: drop-shadow(0 0 10px rgba(0, 245, 212, 0.6));"></i>
+          <div style="font-size: 0.95rem; font-weight: 700; color: #00f5d4; letter-spacing: 0.5px; text-shadow: 0 0 10px rgba(0,245,212,0.4);">비디오 로딩 및 캐시 다운로드 중...</div>
+        </div>
+        <!-- 에러 로그 오버레이 패널 -->
+        <div id="test-movie-error-log" style="position: absolute; inset: 0; background: rgba(15, 23, 42, 0.96); border: 2px dashed #f43f5e; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 24px; box-sizing: border-box; z-index: 99; color: #f8fafc; font-family: var(--font-noto); gap: 12px;">
+           <div style="font-size: 2.2rem; color: #ef4444; animation: alertBlink 1s infinite;"><i class="fa-solid fa-triangle-exclamation"></i></div>
+          <div style="font-size: 1.1rem; font-weight: 800; color: #ef4444; letter-spacing: -0.5px;">구글 드라이브 연동 에러 리포트</div>
+          <div id="test-movie-error-text" style="font-family: monospace; font-size: 0.8rem; background: #020617; border: 1px solid #334155; padding: 12px; border-radius: 6px; width: 100%; max-height: 150px; overflow-y: auto; text-align: left; line-height: 1.4; color: #cbd5e1; word-break: break-all; white-space: pre-wrap;"></div>
+          <div style="font-size: 0.72rem; color: var(--color-text-secondary); text-align: center;">조치 방법: CONFIG.GOOGLE_API_KEY 유효성 및 Drive API 허용 여부를 검토하세요.</div>
+        </div>
+        <div style="position: absolute; top: 16px; left: 16px; background: rgba(13,27,42,0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: var(--color-zone-a); padding: 8px 16px; border-radius: 8px; font-size: 0.9rem; font-weight: 800; border: 1px solid rgba(0,245,212,0.3); font-family: var(--font-noto); display: none; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(0,245,212,0.25);">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+          <span>1사분면: 구글 드라이브 동기부여 영상 테스트</span>
         </div>
       </div>
       
@@ -933,7 +932,7 @@
             <span>멀티비전 모니터 연동 테스트 작동 중</span>
           </div>
           <p style="color: var(--color-text-secondary); font-size: 0.95rem; font-weight: 500; max-width: 600px; line-height: 1.5; word-break: keep-all; padding: 0 20px;">
-            본 화면은 1사분면(좌측 모니터 영역)의 범고래 크로마키 입체 영상 및 2사분면(우측 상단 모니터 영역)의 구글 드라이브 업로드 비디오를 검증하기 위한 테스트 모드입니다.
+            본 화면은 1사분면(좌측 모니터 영역)의 구글 드라이브 동기부여 영상 및 2사분면(우측 상단 모니터 영역)의 구글 드라이브 드론 영상을 검증하기 위한 테스트 모드입니다.
           </p>
         </div>
         <button onclick="toggleTestScreen()" style="background: linear-gradient(135deg, #ea580c 0%, #ff7a00 100%); border: none; color: #ffffff; padding: 12px 32px; border-radius: 8px; cursor: pointer; font-size: 1.05rem; font-weight: 800; transition: all 0.3s; box-shadow: 0 4px 20px rgba(234,88,12,0.4); display: flex; align-items: center; gap: 8px; outline: none;">
@@ -2666,18 +2665,21 @@
     }
 
     // 에러 리포팅을 위한 비디오 이벤트 바인딩 및 순차 재생(Playlist) 기능 바인딩
+    // 에러 리포팅을 위한 비디오 이벤트 바인딩 및 순차 재생(Playlist) 기능 바인딩
     window.addEventListener('DOMContentLoaded', () => {
+      // 재생 시간 표시 포맷 헬퍼
+      function formatDroneTime(sec) {
+        if (isNaN(sec) || sec === Infinity) return "00:00";
+        const m = Math.floor(sec / 60);
+        const s = Math.floor(sec % 60);
+        return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+      }
+
+      // 1. 드론 비디오 바인딩 (2사분면)
       const droneVideo = document.getElementById('test-drone-video');
       const droneLoading = document.getElementById('test-drone-loading');
       if (droneVideo) {
-        // 재생 시간 표시 포맷 헬퍼
         const droneTimeText = document.getElementById('test-drone-time-text');
-        function formatDroneTime(sec) {
-          if (isNaN(sec) || sec === Infinity) return "00:00";
-          const m = Math.floor(sec / 60);
-          const s = Math.floor(sec % 60);
-          return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-        }
         
         droneVideo.addEventListener('timeupdate', () => {
           if (droneTimeText) {
@@ -2703,18 +2705,17 @@
           if (isTestScreenActive && testDronePlaylist && testDronePlaylist.length > 0) {
             testDroneIndex = (testDroneIndex + 1) % testDronePlaylist.length;
             const nextUrl = testDronePlaylist[testDroneIndex];
-            console.log(`[Test Video] Ended. Playing next in playlist: Index ${testDroneIndex}/${testDronePlaylist.length}`);
+            console.log(`[Test Drone Video] Ended. Playing next: Index ${testDroneIndex}/${testDronePlaylist.length}`);
             droneVideo.src = nextUrl;
             droneVideo.play().catch(e => {
               showTestDroneError(`[Playback Blocked] 자동 재생이 차단되었습니다:\n${e.message}`);
             });
-            // 새 영상 재생 시작 시 백그라운드 캐싱 슬라이딩 윈도우 동기화
-            getTestScreenVideoUrls(testDroneIndex).catch(()=>{});
+            getTestScreenVideoUrls(CONFIG.TEST_DRONE_FOLDER_ID, testDroneIndex).catch(()=>{});
           }
         });
         droneVideo.addEventListener('error', () => {
           const err = droneVideo.error;
-          let msg = "알 수 없는 비디오 로드 에러가 발생했습니다.";
+          let msg = "드론 비디오 로드 에러가 발생했습니다.";
           if (err) {
             switch (err.code) {
               case err.MEDIA_ERR_ABORTED: msg = "비디오 로드가 사용자에 의해 취소되었습니다."; break;
@@ -2727,20 +2728,72 @@
           showTestDroneError(msg + `\n\n[비디오 재생 실패 URL]\n${droneVideo.src}`);
         });
       }
+
+      // 2. 동기부여 비디오 바인딩 (1사분면)
+      const movieVideo = document.getElementById('test-movie-video');
+      const movieLoading = document.getElementById('test-movie-loading');
+      if (movieVideo) {
+        const movieTimeText = document.getElementById('test-movie-time-text');
+        
+        movieVideo.addEventListener('timeupdate', () => {
+          if (movieTimeText) {
+            const current = formatDroneTime(movieVideo.currentTime);
+            const duration = formatDroneTime(movieVideo.duration);
+            movieTimeText.textContent = `${current} / ${duration}`;
+          }
+        });
+        
+        movieVideo.addEventListener('loadedmetadata', () => {
+          if (movieTimeText) {
+            const current = formatDroneTime(movieVideo.currentTime);
+            const duration = formatDroneTime(movieVideo.duration);
+            movieTimeText.textContent = `${current} / ${duration}`;
+          }
+        });
+
+        movieVideo.addEventListener('loadstart', () => { if (movieLoading) movieLoading.style.display = 'flex'; });
+        movieVideo.addEventListener('waiting', () => { if (movieLoading) movieLoading.style.display = 'flex'; });
+        movieVideo.addEventListener('playing', () => { if (movieLoading) movieLoading.style.display = 'none'; });
+        movieVideo.addEventListener('canplay', () => { if (movieLoading) movieLoading.style.display = 'none'; });
+        movieVideo.addEventListener('ended', () => {
+          if (isTestScreenActive && testMoviePlaylist && testMoviePlaylist.length > 0) {
+            testMovieIndex = (testMovieIndex + 1) % testMoviePlaylist.length;
+            const nextUrl = testMoviePlaylist[testMovieIndex];
+            console.log(`[Test Movie Video] Ended. Playing next: Index ${testMovieIndex}/${testMoviePlaylist.length}`);
+            movieVideo.src = nextUrl;
+            movieVideo.play().catch(e => console.warn('[Test Movie] Auto play blocked:', e));
+            getTestScreenVideoUrls(CONFIG.WORKSPACE_DRIVE_FOLDER_ID, testMovieIndex).catch(()=>{});
+          }
+        });
+        movieVideo.addEventListener('error', () => {
+          const err = movieVideo.error;
+          let msg = "동기부여 비디오 로드 에러가 발생했습니다.";
+          if (err) {
+            switch (err.code) {
+              case err.MEDIA_ERR_ABORTED: msg = "비디오 로드가 사용자에 의해 취소되었습니다."; break;
+              case err.MEDIA_ERR_NETWORK: msg = "네트워크 장애로 비디오 다운로드에 실패했습니다."; break;
+              case err.MEDIA_ERR_DECODE: msg = "비디오 디코딩 실패 (지원하지 않는 파일 포맷이거나 코덱입니다)."; break;
+              case err.MEDIA_ERR_SRC_NOT_SUPPORTED: msg = "비디오 URL을 불러오지 못했습니다. (권한 없음, 존재하지 않는 파일 혹은 CORS 차단)"; break;
+            }
+            msg += `\n[에러 코드: ${err.code}] 상세: ${err.message || '없음'}`;
+          }
+          console.warn(msg + `\n\n[비디오 재생 실패 URL]\n${movieVideo.src}`);
+        });
+      }
     });
 
     let isTestScreenActive = false;
     let testDronePlaylist = [];
     let testDroneIndex = 0;
+    let testMoviePlaylist = [];
+    let testMovieIndex = 0;
     let testDroneInterval = null;
 
     async function toggleTestScreen() {
       const overlay = document.getElementById('test-screen-overlay');
       const btn = document.getElementById('btn-test-screen-toggle');
       const droneVideo = document.getElementById('test-drone-video');
-      
-      // 유튜브 범고래 크로마키 입체 영상 프레임
-      const tigerIframe = document.getElementById('test-tiger-iframe');
+      const movieVideo = document.getElementById('test-movie-video');
       
       isTestScreenActive = !isTestScreenActive;
       
@@ -2749,28 +2802,48 @@
         if (btn) btn.classList.add('active');
         hideTestDroneError(); // 기존 에러 패널 리셋
         
-        // 구글 드라이브 비디오 동적 탐색
+        // 1. 드론 비디오 동적 탐색 (CONFIG.TEST_DRONE_FOLDER_ID)
         try {
-          testDronePlaylist = await getTestScreenVideoUrls(0);
+          testDronePlaylist = await getTestScreenVideoUrls(CONFIG.TEST_DRONE_FOLDER_ID, 0);
           testDroneIndex = 0;
         } catch (err) {
           if (!isTestScreenActive) return;
-          showTestDroneError(`[API Request Error]\n구글 드라이브 폴더 스캔 도중 오류가 발생했습니다.\n${err.message}`);
+          showTestDroneError(`[Drone API Request Error]\n드론 폴더 스캔 도중 오류가 발생했습니다.\n${err.message}`);
           testDronePlaylist = ['https://assets.mixkit.co/videos/preview/mixkit-drone-shot-of-a-winding-road-in-the-mountains-43034-large.mp4'];
           testDroneIndex = 0;
         }
         
+        // 2. 동기부여 비디오 동적 탐색 (CONFIG.WORKSPACE_DRIVE_FOLDER_ID)
+        try {
+          testMoviePlaylist = await getTestScreenVideoUrls(CONFIG.WORKSPACE_DRIVE_FOLDER_ID, 0);
+          testMovieIndex = 0;
+        } catch (err) {
+          if (!isTestScreenActive) return;
+          console.warn(`[Movie API Request Error]\n동기부여 폴더 스캔 도중 오류가 발생했습니다.\n${err.message}`);
+          testMoviePlaylist = ['https://assets.mixkit.co/videos/preview/mixkit-drone-shot-of-a-winding-road-in-the-mountains-43034-large.mp4'];
+          testMovieIndex = 0;
+        }
+        
         if (!isTestScreenActive) return;
+        
+        // 드론 비디오 재생
         if (droneVideo) {
           const currentUrl = testDronePlaylist[testDroneIndex];
-          // 만약 드라이브 탐색에 실패하여 믹스킷 폴백으로 돌아갔을 시 에러 띄우기
           if (!currentUrl || currentUrl.includes('assets.mixkit.co')) {
-            const targetFolderId = CONFIG.TEST_DRONE_FOLDER_ID || CONFIG.WORKSPACE_DRIVE_FOLDER_ID;
-            showTestDroneError(`[Drive Sync Error] 구글 드라이브(${targetFolderId}) 내에서 직접 영상 파일을 성공적으로 찾지 못했습니다.\n\n대체(믹스킷) 비디오 재생을 시도합니다.\nCONFIG.GOOGLE_API_KEY 권한 및 파일 가시성을 확인해 주세요.`);
+            showTestDroneError(`[Drive Sync Error] 구글 드라이브(${CONFIG.TEST_DRONE_FOLDER_ID}) 내에서 직접 영상 파일을 성공적으로 찾지 못했습니다.\n\n대체(믹스킷) 비디오 재생을 시도합니다.\nCONFIG.GOOGLE_API_KEY 권한 및 파일 가시성을 확인해 주세요.`);
           }
           droneVideo.src = currentUrl || 'https://assets.mixkit.co/videos/preview/mixkit-drone-shot-of-a-winding-road-in-the-mountains-43034-large.mp4';
           droneVideo.play().catch(e => {
-            showTestDroneError(`[Playback Blocked] 자동 재생이 차단되었습니다:\n${e.message}`);
+            showTestDroneError(`[Drone Playback Blocked] 자동 재생이 차단되었습니다:\n${e.message}`);
+          });
+        }
+        
+        // 동기부여 비디오 재생
+        if (movieVideo) {
+          const currentUrl = testMoviePlaylist[testMovieIndex];
+          movieVideo.src = currentUrl || 'https://assets.mixkit.co/videos/preview/mixkit-drone-shot-of-a-winding-road-in-the-mountains-43034-large.mp4';
+          movieVideo.play().catch(e => {
+            console.warn(`[Movie Playback Blocked] 자동 재생이 차단되었습니다:\n${e.message}`);
           });
         }
         
@@ -2779,21 +2852,29 @@
         testDroneInterval = setInterval(async () => {
           if (!isTestScreenActive) return;
           try {
-            console.log('[Test Screen] Periodically updating video playlist & syncing...');
-            const newPlaylist = await getTestScreenVideoUrls(testDroneIndex);
-            if (newPlaylist && newPlaylist.length > 0) {
+            console.log('[Test Screen] Periodically updating video playlists & syncing...');
+            
+            // 드론 비디오 갱신
+            const newDronePlaylist = await getTestScreenVideoUrls(CONFIG.TEST_DRONE_FOLDER_ID, testDroneIndex);
+            if (newDronePlaylist && newDronePlaylist.length > 0) {
               const currentVideo = testDronePlaylist[testDroneIndex];
-              testDronePlaylist = newPlaylist;
+              testDronePlaylist = newDronePlaylist;
               const newIdx = testDronePlaylist.indexOf(currentVideo);
-              if (newIdx !== -1) {
-                testDroneIndex = newIdx;
-              } else {
-                testDroneIndex = 0;
-              }
-              console.log(`[Test Screen] Playlist updated. Total videos: ${testDronePlaylist.length}`);
+              testDroneIndex = newIdx !== -1 ? newIdx : 0;
             }
+            
+            // 동기부여 비디오 갱신
+            const newMoviePlaylist = await getTestScreenVideoUrls(CONFIG.WORKSPACE_DRIVE_FOLDER_ID, testMovieIndex);
+            if (newMoviePlaylist && newMoviePlaylist.length > 0) {
+              const currentVideo = testMoviePlaylist[testMovieIndex];
+              testMoviePlaylist = newMoviePlaylist;
+              const newIdx = testMoviePlaylist.indexOf(currentVideo);
+              testMovieIndex = newIdx !== -1 ? newIdx : 0;
+            }
+            
+            console.log(`[Test Screen] Playlists updated.`);
           } catch (e) {
-            console.warn('[Test Screen] Failed to periodically sync playlist:', e);
+            console.warn('[Test Screen] Failed to periodically sync playlists:', e);
           }
         }, 1800000); // 30분 (1,800,000ms)
         
@@ -2806,21 +2887,27 @@
         if (btn) btn.classList.remove('active');
         hideTestDroneError();
         
-        // 재생 중지 및 리소스 해제
+        // 드론 비디오 중지
         if (droneVideo) {
           droneVideo.pause();
           droneVideo.src = "";
         }
+        // 동기부여 비디오 중지
+        if (movieVideo) {
+          movieVideo.pause();
+          movieVideo.src = "";
+        }
+        
         const droneLoading = document.getElementById('test-drone-loading');
         if (droneLoading) droneLoading.style.display = 'none';
-        if (tigerIframe) {
-          tigerIframe.src = "";
-        }
+        
+        const movieLoading = document.getElementById('test-movie-loading');
+        if (movieLoading) movieLoading.style.display = 'none';
       }
     }
 
-    async function getTestScreenVideoUrls(currentIndex = 0) {
-      const folderId = CONFIG.TEST_DRONE_FOLDER_ID || CONFIG.WORKSPACE_DRIVE_FOLDER_ID;
+    async function getTestScreenVideoUrls(targetFolderId = null, currentIndex = 0) {
+      const folderId = targetFolderId || CONFIG.TEST_DRONE_FOLDER_ID || CONFIG.WORKSPACE_DRIVE_FOLDER_ID;
       let isTokenValid = typeof googleAccessToken !== 'undefined' && googleAccessToken && typeof googleTokenExpiry !== 'undefined' && googleTokenExpiry && Date.now() < parseInt(googleTokenExpiry);
       
       if (!isTokenValid) {
