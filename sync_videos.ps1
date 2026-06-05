@@ -9,7 +9,7 @@ if ([string]::IsNullOrEmpty($folderId) -or [string]::IsNullOrEmpty($accessToken)
     exit
 }
 
-$videosDir = "C:\Videos"
+$videosDir = Join-Path "C:\Videos" $folderId
 if (-not (Test-Path $videosDir)) {
     New-Item -Path $videosDir -ItemType Directory -Force | Out-Null
 }

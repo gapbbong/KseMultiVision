@@ -78,8 +78,9 @@ try {
                 $accessToken = $request.QueryString["access_token"]
                 
                 if ($type -eq "video") {
-                    $localVideoPath = "C:\Videos\$id.mp4"
-                    if (Test-Path $localVideoPath -PathType Leaf) {
+                    $localFile = Get-ChildItem -Path "C:\Videos" -Filter "$id.mp4" -Recurse | Select-Object -First 1
+                    if ($localFile) {
+                        $localVideoPath = $localFile.FullName
                         Write-Host "[Proxy Server] Serving LOCAL video for $id"
                         $response.ContentType = "video/mp4"
                         $fileInfo = New-Object System.IO.FileInfo($localVideoPath)
@@ -167,7 +168,7 @@ try {
                 $videosDir = "C:\Videos"
                 $fileList = @()
                 if (Test-Path $videosDir) {
-                    $files = Get-ChildItem -Path $videosDir -Filter "*.mp4"
+                    $files = Get-ChildItem -Path $videosDir -Filter "*.mp4" -Recurse
                     foreach ($f in $files) {
                         $obj = New-Object PSObject
                         $obj | Add-Member -MemberType NoteProperty -Name "name" -Value $f.Name
@@ -194,9 +195,9 @@ try {
             if ($path -match "^/local/(.*)$") {
                 $fileName = [System.Uri]::UnescapeDataString($matches[1])
                 $videosDir = "C:\Videos"
-                $filePath = Join-Path $videosDir $fileName
-                
-                if (Test-Path $filePath -PathType Leaf) {
+                $localFile = Get-ChildItem -Path $videosDir -Filter $fileName -Recurse | Select-Object -First 1
+                if ($localFile) {
+                    $filePath = $localFile.FullName
                     $response.ContentType = "video/mp4"
                     $stream = [System.IO.File]::OpenRead($filePath)
                     $buffer = New-Object byte[] 65536

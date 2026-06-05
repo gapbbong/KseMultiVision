@@ -2925,9 +2925,7 @@
           }
           
           if (!isTokenValid) {
-              alert("⚠️ 구글 드라이브 권한이 만료되었습니다!\n오른쪽 하단 'Google Drive 로그인' 버튼을 눌러 다시 연동해주세요.");
-              if (typeof requestGoogleAuth === 'function') requestGoogleAuth(false);
-              throw new Error("Google Drive Token Expired");
+              console.warn("Google Drive Token Expired. Falling back to API Key proxy listing.");
           }
       }
       
