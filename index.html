@@ -3956,6 +3956,15 @@
         return;
       }
 
+      // 숫자 '1' 키를 누르면 메인 화면(첫화면)으로 복귀 (테스트 모드 종료)
+      if (e.key === '1' || e.code === 'Digit1' || e.code === 'Numpad1') {
+        e.preventDefault();
+        if (isTestScreenActive) {
+          toggleTestScreen();
+        }
+        return;
+      }
+
       if (!isTestScreenActive) return;
       
       const droneVideo = document.getElementById('test-drone-video');
