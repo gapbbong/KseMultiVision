@@ -29,14 +29,9 @@ app.get('/list', async (req, res) => {
       headers['Authorization'] = `Bearer ${access_token}`;
     }
 
-    console.log(`[Node Server] Fetching files in folder: ${folderId}`);
-    const listResponse = await fetch(url, { headers });
-    
-    if (!listResponse.ok) {
-      throw new Error(`Google API returned status ${listResponse.status}`);
-    }
-
-    const data = await listResponse.json();
+    console.log(`[Node Server] Fetching files in folder: ${folderId} (recursive)`);
+    const allFiles = await getFilesInFolderRecursive(folderId, access_token, apiKey);
+    const data = { files: allFiles };
     const jsonBytes = JSON.stringify(data);
 
     // 디버그 리스트 저장
@@ -246,6 +241,42 @@ async function proxyRequest(url, clientReq, clientRes, accessToken, isVideo) {
       clientRes.status(500).send('Error proxying data');
     }
   }
+}
+
+async function getFilesInFolderRecursive(folderId, accessToken, apiKey) {
+  let allFiles = [];
+  let url = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+trashed=false&fields=files(id,name,mimeType,webContentLink)&supportsAllDrives=true&includeItemsFromAllDrives=true`;
+  if (!accessToken && apiKey) {
+    url += `&key=${apiKey}`;
+  }
+
+  const headers = { 'User-Agent': 'Mozilla/5.0' };
+  if (accessToken) {
+    headers['Authorization'] = `Bearer ${accessToken}`;
+  }
+
+  const response = await fetch(url, { headers });
+  if (!response.ok) {
+    throw new Error(`Google Drive API returned status ${response.status} for folder ${folderId}`);
+  }
+
+  const data = await response.json();
+  if (data.files && data.files.length > 0) {
+    for (const file of data.files) {
+      if (file.mimeType === 'application/vnd.google-apps.folder') {
+        try {
+          const subFiles = await getFilesInFolderRecursive(file.id, accessToken, apiKey);
+          allFiles = allFiles.concat(subFiles);
+        } catch (subErr) {
+          console.warn(`[Node Server] Failed to list subfolder ${file.name}:`, subErr.message);
+        }
+      } else {
+        allFiles.push(file);
+      }
+    }
+  }
+
+  return allFiles;
 }
 
 app.listen(PORT, () => {
