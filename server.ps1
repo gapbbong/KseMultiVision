@@ -44,9 +44,8 @@ try {
                     $keepIds = $request.QueryString["keep_ids"]
                     if (-not [string]::IsNullOrEmpty($accessToken) -and -not [string]::IsNullOrEmpty($keepIds)) {
                         $syncScript = Join-Path $PSScriptRoot "sync_videos.ps1"
-                        $argsList = "-WindowStyle Hidden -File `"$syncScript`" -folderId `"$folderId`" -accessToken `"$accessToken`""
-                        $argsList += " -keepIds `"$keepIds`""
-                        Start-Process powershell -ArgumentList $argsList
+                        Get-Job | Where-Object { $_.State -in "Completed", "Failed" } | Remove-Job -Force
+                        Start-Job -FilePath $syncScript -ArgumentList @($folderId, $accessToken, $keepIds) | Out-Null
                     }
                     
                     [System.IO.File]::WriteAllBytes("C:\Videos\debug_list.json", $jsonBytes)

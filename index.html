@@ -1231,7 +1231,7 @@
       GOOGLE_API_KEY: 'AIzaSyCgjlRcgzTYBAf_21P-AJTSLTYlFvadavI',
       WORKSPACE_DRIVE_FOLDER_ID: '14ThjsFnG5tjFM_cp3wrOv2sIHhArdVkb',
       NOTICE_DRIVE_FOLDER_ID: '1rpumueOBAPqU4TKZyOdjBBoUyCDNuurj',
-      TEST_DRONE_FOLDER_ID: '1GVcymOsyDYcoVvxt-kF-Q0YZ8E0WlUSf',
+      TEST_DRONE_FOLDER_ID: ['1GVcymOsyDYcoVvxt-kF-Q0YZ8E0WlUSf', '1BN1QuoCnzzdWAgph5ZD88U1zoLBrWt6L'],
       ATPT_OFCDC_SC_CODE: 'C10',
       SD_SCH_CODE: '7150429',
       NEIS_API_KEY: '31ca8d4d17274275b155ae2e5cabba40',
@@ -2927,42 +2927,77 @@
           }
       }
       
-      try {
-        let listUrl = 'http://localhost:8080/list?folderId=' + folderId;
-        if (isTokenValid) listUrl += '&access_token=' + googleAccessToken;
-        
-        const res = await fetch(listUrl);
-        if (res.ok) {
-           const data = await res.json();
-           if (data.files && data.files.length > 0) {
-             const videos = data.files.filter(f => f.mimeType && f.mimeType.includes('video'));
-             if (videos.length > 0) {
-                // 자연스러운 정렬(알파벳/숫자 순)을 수행하여 차례대로 나오도록 함
-                videos.sort((a, b) => a.name.localeCompare(b.name, undefined, {numeric: true, sensitivity: 'base'}));
+      const folderIds = Array.isArray(folderId) ? folderId : [folderId];
+      let allVideos = [];
+      
+      for (const fid of folderIds) {
+        try {
+          let listUrl = 'http://localhost:8080/list?folderId=' + fid;
+          if (isTokenValid) listUrl += '&access_token=' + googleAccessToken;
+          
+          const res = await fetch(listUrl);
+          if (res.ok) {
+             const data = await res.json();
+             if (data.files && data.files.length > 0) {
+                let videos = data.files.filter(f => f.mimeType && f.mimeType.includes('video'));
                 
-                // 1~3개만 슬라이딩 윈도우 방식으로 로컬 캐싱 트리거 (하드디스크 공간 초과 방지)
-                const idsToCache = [];
-                for (let i = 0; i < Math.min(3, videos.length); i++) {
-                  const targetIdx = (currentIndex + i) % videos.length;
-                  idsToCache.push(videos[targetIdx].id);
+                if (videos.length === 0) {
+                   // 하위 폴더 검색 (Workspace 구조 대응)
+                   const folders = data.files.filter(f => f.mimeType === 'application/vnd.google-apps.folder');
+                   if (folders.length > 0) {
+                      for (let folder of folders.slice(0, 3)) {
+                         let subListUrl = 'http://localhost:8080/list?folderId=' + folder.id;
+                         if (isTokenValid) subListUrl += '&access_token=' + googleAccessToken;
+                         try {
+                            const subRes = await fetch(subListUrl);
+                            if (subRes.ok) {
+                               const subData = await subRes.json();
+                               if (subData.files) {
+                                  const subVideos = subData.files.filter(f => f.mimeType && f.mimeType.includes('video'));
+                                  allVideos = allVideos.concat(subVideos);
+                               }
+                            }
+                         } catch (subErr) {
+                            console.warn('Failed to list subfolder:', subErr);
+                         }
+                      }
+                   }
+                } else {
+                   allVideos = allVideos.concat(videos);
                 }
-                
-                if (idsToCache.length > 0) {
-                  let syncUrl = listUrl + '&keep_ids=' + idsToCache.join(',');
-                  fetch(syncUrl).catch(err => console.warn('Background sync trigger failed:', err));
-                }
-                
-                return videos.map(randomVideo => {
-                  let proxyUrl = 'http://localhost:8080/proxy?id=' + randomVideo.id + '&type=video';
-                  if (isTokenValid) proxyUrl += '&access_token=' + googleAccessToken;
-                  return proxyUrl;
-                });
              }
-           }
+          }
+        } catch (e) {
+          console.warn('Failed to get list for folder: ' + fid, e);
         }
-      } catch(e) {
-         console.warn('Failed to get list from proxy:', e);
       }
+      
+      if (allVideos.length > 0) {
+         // 알파벳/숫자 순 정렬 (체육대회와 하이파이브데이 드론 영상이 섞이거나 차례대로 나오도록 함)
+         allVideos.sort((a, b) => a.name.localeCompare(b.name, undefined, {numeric: true, sensitivity: 'base'}));
+         
+         // 1~3개 슬라이딩 윈도우 캐싱 트리거 (하드디스크 공간 세이브)
+         // 캐싱 트리거는 첫번째 폴더 ID를 기준으로 호출하되, keep_ids를 셋팅해 보냅니다.
+         const idsToCache = [];
+         for (let i = 0; i < Math.min(3, allVideos.length); i++) {
+           const targetIdx = (currentIndex + i) % allVideos.length;
+           idsToCache.push(allVideos[targetIdx].id);
+         }
+         
+         if (idsToCache.length > 0) {
+           const triggerFid = folderIds[0];
+           let syncUrl = 'http://localhost:8080/list?folderId=' + triggerFid + '&keep_ids=' + idsToCache.join(',');
+           if (isTokenValid) syncUrl += '&access_token=' + googleAccessToken;
+           fetch(syncUrl).catch(err => console.warn('Background sync trigger failed:', err));
+         }
+         
+         return allVideos.map(randomVideo => {
+           let proxyUrl = 'http://localhost:8080/proxy?id=' + randomVideo.id + '&type=video';
+           if (isTokenValid) proxyUrl += '&access_token=' + googleAccessToken;
+           return proxyUrl;
+         });
+      }
+      
       return ['https://assets.mixkit.co/videos/preview/mixkit-drone-shot-of-a-winding-road-in-the-mountains-43034-large.mp4'];
     }
 

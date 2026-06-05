@@ -15,14 +15,24 @@ if (-not (Test-Path $videosDir)) {
 }
 
 try {
-    # 1. Get the list of videos in the folder
-    $url = "https://www.googleapis.com/drive/v3/files?q='$folderId'+in+parents+and+mimeType+contains+'video/'&fields=files(id,name)&supportsAllDrives=true&includeItemsFromAllDrives=true"
+    # 1. Get the list of videos in the folder (or query specific ids if keepIds is specified)
+    if (-not [string]::IsNullOrEmpty($keepIds)) {
+        $ids = $keepIds.Split(",")
+        $qParts = @()
+        foreach ($id in $ids) {
+            $qParts += "id = '$id'"
+        }
+        $q = $qParts -join " or "
+        $url = "https://www.googleapis.com/drive/v3/files?q=" + [Uri]::EscapeDataString($q) + "&fields=files(id,name)&supportsAllDrives=true&includeItemsFromAllDrives=true"
+    } else {
+        $url = "https://www.googleapis.com/drive/v3/files?q='$folderId'+in+parents+and+mimeType+contains+'video/'&fields=files(id,name)&supportsAllDrives=true&includeItemsFromAllDrives=true"
+    }
     
     $wc = New-Object System.Net.WebClient
     $wc.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
     $wc.Headers.Add("Authorization", "Bearer $accessToken")
     
-    Write-Host "Fetching video list for folder: $folderId"
+    Write-Host "Fetching video list for folder: $folderId / keepIds: $keepIds"
     $jsonBytes = $wc.DownloadData($url)
     $jsonStr = [System.Text.Encoding]::UTF8.GetString($jsonBytes)
     
