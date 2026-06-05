@@ -873,7 +873,7 @@
     <!-- 테스트 화면 모드 전용 오버레이 (1사분면: 동기부여 영상, 2사분면: 드론 영상) -->
     <div id="test-screen-overlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #020617; z-index: 100010; display: none; pointer-events: all; box-sizing: border-box;">
       <!-- 1사분면 (좌상단 50vw, 50vh) - 구글 드라이브 동기부여 영상 -->
-      <div id="test-quad-1" style="position: absolute; left: 0; top: 0; width: 50vw; height: 50vh; background: #000; overflow: hidden; border-right: 2px dashed rgba(0, 245, 212, 0.4); border-bottom: 2px dashed rgba(0, 245, 212, 0.4);">
+      <div id="test-quad-1" style="position: absolute; left: 0; top: 0; width: 50vw; height: 50vh; background: #000; overflow: hidden;">
         <video id="test-movie-video" style="width: 100%; height: 100%; object-fit: cover;" autoplay playsinline></video>
         <!-- 재생 시간 표시 패널 (현재재생시간 / 전체재생시간) -->
         <div id="test-movie-time-display" style="position: absolute; bottom: 16px; right: 16px; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #ffffff; padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; font-family: var(--font-outfit), monospace; font-weight: 700; border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 4px 12px rgba(0,0,0,0.5); z-index: 10; display: flex; align-items: center; gap: 6px; letter-spacing: 0.5px;">
@@ -899,7 +899,7 @@
       </div>
       
       <!-- 2사분면 (우상단 50vw, 50vh) - 구글 드라이브 드론 영상 -->
-      <div id="test-quad-2" style="position: absolute; left: 50vw; top: 0; width: 50vw; height: 50vh; background: #000; overflow: hidden; border-left: 2px dashed rgba(0, 245, 212, 0.4); border-bottom: 2px dashed rgba(0, 245, 212, 0.4);">
+      <div id="test-quad-2" style="position: absolute; left: 50vw; top: 0; width: 50vw; height: 50vh; background: #000; overflow: hidden;">
         <video id="test-drone-video" style="width: 100%; height: 100%; object-fit: cover;" autoplay playsinline muted></video>
         <!-- 재생 시간 표시 패널 (현재재생시간 / 전체재생시간) -->
         <div id="test-drone-time-display" style="position: absolute; bottom: 16px; right: 16px; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #ffffff; padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; font-family: var(--font-outfit), monospace; font-weight: 700; border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 4px 12px rgba(0,0,0,0.5); z-index: 10; display: flex; align-items: center; gap: 6px; letter-spacing: 0.5px;">
@@ -925,7 +925,7 @@
       </div>
       
       <!-- 하단 50vh 영역: 테스트 대시보드 및 복귀 버튼 -->
-      <div style="position: absolute; left: 0; top: 50vh; width: 100vw; height: 50vh; background: linear-gradient(180deg, #090d22 0%, #020617 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; border-top: 2px dashed #ea580c; box-shadow: 0 -10px 40px rgba(0,0,0,0.5);">
+      <div style="position: absolute; left: 0; top: 50vh; width: 100vw; height: 50vh; background: linear-gradient(180deg, #090d22 0%, #020617 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; box-shadow: 0 -10px 40px rgba(0,0,0,0.5);">
         <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
           <div style="font-size: 1.8rem; font-weight: 900; color: #ea580c; display: flex; align-items: center; gap: 12px; text-shadow: 0 0 15px rgba(234,88,12,0.4);">
             <i class="fa-solid fa-triangle-exclamation fa-fade"></i>
