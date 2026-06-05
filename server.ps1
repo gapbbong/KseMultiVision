@@ -44,8 +44,15 @@ try {
                     $keepIds = $request.QueryString["keep_ids"]
                     if (-not [string]::IsNullOrEmpty($accessToken) -and -not [string]::IsNullOrEmpty($keepIds)) {
                         $syncScript = Join-Path $PSScriptRoot "sync_videos.ps1"
-                        Get-Job | Where-Object { $_.State -in "Completed", "Failed" } | Remove-Job -Force
-                        Start-Job -FilePath $syncScript -ArgumentList @($folderId, $accessToken, $keepIds) | Out-Null
+                        
+                        # Start background sync process silently without opening/flashing any console windows
+                        $psi = New-Object System.Diagnostics.ProcessStartInfo
+                        $psi.FileName = "powershell.exe"
+                        $psi.Arguments = "-ExecutionPolicy Bypass -File `"$syncScript`" -folderId `"$folderId`" -accessToken `"$accessToken`" -keepIds `"$keepIds`""
+                        $psi.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Hidden
+                        $psi.CreateNoWindow = $true
+                        $psi.UseShellExecute = $false
+                        [System.Diagnostics.Process]::Start($psi) | Out-Null
                     }
                     
                     [System.IO.File]::WriteAllBytes("C:\Videos\debug_list.json", $jsonBytes)
