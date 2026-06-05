@@ -880,6 +880,11 @@
           <span style="display: inline-block; width: 6px; height: 6px; background: #10b981; border-radius: 50%; animation: alertBlink 1.5s infinite;"></span>
           <span id="test-drone-time-text">00:00 / 00:00</span>
         </div>
+        <!-- 로딩 스피너 오버레이 (비디오 다운로드 및 버퍼링용) -->
+        <div id="test-drone-loading" style="position: absolute; inset: 0; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); display: none; flex-direction: column; align-items: center; justify-content: center; gap: 16px; z-index: 5; color: #ffffff; font-family: var(--font-noto);">
+          <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 3rem; color: #00f5d4; filter: drop-shadow(0 0 10px rgba(0, 245, 212, 0.6));"></i>
+          <div style="font-size: 0.95rem; font-weight: 700; color: #00f5d4; letter-spacing: 0.5px; text-shadow: 0 0 10px rgba(0,245,212,0.4);">비디오 로딩 및 캐시 다운로드 중...</div>
+        </div>
         <!-- 에러 로그 오버레이 패널 -->
         <div id="test-drone-error-log" style="position: absolute; inset: 0; background: rgba(15, 23, 42, 0.96); border: 2px dashed #f43f5e; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 24px; box-sizing: border-box; z-index: 99; color: #f8fafc; font-family: var(--font-noto); gap: 12px;">
            <div style="font-size: 2.2rem; color: #ef4444; animation: alertBlink 1s infinite;"><i class="fa-solid fa-triangle-exclamation"></i></div>
@@ -2690,7 +2695,10 @@
           }
         });
 
+        droneVideo.addEventListener('loadstart', () => { if (droneLoading) droneLoading.style.display = 'flex'; });
+        droneVideo.addEventListener('waiting', () => { if (droneLoading) droneLoading.style.display = 'flex'; });
         droneVideo.addEventListener('playing', () => { if (droneLoading) droneLoading.style.display = 'none'; });
+        droneVideo.addEventListener('canplay', () => { if (droneLoading) droneLoading.style.display = 'none'; });
         droneVideo.addEventListener('ended', () => {
           if (isTestScreenActive && testDronePlaylist && testDronePlaylist.length > 0) {
             testDroneIndex = (testDroneIndex + 1) % testDronePlaylist.length;
