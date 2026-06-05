@@ -11,4 +11,4 @@ if %ERRORLEVEL% == 0 (
 )
 
 echo [시작] 멀티비전 로컬 서버를 시작합니다...
-powershell -ExecutionPolicy Bypass -WindowStyle Hidden -File "%~dp0server.ps1"
+powershell -WindowStyle Hidden -Command "node '%~dp0server.js'"
