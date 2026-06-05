@@ -1229,9 +1229,12 @@
     const CONFIG = {
       GOOGLE_CLIENT_ID: '476208201237-9cvftec2m6g60r07jfe88akitbkb7869.apps.googleusercontent.com',
       GOOGLE_API_KEY: 'AIzaSyCgjlRcgzTYBAf_21P-AJTSLTYlFvadavI',
-      WORKSPACE_DRIVE_FOLDER_ID: '14ThjsFnG5tjFM_cp3wrOv2sIHhArdVkb',
-      NOTICE_DRIVE_FOLDER_ID: '1rpumueOBAPqU4TKZyOdjBBoUyCDNuurj',
-      TEST_DRONE_FOLDER_ID: ['1GVcymOsyDYcoVvxt-kF-Q0YZ8E0WlUSf', '1BN1QuoCnzzdWAgph5ZD88U1zoLBrWt6L'],
+      WORKSPACE_DRIVE_FOLDER_ID: 'Movie:14ThjsFnG5tjFM_cp3wrOv2sIHhArdVkb',
+      NOTICE_DRIVE_FOLDER_ID: 'Notice:1rpumueOBAPqU4TKZyOdjBBoUyCDNuurj',
+      TEST_DRONE_FOLDER_ID: [
+        '20260429하이파이브데이-드론:1GVcymOsyDYcoVvxt-kF-Q0YZ8E0WlUSf', 
+        '260424체육대회-드론:1BN1QuoCnzzdWAgph5ZD88U1zoLBrWt6L'
+      ],
       ATPT_OFCDC_SC_CODE: 'C10',
       SD_SCH_CODE: '7150429',
       NEIS_API_KEY: '31ca8d4d17274275b155ae2e5cabba40',
@@ -1242,6 +1245,21 @@
       MEDIA_REFRESH_INTERVAL: 10800000, // 3시간 (오전/오후 각 2회 분량)
       BELL_TIME_OFFSET_SEC: 7            // 학교 타종 방송 시스템 딜레이 보정 (초 단위, 물리 타종이 7초 늦게 울림)
     };
+
+    // 구글 드라이브 폴더 설정 파싱 헬퍼 (이름:폴더ID 형태 대응)
+    function getFolderId(configValue) {
+      if (typeof configValue === 'string' && configValue.includes(':')) {
+        return configValue.split(':')[1];
+      }
+      return configValue;
+    }
+
+    function getFolderName(configValue) {
+      if (typeof configValue === 'string' && configValue.includes(':')) {
+        return configValue.split(':')[0];
+      }
+      return configValue;
+    }
 
     let upcomingCreativeEvents = [];
     let isVpEventsLoaded = false;
@@ -1791,7 +1809,7 @@
       horizontalList = [];
 
       const apiKey = CONFIG.GOOGLE_API_KEY;
-      const folderId = CONFIG.WORKSPACE_DRIVE_FOLDER_ID;
+      const folderId = getFolderId(CONFIG.WORKSPACE_DRIVE_FOLDER_ID);
 
       if (apiKey && folderId) {
         try {
@@ -2538,7 +2556,7 @@
 
     async function loadNoticeBoard() {
       const apiKey = CONFIG.GOOGLE_API_KEY;
-      const folderId = CONFIG.NOTICE_DRIVE_FOLDER_ID;
+      const folderId = getFolderId(CONFIG.NOTICE_DRIVE_FOLDER_ID);
       const isTokenValid = googleAccessToken && googleTokenExpiry && Date.now() < parseInt(googleTokenExpiry);
       
       const getFallbackDday = (month, day) => {
@@ -2934,7 +2952,9 @@
       
       for (const fid of folderIds) {
         try {
-          let listUrl = 'http://localhost:8080/list?folderId=' + fid;
+          const fId = getFolderId(fid);
+          const fName = getFolderName(fid);
+          let listUrl = 'http://localhost:8080/list?folderId=' + fId + '&folderName=' + encodeURIComponent(fName);
           if (isTokenValid) listUrl += '&access_token=' + googleAccessToken;
           
           const res = await fetch(listUrl);
@@ -2988,7 +3008,9 @@
          
          if (idsToCache.length > 0) {
            const triggerFid = folderIds[0];
-           let syncUrl = 'http://localhost:8080/list?folderId=' + triggerFid + '&keep_ids=' + idsToCache.join(',');
+           const triggerId = getFolderId(triggerFid);
+           const triggerName = getFolderName(triggerFid);
+           let syncUrl = 'http://localhost:8080/list?folderId=' + triggerId + '&folderName=' + encodeURIComponent(triggerName) + '&keep_ids=' + idsToCache.join(',');
            if (isTokenValid) syncUrl += '&access_token=' + googleAccessToken;
            fetch(syncUrl).catch(err => console.warn('Background sync trigger failed:', err));
          }

@@ -1,7 +1,8 @@
 param(
     [string]$folderId,
     [string]$accessToken,
-    [string]$keepIds
+    [string]$keepIds,
+    [string]$folderName
 )
 
 if ([string]::IsNullOrEmpty($folderId) -or [string]::IsNullOrEmpty($accessToken)) {
@@ -9,7 +10,8 @@ if ([string]::IsNullOrEmpty($folderId) -or [string]::IsNullOrEmpty($accessToken)
     exit
 }
 
-$videosDir = Join-Path "C:\Videos" $folderId
+$targetFolder = if ([string]::IsNullOrEmpty($folderName)) { $folderId } else { $folderName }
+$videosDir = Join-Path "C:\Videos" $targetFolder
 if (-not (Test-Path $videosDir)) {
     New-Item -Path $videosDir -ItemType Directory -Force | Out-Null
 }

@@ -17,7 +17,7 @@ try {
                 $folderId = $request.QueryString["folderId"]
                 $accessToken = $request.QueryString["access_token"]
                 $apiKey = "AIzaSyCgjlRcgzTYBAf_21P-AJTSLTYlFvadavI"
-                $folderId = $request.QueryString["folderId"]
+                $folderName = $request.QueryString["folderName"]
                 $url = "https://www.googleapis.com/drive/v3/files?q='$folderId'%20in%20parents&fields=files(id,name,mimeType,webContentLink)&supportsAllDrives=true&includeItemsFromAllDrives=true"
                 
                 if (-not [string]::IsNullOrEmpty($accessToken)) {
@@ -48,7 +48,8 @@ try {
                         # Start background sync process silently without opening/flashing any console windows
                         $psi = New-Object System.Diagnostics.ProcessStartInfo
                         $psi.FileName = "powershell.exe"
-                        $psi.Arguments = "-ExecutionPolicy Bypass -File `"$syncScript`" -folderId `"$folderId`" -accessToken `"$accessToken`" -keepIds `"$keepIds`""
+                        $folderNameArg = if ([string]::IsNullOrEmpty($folderName)) { $folderId } else { $folderName }
+                        $psi.Arguments = "-ExecutionPolicy Bypass -File `"$syncScript`" -folderId `"$folderId`" -accessToken `"$accessToken`" -keepIds `"$keepIds`" -folderName `"$folderNameArg`""
                         $psi.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Hidden
                         $psi.CreateNoWindow = $true
                         $psi.UseShellExecute = $false
