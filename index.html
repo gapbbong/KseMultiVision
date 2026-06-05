@@ -875,6 +875,11 @@
       <!-- 1사분면 (좌상단 50vw, 50vh) - 구글 드라이브 드론 영상 -->
       <div id="test-quad-1" style="position: absolute; left: 0; top: 0; width: 50vw; height: 50vh; background: #000; overflow: hidden; border-right: 2px dashed rgba(0, 245, 212, 0.4); border-bottom: 2px dashed rgba(0, 245, 212, 0.4);">
         <video id="test-drone-video" style="width: 100%; height: 100%; object-fit: cover;" autoplay muted playsinline></video>
+        <!-- 재생 시간 표시 패널 (현재재생시간 / 전체재생시간) -->
+        <div id="test-drone-time-display" style="position: absolute; bottom: 16px; right: 16px; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #ffffff; padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; font-family: var(--font-outfit), monospace; font-weight: 700; border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 4px 12px rgba(0,0,0,0.5); z-index: 10; display: flex; align-items: center; gap: 6px; letter-spacing: 0.5px;">
+          <span style="display: inline-block; width: 6px; height: 6px; background: #10b981; border-radius: 50%; animation: alertBlink 1.5s infinite;"></span>
+          <span id="test-drone-time-text">00:00 / 00:00</span>
+        </div>
         <!-- 에러 로그 오버레이 패널 -->
         <div id="test-drone-error-log" style="position: absolute; inset: 0; background: rgba(15, 23, 42, 0.96); border: 2px dashed #f43f5e; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 24px; box-sizing: border-box; z-index: 99; color: #f8fafc; font-family: var(--font-noto); gap: 12px;">
            <div style="font-size: 2.2rem; color: #ef4444; animation: alertBlink 1s infinite;"><i class="fa-solid fa-triangle-exclamation"></i></div>
@@ -2660,6 +2665,31 @@
       const droneVideo = document.getElementById('test-drone-video');
       const droneLoading = document.getElementById('test-drone-loading');
       if (droneVideo) {
+        // 재생 시간 표시 포맷 헬퍼
+        const droneTimeText = document.getElementById('test-drone-time-text');
+        function formatDroneTime(sec) {
+          if (isNaN(sec) || sec === Infinity) return "00:00";
+          const m = Math.floor(sec / 60);
+          const s = Math.floor(sec % 60);
+          return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        }
+        
+        droneVideo.addEventListener('timeupdate', () => {
+          if (droneTimeText) {
+            const current = formatDroneTime(droneVideo.currentTime);
+            const duration = formatDroneTime(droneVideo.duration);
+            droneTimeText.textContent = `${current} / ${duration}`;
+          }
+        });
+        
+        droneVideo.addEventListener('loadedmetadata', () => {
+          if (droneTimeText) {
+            const current = formatDroneTime(droneVideo.currentTime);
+            const duration = formatDroneTime(droneVideo.duration);
+            droneTimeText.textContent = `${current} / ${duration}`;
+          }
+        });
+
         droneVideo.addEventListener('playing', () => { if (droneLoading) droneLoading.style.display = 'none'; });
         droneVideo.addEventListener('ended', () => {
           if (isTestScreenActive && testDronePlaylist && testDronePlaylist.length > 0) {
