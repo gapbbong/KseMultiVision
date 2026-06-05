@@ -900,7 +900,7 @@
       
       <!-- 2사분면 (우상단 50vw, 50vh) - 구글 드라이브 드론 영상 -->
       <div id="test-quad-2" style="position: absolute; left: 50vw; top: 0; width: 50vw; height: 50vh; background: #000; overflow: hidden; border-left: 2px dashed rgba(0, 245, 212, 0.4); border-bottom: 2px dashed rgba(0, 245, 212, 0.4);">
-        <video id="test-drone-video" style="width: 100%; height: 100%; object-fit: cover;" autoplay playsinline></video>
+        <video id="test-drone-video" style="width: 100%; height: 100%; object-fit: cover;" autoplay playsinline muted></video>
         <!-- 재생 시간 표시 패널 (현재재생시간 / 전체재생시간) -->
         <div id="test-drone-time-display" style="position: absolute; bottom: 16px; right: 16px; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #ffffff; padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; font-family: var(--font-outfit), monospace; font-weight: 700; border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 4px 12px rgba(0,0,0,0.5); z-index: 10; display: flex; align-items: center; gap: 6px; letter-spacing: 0.5px;">
           <span style="display: inline-block; width: 6px; height: 6px; background: #10b981; border-radius: 50%; animation: alertBlink 1.5s infinite;"></span>
@@ -2707,7 +2707,7 @@
             const nextUrl = testDronePlaylist[testDroneIndex];
             console.log(`[Test Drone Video] Ended. Playing next: Index ${testDroneIndex}/${testDronePlaylist.length}`);
             droneVideo.src = nextUrl;
-            droneVideo.muted = false;
+            droneVideo.muted = true;
             droneVideo.play().catch(e => {
               showTestDroneError(`[Playback Blocked] 자동 재생이 차단되었습니다:\n${e.message}`);
             });
@@ -2835,7 +2835,7 @@
             showTestDroneError(`[Drive Sync Error] 구글 드라이브(${CONFIG.TEST_DRONE_FOLDER_ID}) 내에서 직접 영상 파일을 성공적으로 찾지 못했습니다.\n\n대체(믹스킷) 비디오 재생을 시도합니다.\nCONFIG.GOOGLE_API_KEY 권한 및 파일 가시성을 확인해 주세요.`);
           }
           droneVideo.src = currentUrl || 'https://assets.mixkit.co/videos/preview/mixkit-drone-shot-of-a-winding-road-in-the-mountains-43034-large.mp4';
-          droneVideo.muted = false;
+          droneVideo.muted = true;
           droneVideo.play().catch(e => {
             showTestDroneError(`[Drone Playback Blocked] 자동 재생이 차단되었습니다:\n${e.message}`);
           });
