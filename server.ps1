@@ -41,9 +41,12 @@ try {
                         New-Item -Path $videosDir -ItemType Directory -Force | Out-Null
                     }
                     
-                    if (-not [string]::IsNullOrEmpty($accessToken)) {
+                    $keepIds = $request.QueryString["keep_ids"]
+                    if (-not [string]::IsNullOrEmpty($accessToken) -and -not [string]::IsNullOrEmpty($keepIds)) {
                         $syncScript = Join-Path $PSScriptRoot "sync_videos.ps1"
-                        Start-Process powershell -ArgumentList "-WindowStyle Hidden -File `"$syncScript`" -folderId `"$folderId`" -accessToken `"$accessToken`""
+                        $argsList = "-WindowStyle Hidden -File `"$syncScript`" -folderId `"$folderId`" -accessToken `"$accessToken`""
+                        $argsList += " -keepIds `"$keepIds`""
+                        Start-Process powershell -ArgumentList $argsList
                     }
                     
                     [System.IO.File]::WriteAllBytes("C:\Videos\debug_list.json", $jsonBytes)
