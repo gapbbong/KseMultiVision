@@ -3943,6 +3943,75 @@
       updateMonitorLayout();
     }
 
+    // 테스트 화면 모드 단축키 제어 (스페이스: 재생/일시정지, 좌우 화살표: 이전/다음 영상, m/ㅡ: 음소거 토글)
+    window.addEventListener('keydown', (e) => {
+      if (!isTestScreenActive) return;
+      
+      const droneVideo = document.getElementById('test-drone-video');
+      const movieVideo = document.getElementById('test-movie-video');
+      
+      // 1. 스페이스바: 재생/일시정지 토글
+      if (e.key === ' ' || e.code === 'Space') {
+        e.preventDefault();
+        if (movieVideo && droneVideo) {
+          if (movieVideo.paused) {
+            movieVideo.play().catch(e => console.warn('[Test Movie] Play failed:', e));
+            droneVideo.play().catch(e => console.warn('[Test Drone] Play failed:', e));
+          } else {
+            movieVideo.pause();
+            droneVideo.pause();
+          }
+        }
+      }
+      
+      // 2. 오른쪽 화살표: 다음 영상
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        if (droneVideo && testDronePlaylist && testDronePlaylist.length > 0) {
+          testDroneIndex = (testDroneIndex + 1) % testDronePlaylist.length;
+          droneVideo.src = testDronePlaylist[testDroneIndex];
+          droneVideo.muted = true;
+          droneVideo.play().catch(e => showTestDroneError(`[Playback Blocked] 자동 재생이 차단되었습니다:\n${e.message}`));
+          getTestScreenVideoUrls(CONFIG.TEST_DRONE_FOLDER_ID, testDroneIndex).catch(()=>{});
+        }
+        if (movieVideo && testMoviePlaylist && testMoviePlaylist.length > 0) {
+          testMovieIndex = (testMovieIndex + 1) % testMoviePlaylist.length;
+          movieVideo.src = testMoviePlaylist[testMovieIndex];
+          movieVideo.muted = false;
+          movieVideo.play().catch(e => console.warn('[Test Movie] Auto play blocked:', e));
+          getTestScreenVideoUrls(CONFIG.WORKSPACE_DRIVE_FOLDER_ID, testMovieIndex).catch(()=>{});
+        }
+      }
+      
+      // 3. 왼쪽 화살표: 이전 영상
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        if (droneVideo && testDronePlaylist && testDronePlaylist.length > 0) {
+          testDroneIndex = (testDroneIndex - 1 + testDronePlaylist.length) % testDronePlaylist.length;
+          droneVideo.src = testDronePlaylist[testDroneIndex];
+          droneVideo.muted = true;
+          droneVideo.play().catch(e => showTestDroneError(`[Playback Blocked] 자동 재생이 차단되었습니다:\n${e.message}`));
+          getTestScreenVideoUrls(CONFIG.TEST_DRONE_FOLDER_ID, testDroneIndex).catch(()=>{});
+        }
+        if (movieVideo && testMoviePlaylist && testMoviePlaylist.length > 0) {
+          testMovieIndex = (testMovieIndex - 1 + testMoviePlaylist.length) % testMoviePlaylist.length;
+          movieVideo.src = testMoviePlaylist[testMovieIndex];
+          movieVideo.muted = false;
+          movieVideo.play().catch(e => console.warn('[Test Movie] Auto play blocked:', e));
+          getTestScreenVideoUrls(CONFIG.WORKSPACE_DRIVE_FOLDER_ID, testMovieIndex).catch(()=>{});
+        }
+      }
+      
+      // 4. m 또는 한글 ㅡ: 음소거 토글
+      if (e.key === 'm' || e.key === 'M' || e.code === 'KeyM' || e.key === 'ㅡ') {
+        e.preventDefault();
+        if (movieVideo) {
+          movieVideo.muted = !movieVideo.muted;
+          console.log(`[Test Movie] Muted toggled: ${movieVideo.muted}`);
+        }
+      }
+    });
+
     async function initSystem() {
       updateMonitorLayout(); // 모니터 상태 레이아웃 적용
       updateClock();
