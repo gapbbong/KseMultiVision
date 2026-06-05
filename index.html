@@ -870,36 +870,10 @@
       </defs>
     </svg>
 
-    <!-- 테스트 화면 모드 전용 오버레이 (1사분면: 드라이브 영상, 2사분면: 범고래 입체 영상) -->
+    <!-- 테스트 화면 모드 전용 오버레이 (1사분면: 범고래 입체 영상, 2사분면: 드라이브 영상) -->
     <div id="test-screen-overlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #020617; z-index: 100010; display: none; pointer-events: all; box-sizing: border-box;">
-      <!-- 1사분면 (좌상단 50vw, 50vh) - 구글 드라이브 드론 영상 -->
-      <div id="test-quad-1" style="position: absolute; left: 0; top: 0; width: 50vw; height: 50vh; background: #000; overflow: hidden; border-right: 2px dashed rgba(0, 245, 212, 0.4); border-bottom: 2px dashed rgba(0, 245, 212, 0.4);">
-        <video id="test-drone-video" style="width: 100%; height: 100%; object-fit: cover;" autoplay muted playsinline></video>
-        <!-- 재생 시간 표시 패널 (현재재생시간 / 전체재생시간) -->
-        <div id="test-drone-time-display" style="position: absolute; bottom: 16px; right: 16px; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #ffffff; padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; font-family: var(--font-outfit), monospace; font-weight: 700; border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 4px 12px rgba(0,0,0,0.5); z-index: 10; display: flex; align-items: center; gap: 6px; letter-spacing: 0.5px;">
-          <span style="display: inline-block; width: 6px; height: 6px; background: #10b981; border-radius: 50%; animation: alertBlink 1.5s infinite;"></span>
-          <span id="test-drone-time-text">00:00 / 00:00</span>
-        </div>
-        <!-- 로딩 스피너 오버레이 (비디오 다운로드 및 버퍼링용) -->
-        <div id="test-drone-loading" style="position: absolute; inset: 0; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); display: none; flex-direction: column; align-items: center; justify-content: center; gap: 16px; z-index: 5; color: #ffffff; font-family: var(--font-noto);">
-          <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 3rem; color: #00f5d4; filter: drop-shadow(0 0 10px rgba(0, 245, 212, 0.6));"></i>
-          <div style="font-size: 0.95rem; font-weight: 700; color: #00f5d4; letter-spacing: 0.5px; text-shadow: 0 0 10px rgba(0,245,212,0.4);">비디오 로딩 및 캐시 다운로드 중...</div>
-        </div>
-        <!-- 에러 로그 오버레이 패널 -->
-        <div id="test-drone-error-log" style="position: absolute; inset: 0; background: rgba(15, 23, 42, 0.96); border: 2px dashed #f43f5e; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 24px; box-sizing: border-box; z-index: 99; color: #f8fafc; font-family: var(--font-noto); gap: 12px;">
-           <div style="font-size: 2.2rem; color: #ef4444; animation: alertBlink 1s infinite;"><i class="fa-solid fa-triangle-exclamation"></i></div>
-          <div style="font-size: 1.1rem; font-weight: 800; color: #ef4444; letter-spacing: -0.5px;">구글 드라이브 연동 에러 리포트</div>
-          <div id="test-drone-error-text" style="font-family: monospace; font-size: 0.8rem; background: #020617; border: 1px solid #334155; padding: 12px; border-radius: 6px; width: 100%; max-height: 150px; overflow-y: auto; text-align: left; line-height: 1.4; color: #cbd5e1; word-break: break-all; white-space: pre-wrap;"></div>
-          <div style="font-size: 0.72rem; color: var(--color-text-secondary); text-align: center;">조치 방법: CONFIG.GOOGLE_API_KEY 유효성 및 Drive API 허용 여부를 검토하세요.</div>
-        </div>
-        <div style="position: absolute; top: 16px; left: 16px; background: rgba(13,27,42,0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: var(--color-zone-a); padding: 8px 16px; border-radius: 8px; font-size: 0.9rem; font-weight: 800; border: 1px solid rgba(0,245,212,0.3); font-family: var(--font-noto); display: none; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(0,245,212,0.25);">
-          <i class="fa-solid fa-cloud-arrow-up"></i>
-          <span>1사분면: 구글 드라이브 연동 영상 테스트</span>
-        </div>
-      </div>
-      
-      <!-- 2사분면 (우상단 50vw, 50vh) - 3D 범고래 입체 시뮬레이션 -->
-      <div id="test-quad-2" style="position: absolute; left: 50vw; top: 0; width: 50vw; height: 50vh; background: #000000; overflow: hidden; border-left: 2px dashed rgba(255, 0, 127, 0.4); border-bottom: 2px dashed rgba(255, 0, 127, 0.4); display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+      <!-- 1사분면 (좌상단 50vw, 50vh) - 3D 범고래 입체 시뮬레이션 -->
+      <div id="test-quad-1" style="position: absolute; left: 0; top: 0; width: 50vw; height: 50vh; background: #000000; overflow: hidden; border-right: 2px dashed rgba(255, 0, 127, 0.4); border-bottom: 2px dashed rgba(255, 0, 127, 0.4); display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
         
         <!-- 하이테크 3D 격자선 배경 (공간감 제공) -->
         <div style="position: absolute; inset: 0; background-image: linear-gradient(rgba(255,0,127,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,0,127,0.05) 1px, transparent 1px); background-size: 40px 40px; opacity: 0.65; pointer-events: none; display: none;"></div>
@@ -921,7 +895,33 @@
         
         <div style="position: absolute; top: 16px; left: 16px; background: rgba(13,27,42,0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: var(--color-zone-c); padding: 8px 16px; border-radius: 8px; font-size: 0.9rem; font-weight: 800; border: 1px solid rgba(255,0,127,0.3); font-family: var(--font-noto); display: none; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(255,0,127,0.25);">
           <i class="fa-solid fa-cube fa-bounce"></i>
-          <span>2사분면: 범고래 3D 입체 시뮬레이션 (Chroma Key)</span>
+          <span>1사분면: 범고래 3D 입체 시뮬레이션 (Chroma Key)</span>
+        </div>
+      </div>
+      
+      <!-- 2사분면 (우상단 50vw, 50vh) - 구글 드라이브 드론 영상 -->
+      <div id="test-quad-2" style="position: absolute; left: 50vw; top: 0; width: 50vw; height: 50vh; background: #000; overflow: hidden; border-left: 2px dashed rgba(0, 245, 212, 0.4); border-bottom: 2px dashed rgba(0, 245, 212, 0.4);">
+        <video id="test-drone-video" style="width: 100%; height: 100%; object-fit: cover;" autoplay muted playsinline></video>
+        <!-- 재생 시간 표시 패널 (현재재생시간 / 전체재생시간) -->
+        <div id="test-drone-time-display" style="position: absolute; bottom: 16px; right: 16px; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #ffffff; padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; font-family: var(--font-outfit), monospace; font-weight: 700; border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 4px 12px rgba(0,0,0,0.5); z-index: 10; display: flex; align-items: center; gap: 6px; letter-spacing: 0.5px;">
+          <span style="display: inline-block; width: 6px; height: 6px; background: #10b981; border-radius: 50%; animation: alertBlink 1.5s infinite;"></span>
+          <span id="test-drone-time-text">00:00 / 00:00</span>
+        </div>
+        <!-- 로딩 스피너 오버레이 (비디오 다운로드 및 버퍼링용) -->
+        <div id="test-drone-loading" style="position: absolute; inset: 0; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); display: none; flex-direction: column; align-items: center; justify-content: center; gap: 16px; z-index: 5; color: #ffffff; font-family: var(--font-noto);">
+          <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 3rem; color: #00f5d4; filter: drop-shadow(0 0 10px rgba(0, 245, 212, 0.6));"></i>
+          <div style="font-size: 0.95rem; font-weight: 700; color: #00f5d4; letter-spacing: 0.5px; text-shadow: 0 0 10px rgba(0,245,212,0.4);">비디오 로딩 및 캐시 다운로드 중...</div>
+        </div>
+        <!-- 에러 로그 오버레이 패널 -->
+        <div id="test-drone-error-log" style="position: absolute; inset: 0; background: rgba(15, 23, 42, 0.96); border: 2px dashed #f43f5e; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 24px; box-sizing: border-box; z-index: 99; color: #f8fafc; font-family: var(--font-noto); gap: 12px;">
+           <div style="font-size: 2.2rem; color: #ef4444; animation: alertBlink 1s infinite;"><i class="fa-solid fa-triangle-exclamation"></i></div>
+          <div style="font-size: 1.1rem; font-weight: 800; color: #ef4444; letter-spacing: -0.5px;">구글 드라이브 연동 에러 리포트</div>
+          <div id="test-drone-error-text" style="font-family: monospace; font-size: 0.8rem; background: #020617; border: 1px solid #334155; padding: 12px; border-radius: 6px; width: 100%; max-height: 150px; overflow-y: auto; text-align: left; line-height: 1.4; color: #cbd5e1; word-break: break-all; white-space: pre-wrap;"></div>
+          <div style="font-size: 0.72rem; color: var(--color-text-secondary); text-align: center;">조치 방법: CONFIG.GOOGLE_API_KEY 유효성 및 Drive API 허용 여부를 검토하세요.</div>
+        </div>
+        <div style="position: absolute; top: 16px; left: 16px; background: rgba(13,27,42,0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: var(--color-zone-a); padding: 8px 16px; border-radius: 8px; font-size: 0.9rem; font-weight: 800; border: 1px solid rgba(0,245,212,0.3); font-family: var(--font-noto); display: none; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(0,245,212,0.25);">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+          <span>2사분면: 구글 드라이브 연동 영상 테스트</span>
         </div>
       </div>
       
@@ -933,7 +933,7 @@
             <span>멀티비전 모니터 연동 테스트 작동 중</span>
           </div>
           <p style="color: var(--color-text-secondary); font-size: 0.95rem; font-weight: 500; max-width: 600px; line-height: 1.5; word-break: keep-all; padding: 0 20px;">
-            본 화면은 1사분면(좌측 모니터 영역)의 구글 드라이브 업로드 비디오 및 2사분면(우측 상단 모니터 영역)의 범고래 크로마키 입체 영상을 검증하기 위한 테스트 모드입니다.
+            본 화면은 1사분면(좌측 모니터 영역)의 범고래 크로마키 입체 영상 및 2사분면(우측 상단 모니터 영역)의 구글 드라이브 업로드 비디오를 검증하기 위한 테스트 모드입니다.
           </p>
         </div>
         <button onclick="toggleTestScreen()" style="background: linear-gradient(135deg, #ea580c 0%, #ff7a00 100%); border: none; color: #ffffff; padding: 12px 32px; border-radius: 8px; cursor: pointer; font-size: 1.05rem; font-weight: 800; transition: all 0.3s; box-shadow: 0 4px 20px rgba(234,88,12,0.4); display: flex; align-items: center; gap: 8px; outline: none;">
@@ -1232,7 +1232,7 @@
       GOOGLE_API_KEY: 'AIzaSyCgjlRcgzTYBAf_21P-AJTSLTYlFvadavI',
       WORKSPACE_DRIVE_FOLDER_ID: '14ThjsFnG5tjFM_cp3wrOv2sIHhArdVkb',
       NOTICE_DRIVE_FOLDER_ID: '1rpumueOBAPqU4TKZyOdjBBoUyCDNuurj',
-      TEST_DRONE_FOLDER_ID: '1vCFHViQyZtvWl-opzdx5ISJZTyGdBFug',
+      TEST_DRONE_FOLDER_ID: '1GVcymOsyDYcoVvxt-kF-Q0YZ8E0WlUSf',
       ATPT_OFCDC_SC_CODE: 'C10',
       SD_SCH_CODE: '7150429',
       NEIS_API_KEY: '31ca8d4d17274275b155ae2e5cabba40',
