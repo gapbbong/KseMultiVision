@@ -1230,7 +1230,8 @@
       MEDIA_CYCLE_INTERVAL_V: 6000,
       MEDIA_CYCLE_INTERVAL_H: 2000,
       DATA_REFRESH_INTERVAL: 1800000,
-      MEDIA_REFRESH_INTERVAL: 10800000 // 3시간 (오전/오후 각 2회 분량)
+      MEDIA_REFRESH_INTERVAL: 10800000, // 3시간 (오전/오후 각 2회 분량)
+      BELL_TIME_OFFSET_SEC: 7            // 학교 타종 방송 시스템 딜레이 보정 (초 단위, 물리 타종이 7초 늦게 울림)
     };
 
     let upcomingCreativeEvents = [];
@@ -1577,7 +1578,7 @@
         }
       }
       
-      // 13초 전 종 울림 카운트다운 처리
+      // 13초 전 종 울림 카운트다운 처리 (타종 방송 딜레이 오프셋 반영)
       const bellOverlay = document.getElementById('bell-countdown-overlay');
       const bellNumEl = document.getElementById('bell-countdown-number');
       const bellTextEl = document.getElementById('bell-target-text');
@@ -1586,9 +1587,26 @@
       let countdownSec = 0;
       let targetBellName = "";
       
-      if (sVal >= 47 && bellOverlay && bellNumEl && bellTextEl) {
-        let nextM = mVal + 1;
-        let nextH = hVal;
+      // 타종 방송 딜레이(7초)를 차감한 보정 시간 계산
+      const offsetSec = CONFIG.BELL_TIME_OFFSET_SEC || 0;
+      const bellTime = new Date(now.getTime() - offsetSec * 1000);
+      
+      let bellHVal = bellTime.getHours();
+      let bellMVal = bellTime.getMinutes();
+      let bellSVal = bellTime.getSeconds();
+      
+      if (bgmMockOffsetMin !== null && bgmMockOffsetMin !== undefined) {
+        const totalBellMins = bellTime.getHours() * 60 + bellTime.getMinutes() + bgmMockOffsetMin;
+        bellHVal = Math.floor(totalBellMins / 60) % 24;
+        bellMVal = totalBellMins % 60;
+      } else if (bgmMockTime) {
+        bellHVal = bgmMockTime.hour;
+        bellMVal = bgmMockTime.min;
+      }
+      
+      if (bellSVal >= 47 && bellOverlay && bellNumEl && bellTextEl) {
+        let nextM = bellMVal + 1;
+        let nextH = bellHVal;
         if (nextM >= 60) {
           nextM = 0;
           nextH = (nextH + 1) % 24;
@@ -1606,7 +1624,7 @@
         
         if (boundaries.includes(nextTimeStr)) {
           isCountdownActive = true;
-          countdownSec = 60 - sVal;
+          countdownSec = 60 - bellSVal;
           
           if (["09:00", "10:00", "11:00", "12:00", "13:40", "14:40", "15:40"].includes(nextTimeStr)) {
             let period = "";
@@ -2674,6 +2692,7 @@
     let isTestScreenActive = false;
     let testDronePlaylist = [];
     let testDroneIndex = 0;
+    let testDroneInterval = null;
 
     async function toggleTestScreen() {
       const overlay = document.getElementById('test-screen-overlay');
@@ -2706,7 +2725,8 @@
           const currentUrl = testDronePlaylist[testDroneIndex];
           // 만약 드라이브 탐색에 실패하여 믹스킷 폴백으로 돌아갔을 시 에러 띄우기
           if (!currentUrl || currentUrl.includes('assets.mixkit.co')) {
-            showTestDroneError(`[Drive Sync Error] 구글 드라이브(14ThjsFnG5tjFM_cp3wrOv2sIHhArdVkb) 내에서 직접 영상 파일을 성공적으로 찾지 못했습니다.\n\n대체(믹스킷) 비디오 재생을 시도합니다.\nCONFIG.GOOGLE_API_KEY 권한 및 파일 가시성을 확인해 주세요.`);
+            const targetFolderId = CONFIG.TEST_DRONE_FOLDER_ID || CONFIG.WORKSPACE_DRIVE_FOLDER_ID;
+            showTestDroneError(`[Drive Sync Error] 구글 드라이브(${targetFolderId}) 내에서 직접 영상 파일을 성공적으로 찾지 못했습니다.\n\n대체(믹스킷) 비디오 재생을 시도합니다.\nCONFIG.GOOGLE_API_KEY 권한 및 파일 가시성을 확인해 주세요.`);
           }
           droneVideo.src = currentUrl || 'https://assets.mixkit.co/videos/preview/mixkit-drone-shot-of-a-winding-road-in-the-mountains-43034-large.mp4';
           droneVideo.play().catch(e => {
@@ -2714,12 +2734,34 @@
           });
         }
         
-        // 3D 범고래 크로마키 유튜브 영상 로드 비활성화 (검은 화면 처리)
-        // if (tigerIframe) {
-        //   tigerIframe.src = "https://www.youtube.com/embed/VgvM7av1o1Q?autoplay=1&loop=1&playlist=VgvM7av1o1Q&mute=1&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3";
-        // }
+        // 10분마다 구글 드라이브 비디오 싱크 및 플레이리스트 백그라운드 갱신
+        if (testDroneInterval) clearInterval(testDroneInterval);
+        testDroneInterval = setInterval(async () => {
+          if (!isTestScreenActive) return;
+          try {
+            console.log('[Test Screen] Periodically updating video playlist & syncing...');
+            const newPlaylist = await getTestScreenVideoUrls();
+            if (newPlaylist && newPlaylist.length > 0) {
+              const currentVideo = testDronePlaylist[testDroneIndex];
+              testDronePlaylist = newPlaylist;
+              const newIdx = testDronePlaylist.indexOf(currentVideo);
+              if (newIdx !== -1) {
+                testDroneIndex = newIdx;
+              } else {
+                testDroneIndex = 0;
+              }
+              console.log(`[Test Screen] Playlist updated. Total videos: ${testDronePlaylist.length}`);
+            }
+          } catch (e) {
+            console.warn('[Test Screen] Failed to periodically sync playlist:', e);
+          }
+        }, 600000); // 10분 (600,000ms)
         
       } else {
+        if (testDroneInterval) {
+          clearInterval(testDroneInterval);
+          testDroneInterval = null;
+        }
         if (overlay) overlay.style.display = 'none';
         if (btn) btn.classList.remove('active');
         hideTestDroneError();
@@ -2757,11 +2799,13 @@
            if (data.files && data.files.length > 0) {
              const videos = data.files.filter(f => f.mimeType && f.mimeType.includes('video'));
              if (videos.length > 0) {
+                // 자연스러운 정렬(알파벳/숫자 순)을 수행하여 차례대로 나오도록 함
+                videos.sort((a, b) => a.name.localeCompare(b.name, undefined, {numeric: true, sensitivity: 'base'}));
                 return videos.map(randomVideo => {
-                let proxyUrl = 'http://localhost:8080/proxy?id=' + randomVideo.id + '&type=video';
-                if (isTokenValid) proxyUrl += '&access_token=' + googleAccessToken;
-                return proxyUrl;
-              });
+                  let proxyUrl = 'http://localhost:8080/proxy?id=' + randomVideo.id + '&type=video';
+                  if (isTokenValid) proxyUrl += '&access_token=' + googleAccessToken;
+                  return proxyUrl;
+                });
              }
            }
         }

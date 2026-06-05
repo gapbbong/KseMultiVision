@@ -36,6 +36,11 @@ try {
                     Write-Host "[Proxy Server] Listing files in folder: $folderId"
                     $jsonBytes = $wc.DownloadData($url)
                     
+                    $videosDir = "C:\Videos"
+                    if (-not (Test-Path $videosDir)) {
+                        New-Item -Path $videosDir -ItemType Directory -Force | Out-Null
+                    }
+                    
                     if (-not [string]::IsNullOrEmpty($accessToken)) {
                         $syncScript = Join-Path $PSScriptRoot "sync_videos.ps1"
                         Start-Process powershell -ArgumentList "-WindowStyle Hidden -File `"$syncScript`" -folderId `"$folderId`" -accessToken `"$accessToken`""
