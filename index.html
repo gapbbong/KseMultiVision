@@ -2991,7 +2991,27 @@
            fetch(syncUrl).catch(err => console.warn('Background sync trigger failed:', err));
          }
          
+         // 로컬 캐시 파일 먼저 확인 (이미 다운로드된 파일이면 네트워크 스트리밍 없이 즉시 재생)
+         let localFileMap = {};
+         try {
+           const localRes = await fetch('http://localhost:8080/api/videos');
+           if (localRes.ok) {
+             const localData = await localRes.json();
+             for (const f of localData) {
+               // 파일명이 "{id}.mp4" 형태로 저장됨
+               const fileId = f.name.replace('.mp4', '');
+               localFileMap[fileId] = f.url; // e.g. "/local/1BtSyXfL0d5TVOJSfB_B-wPcoVmDFtNIE.mp4"
+             }
+           }
+         } catch (e) {
+           console.warn('[Local Cache Check] Failed:', e);
+         }
+         
          return allVideos.map(randomVideo => {
+           // 로컬 캐시가 있으면 로컬 파일을, 없으면 프록시 스트리밍 사용
+           if (localFileMap[randomVideo.id]) {
+             return 'http://localhost:8080' + localFileMap[randomVideo.id];
+           }
            let proxyUrl = 'http://localhost:8080/proxy?id=' + randomVideo.id + '&type=video';
            if (isTokenValid) proxyUrl += '&access_token=' + googleAccessToken;
            return proxyUrl;
