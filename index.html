@@ -3943,8 +3943,19 @@
       updateMonitorLayout();
     }
 
-    // 테스트 화면 모드 단축키 제어 (스페이스: 재생/일시정지, 좌우 화살표: 이전/다음 영상, m/ㅡ: 음소거 토글)
     window.addEventListener('keydown', (e) => {
+      // 포커스가 입력 필드(인풋/텍스트에어리어)에 있을 때는 단축키 기능 방지
+      if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) {
+        return;
+      }
+
+      // 숫자 '2' 키를 누르면 테스트 화면 토글 (활성화/비활성화)
+      if (e.key === '2' || e.code === 'Digit2' || e.code === 'Numpad2') {
+        e.preventDefault();
+        toggleTestScreen();
+        return;
+      }
+
       if (!isTestScreenActive) return;
       
       const droneVideo = document.getElementById('test-drone-video');
