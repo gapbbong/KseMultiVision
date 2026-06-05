@@ -1762,11 +1762,11 @@
       }
     }
 
-    function requestGoogleAuth() {
+    function requestGoogleAuth(silent = false) {
       if (tokenClient) {
-        tokenClient.requestAccessToken({ prompt: 'consent' });
+        tokenClient.requestAccessToken({ prompt: silent ? '' : 'consent' });
       } else {
-        alert('구글 인증 라이브러리가 로드 중입니다. 잠시 후 다시 시도해 주세요.');
+        if (!silent) alert('구글 인증 라이브러리가 로드 중입니다. 잠시 후 다시 시도해 주세요.');
       }
     }
 
@@ -2813,12 +2813,23 @@
 
     async function getTestScreenVideoUrls(currentIndex = 0) {
       const folderId = CONFIG.TEST_DRONE_FOLDER_ID || CONFIG.WORKSPACE_DRIVE_FOLDER_ID;
-      const isTokenValid = typeof googleAccessToken !== 'undefined' && googleAccessToken && typeof googleTokenExpiry !== 'undefined' && googleTokenExpiry && Date.now() < parseInt(googleTokenExpiry);
+      let isTokenValid = typeof googleAccessToken !== 'undefined' && googleAccessToken && typeof googleTokenExpiry !== 'undefined' && googleTokenExpiry && Date.now() < parseInt(googleTokenExpiry);
       
       if (!isTokenValid) {
-          alert("⚠️ 구글 드라이브 권한이 만료되었습니다!\n오른쪽 하단 'Google Drive 로그인' 버튼을 눌러 다시 연동해주세요.");
-          if (typeof requestGoogleAuth === 'function') requestGoogleAuth();
-          throw new Error("Google Drive Token Expired");
+          console.warn('[Google Auth] Token expired or invalid. Attempting silent token refresh...');
+          if (typeof requestGoogleAuth === 'function') {
+            requestGoogleAuth(true); // silent refresh
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            googleAccessToken = localStorage.getItem('google_access_token');
+            googleTokenExpiry = localStorage.getItem('google_token_expiry');
+            isTokenValid = googleAccessToken && googleTokenExpiry && Date.now() < parseInt(googleTokenExpiry);
+          }
+          
+          if (!isTokenValid) {
+              alert("⚠️ 구글 드라이브 권한이 만료되었습니다!\n오른쪽 하단 'Google Drive 로그인' 버튼을 눌러 다시 연동해주세요.");
+              if (typeof requestGoogleAuth === 'function') requestGoogleAuth(false);
+              throw new Error("Google Drive Token Expired");
+          }
       }
       
       try {
