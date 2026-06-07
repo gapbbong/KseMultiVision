@@ -2818,7 +2818,7 @@
             const nextUrl = testMoviePlaylist[testMovieIndex];
             console.log(`[Test Movie Video] Ended. Playing next: Index ${testMovieIndex}/${testMoviePlaylist.length}`);
             movieVideo.src = nextUrl;
-            movieVideo.muted = false;
+            // preserve muted state
             movieVideo.play().catch(e => console.warn('[Test Movie] Auto play blocked:', e));
             getTestScreenVideoUrls(CONFIG.WORKSPACE_DRIVE_FOLDER_ID, testMovieIndex).catch(()=>{});
           }
@@ -4151,7 +4151,7 @@
         if (movieVideo && testMoviePlaylist && testMoviePlaylist.length > 0) {
           testMovieIndex = (testMovieIndex + 1) % testMoviePlaylist.length;
           movieVideo.src = testMoviePlaylist[testMovieIndex];
-          movieVideo.muted = false;
+          // preserve muted state
           movieVideo.play().catch(e => console.warn('[Test Movie] Auto play blocked:', e));
           getTestScreenVideoUrls(CONFIG.WORKSPACE_DRIVE_FOLDER_ID, testMovieIndex).catch(()=>{});
         }
@@ -4163,7 +4163,7 @@
         if (movieVideo && testMoviePlaylist && testMoviePlaylist.length > 0) {
           testMovieIndex = (testMovieIndex - 1 + testMoviePlaylist.length) % testMoviePlaylist.length;
           movieVideo.src = testMoviePlaylist[testMovieIndex];
-          movieVideo.muted = false;
+          // preserve muted state
           movieVideo.play().catch(e => console.warn('[Test Movie] Auto play blocked:', e));
           getTestScreenVideoUrls(CONFIG.WORKSPACE_DRIVE_FOLDER_ID, testMovieIndex).catch(()=>{});
         }
