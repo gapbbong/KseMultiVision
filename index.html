@@ -1302,10 +1302,10 @@
       { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1TOFownxjff8hyW7N5K-ys0rDewaGbgNe', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: true },
       { url: 'https://drive.google.com/thumbnail?sz=w1280&id=1zqKkdjXtRaJi_D2MzSn9PzIovSoUgPnn', eventName: '260508 3학년 졸업앨범 야외촬영 (3-2)', isVertical: true },
       // --- 가로 영상 (이브닝콘서트) ---
-      { url: 'https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-sunlight-529-large.mp4', eventName: '20260429 이브닝콘서트 - 오케스트라 리허설', isVertical: false, type: 'video' },
-      { url: 'https://assets.mixkit.co/videos/preview/mixkit-under-a-clear-sky-with-clouds-running-4886-large.mp4', eventName: '20260429 이브닝콘서트 - 드론 연출 1', isVertical: false, type: 'video' },
-      { url: 'https://assets.mixkit.co/videos/preview/mixkit-waves-in-the-ocean-near-a-cliff-43026-large.mp4', eventName: '20260429 이브닝콘서트 - 백스테이지 현장', isVertical: false, type: 'video' },
-      { url: 'https://assets.mixkit.co/videos/preview/mixkit-drone-shot-of-a-winding-road-in-the-mountains-43034-large.mp4', eventName: '20260429 이브닝콘서트 - 외부 전경 촬영', isVertical: false, type: 'video' },
+      { url: '/fallback.mp4', eventName: '20260429 이브닝콘서트 - 오케스트라 리허설', isVertical: false, type: 'video' },
+      { url: '/fallback.mp4', eventName: '20260429 이브닝콘서트 - 드론 연출 1', isVertical: false, type: 'video' },
+      { url: '/fallback.mp4', eventName: '20260429 이브닝콘서트 - 백스테이지 현장', isVertical: false, type: 'video' },
+      { url: '/fallback.mp4', eventName: '20260429 이브닝콘서트 - 외부 전경 촬영', isVertical: false, type: 'video' },
       { url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', eventName: '20260429 이브닝콘서트 - 본 공연 실황', isVertical: false, type: 'video' },
       // --- 가로 사진 (졸업앨범 3-5) ---
       { url: 'https://drive.google.com/thumbnail?sz=w1280&id=10Fd7t5l0xQkirE7UXoBg5flEtUZccB4N', eventName: '260508 3학년 졸업앨범 야외촬영 (3-5)', isVertical: false },
@@ -1817,12 +1817,31 @@
           if (res.ok) {
             const data = await res.json();
             if (data.files && data.files.length > 0) {
+              // 1사분면에 졸업앨범/촬영대 영상이 노출되지 않도록 관련 폴더 필터링
+              const filteredFolders = data.files.filter(folder => {
+                const name = folder.name || '';
+                return !(name.includes('졸업') || name.includes('앨범') || name.includes('촬영') || name.includes('야외촬영'));
+              });
               const allMedia = [];
-              for (let folder of data.files.slice(0,6)) {
+              for (let folder of filteredFolders.slice(0,6)) {
                 const fr = await fetch(`https://www.googleapis.com/drive/v3/files?q='${folder.id}'+in+parents+and+(mimeType+contains+'image/'+or+mimeType+contains+'video/')&fields=files(id,name,mimeType,webContentLink)&key=${apiKey}`);
                 if (fr.ok) {
                   const fd = await fr.json();
-                  if (fd.files) fd.files.forEach(f => allMedia.push({ url: f.webContentLink || `https://docs.google.com/uc?export=download&id=${f.id}`, eventName: folder.name, type: f.mimeType.includes('video') ? 'video' : 'image' }));
+                  if (fd.files) {
+                    fd.files.forEach(f => {
+                      const isVideo = f.mimeType && f.mimeType.includes('video');
+                      const fileName = f.name || '';
+                      // 졸업앨범 촬영대 찍은 비디오 파일 필터링
+                      if (isVideo && (fileName.includes('졸업') || fileName.includes('앨범') || fileName.includes('촬영') || fileName.includes('야외촬영'))) {
+                        return;
+                      }
+                      allMedia.push({ 
+                        url: f.webContentLink || `https://docs.google.com/uc?export=download&id=${f.id}`, 
+                        eventName: folder.name, 
+                        type: isVideo ? 'video' : 'image' 
+                      });
+                    });
+                  }
                 }
               }
               if (allMedia.length > 0) { analyzeAndClassifyMedia(allMedia); return; }
@@ -1884,6 +1903,20 @@
       }, 3500);
 
       mediaList.forEach(item => {
+        const eventName = item.eventName || '';
+        const urlStr = item.url || '';
+        
+        // 1사분면에 졸업앨범/촬영대 영상이 섞이지 않도록 비디오 분류 전 필터링
+        if (item.type === 'video' && (
+          eventName.includes('졸업') || eventName.includes('앨범') || eventName.includes('촬영') || eventName.includes('야외촬영') ||
+          urlStr.includes('졸업') || urlStr.includes('앨범') || urlStr.includes('촬영') || urlStr.includes('야외촬영')
+        )) {
+          console.log(`[Media Classify] Filtering out graduation video: ${eventName}`);
+          loadedCount++;
+          checkComplete();
+          return;
+        }
+
         let finalUrl = item.url;
         if (finalUrl.includes('drive.google.com') || finalUrl.includes('docs.google.com')) {
           const id = extractGoogleDriveFileId(finalUrl);
@@ -2818,6 +2851,17 @@
       isTestScreenActive = !isTestScreenActive;
       
       if (isTestScreenActive) {
+        // 테스트 화면 진입 시 전역 BGM 리스너 및 재생 일시 중지
+        ['click', 'touchstart', 'mousemove', 'keydown', 'scroll'].forEach(evt => {
+          document.removeEventListener(evt, activateSoundSystem);
+        });
+        if (ytPlayer && typeof ytPlayer.pauseVideo === 'function') {
+          try {
+            ytPlayer.pauseVideo();
+            console.log('[Test Screen] BGM Paused.');
+          } catch(e) {}
+        }
+
         if (overlay) overlay.style.display = 'block';
         if (btn) btn.classList.add('active');
         hideTestDroneError(); // 기존 에러 패널 리셋
@@ -2829,7 +2873,7 @@
         } catch (err) {
           if (!isTestScreenActive) return;
           showTestDroneError(`[Drone API Request Error]\n드론 폴더 스캔 도중 오류가 발생했습니다.\n${err.message}`);
-          testDronePlaylist = ['https://assets.mixkit.co/videos/preview/mixkit-drone-shot-of-a-winding-road-in-the-mountains-43034-large.mp4'];
+          testDronePlaylist = [];
           testDroneIndex = 0;
         }
         
@@ -2840,7 +2884,7 @@
         } catch (err) {
           if (!isTestScreenActive) return;
           console.warn(`[Movie API Request Error]\n동기부여 폴더 스캔 도중 오류가 발생했습니다.\n${err.message}`);
-          testMoviePlaylist = ['https://assets.mixkit.co/videos/preview/mixkit-drone-shot-of-a-winding-road-in-the-mountains-43034-large.mp4'];
+          testMoviePlaylist = [];
           testMovieIndex = 0;
         }
         
@@ -2849,27 +2893,30 @@
         // 드론 비디오 재생
         if (droneVideo) {
           const currentUrl = testDronePlaylist[testDroneIndex];
-          if (!currentUrl || currentUrl.includes('assets.mixkit.co')) {
-            showTestDroneError(`[Drive Sync Error] 구글 드라이브(${CONFIG.TEST_DRONE_FOLDER_ID}) 내에서 직접 영상 파일을 성공적으로 찾지 못했습니다.\n\n대체(믹스킷) 비디오 재생을 시도합니다.\nCONFIG.GOOGLE_API_KEY 권한 및 파일 가시성을 확인해 주세요.`);
+          if (!currentUrl) {
+            showTestDroneError(`[Drive Sync Error] 재생할 수 있는 로컬 비디오 파일이 존재하지 않습니다. 동기화 다운로드가 완료될 때까지 기다리시거나 CONFIG.GOOGLE_API_KEY 권한을 확인해 주세요.`);
+          } else {
+            droneVideo.src = currentUrl;
+            droneVideo.muted = true;
+            droneVideo.play().catch(e => {
+              showTestDroneError(`[Drone Playback Blocked] 자동 재생이 차단되었습니다:\n${e.message}`);
+            });
           }
-          droneVideo.src = currentUrl || 'https://assets.mixkit.co/videos/preview/mixkit-drone-shot-of-a-winding-road-in-the-mountains-43034-large.mp4';
-          droneVideo.muted = true;
-          droneVideo.play().catch(e => {
-            showTestDroneError(`[Drone Playback Blocked] 자동 재생이 차단되었습니다:\n${e.message}`);
-          });
         }
         
         // 동기부여 비디오 재생
         if (movieVideo) {
           const currentUrl = testMoviePlaylist[testMovieIndex];
-          movieVideo.src = currentUrl || 'https://assets.mixkit.co/videos/preview/mixkit-drone-shot-of-a-winding-road-in-the-mountains-43034-large.mp4';
-          movieVideo.muted = false;
-          movieVideo.play().catch(e => {
-            console.warn(`[Movie Playback Blocked] 자동 재생이 차단되었습니다:\n${e.message}`);
-          });
+          if (currentUrl) {
+            movieVideo.src = currentUrl;
+            movieVideo.muted = false;
+            movieVideo.play().catch(e => {
+              console.warn(`[Movie Playback Blocked] 자동 재생이 차단되었습니다:\n${e.message}`);
+            });
+          }
         }
         
-        // 30분마다 구글 드라이브 비디오 싱크 및 플레이리스트 백그라운드 갱신
+        // 2분마다 구글 드라이브 비디오 싱크 및 플레이리스트 백그라운드 갱신 (비교 및 미다운로드 파일 자동 다운로드)
         if (testDroneInterval) clearInterval(testDroneInterval);
         testDroneInterval = setInterval(async () => {
           if (!isTestScreenActive) return;
@@ -2898,7 +2945,7 @@
           } catch (e) {
             console.warn('[Test Screen] Failed to periodically sync playlists:', e);
           }
-        }, 1800000); // 30분 (1,800,000ms)
+        }, 120000); // 2분 (120,000ms)
         
       } else {
         if (testDroneInterval) {
@@ -2925,6 +2972,21 @@
         
         const movieLoading = document.getElementById('test-movie-loading');
         if (movieLoading) movieLoading.style.display = 'none';
+
+        // 테스트 화면 나갈 시 BGM 상태 복구
+        if (ytPlayer && typeof ytPlayer.playVideo === 'function' && isSoundActivated) {
+          try {
+            if (!ytPlayer.isMuted()) {
+              ytPlayer.playVideo();
+              console.log('[Test Screen] BGM Resumed.');
+            }
+          } catch(e) {}
+        }
+        if (!isSoundActivated) {
+          ['click', 'touchstart', 'mousemove', 'keydown', 'scroll'].forEach(evt => {
+            document.addEventListener(evt, activateSoundSystem, { passive: true });
+          });
+        }
       }
     }
 
@@ -2961,11 +3023,19 @@
           if (res.ok) {
              const data = await res.json();
              if (data.files && data.files.length > 0) {
-                let videos = data.files.filter(f => f.mimeType && f.mimeType.includes('video'));
+                let videos = data.files.filter(f => {
+                    if (!(f.mimeType && f.mimeType.includes('video'))) return false;
+                    const name = f.name || '';
+                    return !(name.includes('졸업') || name.includes('앨범') || name.includes('촬영') || name.includes('야외촬영'));
+                 });
                 
                 if (videos.length === 0) {
                    // 하위 폴더 검색 (Workspace 구조 대응)
-                   const folders = data.files.filter(f => f.mimeType === 'application/vnd.google-apps.folder');
+                   const folders = data.files.filter(f => {
+                       if (f.mimeType !== 'application/vnd.google-apps.folder') return false;
+                       const name = f.name || '';
+                       return !(name.includes('졸업') || name.includes('앨범') || name.includes('촬영') || name.includes('야외촬영'));
+                    });
                    if (folders.length > 0) {
                       for (let folder of folders.slice(0, 3)) {
                          let subListUrl = 'http://localhost:8080/list?folderId=' + folder.id;
@@ -2975,7 +3045,11 @@
                             if (subRes.ok) {
                                const subData = await subRes.json();
                                if (subData.files) {
-                                  const subVideos = subData.files.filter(f => f.mimeType && f.mimeType.includes('video'));
+                                  const subVideos = subData.files.filter(f => {
+                                      if (!(f.mimeType && f.mimeType.includes('video'))) return false;
+                                      const name = f.name || '';
+                                      return !(name.includes('졸업') || name.includes('앨범') || name.includes('촬영') || name.includes('야외촬영'));
+                                   });
                                   allVideos = allVideos.concat(subVideos);
                                }
                             }
@@ -2995,54 +3069,74 @@
       }
       
       if (allVideos.length > 0) {
-         // 알파벳/숫자 순 정렬 (체육대회와 하이파이브데이 드론 영상이 섞이거나 차례대로 나오도록 함)
-         allVideos.sort((a, b) => a.name.localeCompare(b.name, undefined, {numeric: true, sensitivity: 'base'}));
+         // 2사분면 드론 영상은 랜덤 재생되게 셔플하고, 무비 폴더는 순차 재생을 위해 알파벳/숫자 순 정렬
+         const isDroneFolder = folderIds.some(fid => {
+            const name = getFolderName(fid) || '';
+            return name.includes('드론') || name.includes('drone');
+         });
+         if (isDroneFolder) {
+            shuffleArray(allVideos);
+         } else {
+            allVideos.sort((a, b) => a.name.localeCompare(b.name, undefined, {numeric: true, sensitivity: 'base'}));
+         }
          
-         // 1~3개 슬라이딩 윈도우 캐싱 트리거 (하드디스크 공간 세이브)
-         // 캐싱 트리거는 첫번째 폴더 ID를 기준으로 호출하되, keep_ids를 셋팅해 보냅니다.
+         // 무비 폴더는 5개 제약 없이 전체 파일을 백그라운드에서 바로 다운로드하도록 설정
+         const isMovieFolder = folderIds.includes(CONFIG.WORKSPACE_DRIVE_FOLDER_ID);
+         const limit = isMovieFolder ? allVideos.length : 5;
+         
          const idsToCache = [];
-         for (let i = 0; i < Math.min(5, allVideos.length); i++) {
-           const targetIdx = (currentIndex + i) % allVideos.length;
-           idsToCache.push(allVideos[targetIdx].id);
+         for (let i = 0; i < Math.min(limit, allVideos.length); i++) {
+            const targetIdx = (currentIndex + i) % allVideos.length;
+            idsToCache.push(allVideos[targetIdx].id);
          }
          
          if (idsToCache.length > 0) {
-           const triggerFid = folderIds[0];
-           const triggerId = getFolderId(triggerFid);
-           const triggerName = getFolderName(triggerFid);
-           let syncUrl = 'http://localhost:8080/list?folderId=' + triggerId + '&folderName=' + encodeURIComponent(triggerName) + '&keep_ids=' + idsToCache.join(',');
-           if (isTokenValid) syncUrl += '&access_token=' + googleAccessToken;
-           fetch(syncUrl).catch(err => console.warn('Background sync trigger failed:', err));
-         }
-         
-         // 로컬 캐시 파일 먼저 확인 (이미 다운로드된 파일이면 네트워크 스트리밍 없이 즉시 재생)
-         let localFileMap = {};
-         try {
-           const localRes = await fetch('http://localhost:8080/api/videos');
-           if (localRes.ok) {
-             const localData = await localRes.json();
-             for (const f of localData) {
-               // 파일명이 "{id}.mp4" 형태로 저장됨
-               const fileId = f.name.replace('.mp4', '');
-               localFileMap[fileId] = f.url; // e.g. "/local/1BtSyXfL0d5TVOJSfB_B-wPcoVmDFtNIE.mp4"
-             }
-           }
-         } catch (e) {
-           console.warn('[Local Cache Check] Failed:', e);
-         }
-         
-         return allVideos.map(randomVideo => {
-           // 로컬 캐시가 있으면 로컬 파일을, 없으면 프록시 스트리밍 사용
-           if (localFileMap[randomVideo.id]) {
-             return 'http://localhost:8080' + localFileMap[randomVideo.id];
-           }
-           let proxyUrl = 'http://localhost:8080/proxy?id=' + randomVideo.id + '&type=video';
-           if (isTokenValid) proxyUrl += '&access_token=' + googleAccessToken;
-           return proxyUrl;
-         });
+            const triggerFid = folderIds[0];
+            const triggerId = getFolderId(triggerFid);
+            const triggerName = getFolderName(triggerFid);
+            let syncUrl = 'http://localhost:8080/list?folderId=' + triggerId + '&folderName=' + encodeURIComponent(triggerName) + '&keep_ids=' + idsToCache.join(',');
+            if (isTokenValid) syncUrl += '&access_token=' + googleAccessToken;
+            fetch(syncUrl).catch(err => console.warn('Background sync trigger failed:', err));
+          }
+          
+          // 로컬 캐시 파일 먼저 확인 (이미 다운로드된 파일이면 네트워크 스트리밍 없이 즉시 재생)
+          let localFileMap = {};
+          try {
+            const localRes = await fetch('http://localhost:8080/api/videos');
+            if (localRes.ok) {
+              const localData = await localRes.json();
+              for (const f of localData) {
+                const fileId = f.name.replace('.mp4', '');
+                // 각 folderId에 해당하는 폴더의 로컬 파일만 매핑하여 타 폴더 영상 섞임 방지
+                const isMatch = folderIds.some(fid => {
+                  const targetFolderName = getFolderName(fid) + '_' + getFolderId(fid);
+                  return f.folder === targetFolderName || f.folder === getFolderId(fid);
+                });
+                if (isMatch) {
+                  localFileMap[fileId] = f.url;
+                }
+              }
+            }
+          } catch (e) {
+            console.warn('[Local Cache Check] Failed:', e);
+          }
+          
+          return allVideos.map(randomVideo => {
+            // 로컬 캐시가 있으면 로컬 파일을 재생
+            if (localFileMap[randomVideo.id]) {
+              return 'http://localhost:8080' + localFileMap[randomVideo.id];
+            }
+            if (isMovieFolder) {
+              // 1사분면(Movie)은 로컬 디스크에 다운로드된 파일만 재생하도록 필터링 (다운로드 중일 때는 일시 제외)
+              return null;
+            }
+            let proxyUrl = 'http://localhost:8080/proxy?id=' + randomVideo.id + '&type=video';
+            if (isTokenValid) proxyUrl += '&access_token=' + googleAccessToken;
+            return proxyUrl;
+          }).filter(url => url !== null);
       }
       
-      return ['https://assets.mixkit.co/videos/preview/mixkit-drone-shot-of-a-winding-road-in-the-mountains-43034-large.mp4'];
+      return [];
     }
 
     // ========================================================
@@ -4004,16 +4098,9 @@
         }
       }
       
-      // 2. 오른쪽 화살표: 다음 영상
+      // 2. 오른쪽 화살표: 다음 영상 (1사분면 동기부여 비디오만)
       if (e.key === 'ArrowRight') {
         e.preventDefault();
-        if (droneVideo && testDronePlaylist && testDronePlaylist.length > 0) {
-          testDroneIndex = (testDroneIndex + 1) % testDronePlaylist.length;
-          droneVideo.src = testDronePlaylist[testDroneIndex];
-          droneVideo.muted = true;
-          droneVideo.play().catch(e => showTestDroneError(`[Playback Blocked] 자동 재생이 차단되었습니다:\n${e.message}`));
-          getTestScreenVideoUrls(CONFIG.TEST_DRONE_FOLDER_ID, testDroneIndex).catch(()=>{});
-        }
         if (movieVideo && testMoviePlaylist && testMoviePlaylist.length > 0) {
           testMovieIndex = (testMovieIndex + 1) % testMoviePlaylist.length;
           movieVideo.src = testMoviePlaylist[testMovieIndex];
@@ -4023,16 +4110,9 @@
         }
       }
       
-      // 3. 왼쪽 화살표: 이전 영상
+      // 3. 왼쪽 화살표: 이전 영상 (1사분면 동기부여 비디오만)
       if (e.key === 'ArrowLeft') {
         e.preventDefault();
-        if (droneVideo && testDronePlaylist && testDronePlaylist.length > 0) {
-          testDroneIndex = (testDroneIndex - 1 + testDronePlaylist.length) % testDronePlaylist.length;
-          droneVideo.src = testDronePlaylist[testDroneIndex];
-          droneVideo.muted = true;
-          droneVideo.play().catch(e => showTestDroneError(`[Playback Blocked] 자동 재생이 차단되었습니다:\n${e.message}`));
-          getTestScreenVideoUrls(CONFIG.TEST_DRONE_FOLDER_ID, testDroneIndex).catch(()=>{});
-        }
         if (movieVideo && testMoviePlaylist && testMoviePlaylist.length > 0) {
           testMovieIndex = (testMovieIndex - 1 + testMoviePlaylist.length) % testMoviePlaylist.length;
           movieVideo.src = testMoviePlaylist[testMovieIndex];

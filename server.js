@@ -9,6 +9,14 @@ const app = express();
 const PORT = 8080;
 const VIDEOS_DIR = 'C:\\Videos';
 
+// 전역 에러 핸들러 - 클라이언트 연결 끊김(ECONNRESET) 등으로 서버가 죽지 않도록 방지
+process.on('uncaughtException', (err) => {
+  console.error('[Node Server] Uncaught Exception (서버 계속 실행):', err.message);
+});
+process.on('unhandledRejection', (reason) => {
+  console.error('[Node Server] Unhandled Rejection (서버 계속 실행):', reason?.message || reason);
+});
+
 app.use(cors());
 
 // 1. Google Drive 파일 목록 조회 및 캐싱 트리거
@@ -64,6 +72,12 @@ app.get('/list', async (req, res) => {
     res.send(jsonBytes);
   } catch (error) {
     console.error('[Node Server] Error in /list:', error.message);
+    const debugListPath = path.join(VIDEOS_DIR, 'debug_list.json');
+    if (fs.existsSync(debugListPath)) {
+      console.log('[Node Server] Fallback: Serving cached debug_list.json');
+      res.setHeader('Content-Type', 'application/json; charset=utf-8');
+      return res.sendFile(debugListPath);
+    }
     res.status(500).send(`Error listing drive: ${error.message}`);
   }
 });
@@ -94,6 +108,15 @@ app.get('/proxy', async (req, res) => {
   } catch (error) {
     console.error('[Node Server] Error proxying:', error.message);
     if (!res.headersSent) {
+      /*
+      if (type === 'video') {
+        const fallbackPath = path.join(__dirname, 'fallback.mp4');
+        if (fs.existsSync(fallbackPath)) {
+          console.log('[Node Server] Fallback: Serving local fallback.mp4');
+          return serveLocalFile(fallbackPath, req, res);
+        }
+      }
+      */
       res.status(500).send(`Error proxying: ${error.message}`);
     }
   }
@@ -116,9 +139,11 @@ app.get('/api/videos', (req, res) => {
   if (fs.existsSync(VIDEOS_DIR)) {
     const files = getFilesRecursive(VIDEOS_DIR, '.mp4');
     files.forEach(f => {
+      const parentDir = path.basename(path.dirname(f));
       filesList.push({
         name: path.basename(f),
-        url: `/local/${path.basename(f)}`
+        url: `/local/${path.basename(f)}`,
+        folder: parentDir
       });
     });
   }
@@ -192,6 +217,11 @@ function serveLocalFile(filePath, req, res) {
     const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
     const chunksize = (end - start) + 1;
     const file = fs.createReadStream(filePath, { start, end });
+    file.on('error', (err) => {
+      if (err.code !== 'ERR_STREAM_DESTROYED') {
+        console.error('[Node Server] File stream error:', err.message);
+      }
+    });
     const head = {
       'Content-Range': `bytes ${start}-${end}/${fileSize}`,
       'Accept-Ranges': 'bytes',
@@ -200,13 +230,21 @@ function serveLocalFile(filePath, req, res) {
     };
     res.writeHead(206, head);
     file.pipe(res);
+    res.on('close', () => file.destroy());
   } else {
     const head = {
       'Content-Length': fileSize,
       'Content-Type': 'video/mp4',
     };
     res.writeHead(200, head);
-    fs.createReadStream(filePath).pipe(res);
+    const stream = fs.createReadStream(filePath);
+    stream.on('error', (err) => {
+      if (err.code !== 'ERR_STREAM_DESTROYED') {
+        console.error('[Node Server] File stream error:', err.message);
+      }
+    });
+    stream.pipe(res);
+    res.on('close', () => stream.destroy());
   }
 }
 
@@ -221,6 +259,10 @@ async function proxyRequest(url, clientReq, clientRes, accessToken, isVideo) {
 
   try {
     const response = await fetch(url, { headers, redirect: 'follow' });
+    const contentType = response.headers.get('content-type') || '';
+    if (!response.ok || (isVideo && contentType.includes('text/html'))) {
+      throw new Error(`Google returned status ${response.status} with content-type ${contentType}`);
+    }
     clientRes.status(response.status);
     
     response.headers.forEach((val, key) => {
@@ -231,7 +273,15 @@ async function proxyRequest(url, clientReq, clientRes, accessToken, isVideo) {
     });
 
     if (response.body) {
-      Readable.fromWeb(response.body).pipe(clientRes);
+      const readable = Readable.fromWeb(response.body);
+      readable.on('error', (err) => {
+        // 클라이언트 연결 끊김은 무시, 그 외 에러만 로깅
+        if (err.code !== 'ERR_STREAM_DESTROYED' && err.message !== 'terminated') {
+          console.error('[Node Proxy] Stream error:', err.message);
+        }
+      });
+      clientRes.on('close', () => readable.destroy());
+      readable.pipe(clientRes);
     } else {
       clientRes.end();
     }
@@ -263,6 +313,12 @@ async function getFilesInFolderRecursive(folderId, accessToken, apiKey) {
   const data = await response.json();
   if (data.files && data.files.length > 0) {
     for (const file of data.files) {
+      const name = file.name || '';
+      // 1사분면(Movie) 리스팅 시 졸업앨범 야외촬영 관련 폴더/비디오 파일은 제외
+      if (name.includes('졸업') || name.includes('앨범') || name.includes('촬영') || name.includes('야외촬영')) {
+        console.log(`[Node Server] Skipping graduation album item from sync: ${name}`);
+        continue;
+      }
       if (file.mimeType === 'application/vnd.google-apps.folder') {
         try {
           const subFiles = await getFilesInFolderRecursive(file.id, accessToken, apiKey);

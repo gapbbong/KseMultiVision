@@ -36,6 +36,24 @@ try {
                     Write-Host "[Proxy Server] Listing files in folder: $folderId"
                     $jsonBytes = $wc.DownloadData($url)
                     
+                    # Parse JSON and filter out files/folders containing graduation keywords
+                    $jsonStr = [System.Text.Encoding]::UTF8.GetString($jsonBytes)
+                    $data = ConvertFrom-Json $jsonStr
+                    if ($data -and $data.files) {
+                        $filteredFiles = @()
+                        foreach ($file in $data.files) {
+                            $name = $file.name
+                            if ($name -like "*졸업*" -or $name -like "*앨범*" -or $name -like "*촬영*" -or $name -like "*야외촬영*") {
+                                Write-Host "[Proxy Server] Skipping graduation album item from sync: $name"
+                                continue
+                            }
+                            $filteredFiles += $file
+                        }
+                        $data.files = $filteredFiles
+                        $jsonStr = $data | ConvertTo-Json -Depth 5 -Compress
+                        $jsonBytes = [System.Text.Encoding]::UTF8.GetBytes($jsonStr)
+                    }
+                    
                     $videosDir = "C:\Videos"
                     if (-not (Test-Path $videosDir)) {
                         New-Item -Path $videosDir -ItemType Directory -Force | Out-Null
@@ -44,6 +62,11 @@ try {
                     $keepIds = $request.QueryString["keep_ids"]
                     if (-not [string]::IsNullOrEmpty($accessToken) -and -not [string]::IsNullOrEmpty($keepIds)) {
                         $syncScript = Join-Path $PSScriptRoot "sync_videos.ps1"
+                        
+                        # Stop any existing background sync processes to prevent concurrent downloads
+                        Get-CimInstance Win32_Process -Filter "Name = 'powershell.exe' AND CommandLine LIKE '%sync_videos.ps1%'" -ErrorAction SilentlyContinue | ForEach-Object {
+                            Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue
+                        }
                         
                         # Start background sync process silently without opening/flashing any console windows
                         $psi = New-Object System.Diagnostics.ProcessStartInfo
@@ -174,6 +197,7 @@ try {
                         $obj = New-Object PSObject
                         $obj | Add-Member -MemberType NoteProperty -Name "name" -Value $f.Name
                         $obj | Add-Member -MemberType NoteProperty -Name "url" -Value "/local/$($f.Name)"
+                        $obj | Add-Member -MemberType NoteProperty -Name "folder" -Value $f.Directory.Name
                         $fileList += $obj
                     }
                 }
