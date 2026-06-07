@@ -875,6 +875,11 @@
       <!-- 1사분면 (좌상단 50vw, 50vh) - 구글 드라이브 동기부여 영상 -->
       <div id="test-quad-1" style="position: absolute; left: 0; top: 0; width: 50vw; height: 50vh; background: #000; overflow: hidden;">
         <video id="test-movie-video" style="width: 100%; height: 100%; object-fit: cover;" autoplay playsinline></video>
+        <!-- 볼륨 조절 표시기 HUD -->
+        <div id="test-movie-volume-hud" style="position: absolute; top: 16px; right: 16px; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #ffffff; padding: 8px 16px; border-radius: 8px; font-size: 0.9rem; font-family: var(--font-outfit), monospace; font-weight: 700; border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 4px 15px rgba(0,0,0,0.5); z-index: 10; display: none; align-items: center; gap: 8px; transition: opacity 0.3s ease; opacity: 0;">
+          <i id="test-movie-volume-icon" class="fa-solid fa-volume-high" style="color: #00f5d4;"></i>
+          <span id="test-movie-volume-text">100%</span>
+        </div>
         <!-- 재생 시간 표시 패널 (현재재생시간 / 전체재생시간) -->
         <div id="test-movie-time-display" style="position: absolute; bottom: 16px; right: 16px; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #ffffff; padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; font-family: var(--font-outfit), monospace; font-weight: 700; border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 4px 12px rgba(0,0,0,0.5); z-index: 10; display: flex; align-items: center; gap: 6px; letter-spacing: 0.5px;">
           <span style="display: inline-block; width: 6px; height: 6px; background: #10b981; border-radius: 50%; animation: alertBlink 1.5s infinite;"></span>
@@ -4052,6 +4057,48 @@
       }
     }
 
+    let volumeHudTimeout = null;
+    function showVolumeHud(volume, isMuted) {
+      const hud = document.getElementById('test-movie-volume-hud');
+      const icon = document.getElementById('test-movie-volume-icon');
+      const text = document.getElementById('test-movie-volume-text');
+      if (!hud || !icon || !text) return;
+      
+      const volPercent = Math.round(volume * 100);
+      text.textContent = isMuted ? 'Mute' : volPercent + '%';
+      
+      if (isMuted || volume === 0) {
+        icon.className = 'fa-solid fa-volume-xmark';
+        icon.style.color = '#ef4444';
+      } else if (volume <= 0.3) {
+        icon.className = 'fa-solid fa-volume-off';
+        icon.style.color = '#00f5d4';
+      } else if (volume <= 0.7) {
+        icon.className = 'fa-solid fa-volume-low';
+        icon.style.color = '#00f5d4';
+      } else {
+        icon.className = 'fa-solid fa-volume-high';
+        icon.style.color = '#00f5d4';
+      }
+      
+      hud.style.display = 'flex';
+      hud.offsetHeight; // Force reflow
+      hud.style.opacity = '1';
+      
+      if (volumeHudTimeout) {
+        clearTimeout(volumeHudTimeout);
+      }
+      
+      volumeHudTimeout = setTimeout(() => {
+        hud.style.opacity = '0';
+        setTimeout(() => {
+          if (hud.style.opacity === '0') {
+            hud.style.display = 'none';
+          }
+        }, 300);
+      }, 1500);
+    }
+
     function toggleMonitorStatus() {
       damageMode = !damageMode;
       updateMonitorLayout();
@@ -4128,6 +4175,26 @@
         if (movieVideo) {
           movieVideo.muted = !movieVideo.muted;
           console.log(`[Test Movie] Muted toggled: ${movieVideo.muted}`);
+          showVolumeHud(movieVideo.volume, movieVideo.muted);
+        }
+      }
+      if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (movieVideo) {
+          movieVideo.muted = false;
+          movieVideo.volume = Math.min(1.0, movieVideo.volume + 0.05);
+          showVolumeHud(movieVideo.volume, movieVideo.muted);
+        }
+      }
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (movieVideo) {
+          movieVideo.volume = Math.max(0.0, movieVideo.volume - 0.05);
+          if (movieVideo.volume === 0) {
+            movieVideo.muted = true;
+          }
+          showVolumeHud(movieVideo.volume, movieVideo.muted);
         }
       }
     });
