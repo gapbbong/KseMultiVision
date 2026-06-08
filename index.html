@@ -3212,6 +3212,7 @@
     let ytPlayer = null;
     let isYtPlayerReady = false;
     let isSoundActivated = false;
+    let isBgmMuted = true;
     let currentBgmType = null;
     let currentBgmIndex = 0;
     let currentTrack = null;
@@ -3411,14 +3412,14 @@
       const icon = document.getElementById('bgm-ctrl-icon');
       const visualizer = document.getElementById('bgm-visualizer');
       
-      if (icon) icon.className = 'fa-solid fa-volume-high';
-      if (btn) btn.style.background = 'rgba(255,0,127,0.3)';
+      // 시작 시 음소거 상태로 UI 설정
+      if (icon) icon.className = 'fa-solid fa-volume-xmark';
+      if (btn) btn.style.background = 'rgba(255,0,127,0.15)';
       if (visualizer) visualizer.classList.add('playing');
 
-      if (ytPlayer && typeof ytPlayer.unMute === 'function') {
+      if (ytPlayer && typeof ytPlayer.mute === 'function') {
         try {
-          ytPlayer.unMute();
-          ytPlayer.setVolume(40);
+          ytPlayer.mute();
           if (ytPlayer.getPlayerState() !== 1) { // 1 = YT.PlayerState.PLAYING
             ytPlayer.playVideo();
           }
@@ -3431,6 +3432,17 @@
     function toggleBgmPlay() {
       if (!isSoundActivated) {
         activateSoundSystem();
+        isBgmMuted = false;
+        const btn = document.getElementById('bgm-ctrl-btn');
+        const icon = document.getElementById('bgm-ctrl-icon');
+        if (icon) icon.className = 'fa-solid fa-volume-high';
+        if (btn) btn.style.background = 'rgba(255,0,127,0.3)';
+        if (ytPlayer && typeof ytPlayer.unMute === 'function') {
+          try {
+            ytPlayer.unMute();
+            ytPlayer.setVolume(40);
+          } catch(e) {}
+        }
         return;
       }
       
@@ -3440,6 +3452,7 @@
 
       if (ytPlayer && typeof ytPlayer.isMuted === 'function') {
         if (ytPlayer.isMuted()) {
+          isBgmMuted = false;
           ytPlayer.unMute();
           ytPlayer.setVolume(40);
           if (ytPlayer.getPlayerState() !== 1) { // 1 = YT.PlayerState.PLAYING
@@ -3449,6 +3462,7 @@
           if (btn) btn.style.background = 'rgba(255,0,127,0.3)';
           if (visualizer) visualizer.classList.add('playing');
         } else {
+          isBgmMuted = true;
           ytPlayer.mute();
           if (icon) icon.className = 'fa-solid fa-volume-xmark';
           if (btn) btn.style.background = 'rgba(255,0,127,0.15)';
@@ -3911,7 +3925,7 @@
       if (titleEl) titleEl.textContent = track.title;
       
       if (ytPlayer && isYtPlayerReady && typeof ytPlayer.loadVideoById === 'function') {
-        if (isSoundActivated) {
+        if (isSoundActivated && !isBgmMuted) {
           ytPlayer.unMute();
           ytPlayer.setVolume(40);
         } else {
@@ -4126,6 +4140,22 @@
         return;
       }
 
+      // m 또는 한글 ㅡ: 음소거/소리재생 토글 (메인 화면 BGM 혹은 테스트 화면 비디오)
+      if (e.key === 'm' || e.key === 'M' || e.code === 'KeyM' || e.key === 'ㅡ') {
+        e.preventDefault();
+        if (isTestScreenActive) {
+          const movieVideo = document.getElementById('test-movie-video');
+          if (movieVideo) {
+            movieVideo.muted = !movieVideo.muted;
+            console.log(`[Test Movie] Muted toggled: ${movieVideo.muted}`);
+            showVolumeHud(movieVideo.volume, movieVideo.muted);
+          }
+        } else {
+          toggleBgmPlay();
+        }
+        return;
+      }
+
       if (!isTestScreenActive) return;
       
       const droneVideo = document.getElementById('test-drone-video');
@@ -4169,15 +4199,7 @@
         }
       }
       
-      // 4. m 또는 한글 ㅡ: 음소거 토글
-      if (e.key === 'm' || e.key === 'M' || e.code === 'KeyM' || e.key === 'ㅡ') {
-        e.preventDefault();
-        if (movieVideo) {
-          movieVideo.muted = !movieVideo.muted;
-          console.log(`[Test Movie] Muted toggled: ${movieVideo.muted}`);
-          showVolumeHud(movieVideo.volume, movieVideo.muted);
-        }
-      }
+
       if (e.key === 'ArrowUp') {
         e.preventDefault();
         if (movieVideo) {
