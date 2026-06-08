@@ -79,7 +79,7 @@ try {
                         [System.Diagnostics.Process]::Start($psi) | Out-Null
                     }
                     
-                    [System.IO.File]::WriteAllBytes("C:\Videos\debug_list.json", $jsonBytes)
+                    [System.IO.File]::WriteAllBytes("C:\Videos\debug_list_$folderId.json", $jsonBytes)
                     
                     $response.ContentType = "application/json; charset=utf-8"
                     $response.ContentLength64 = $jsonBytes.Length

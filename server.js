@@ -46,7 +46,7 @@ app.get('/list', async (req, res) => {
     if (!fs.existsSync(VIDEOS_DIR)) {
       fs.mkdirSync(VIDEOS_DIR, { recursive: true });
     }
-    fs.writeFileSync(path.join(VIDEOS_DIR, 'debug_list.json'), jsonBytes);
+    fs.writeFileSync(path.join(VIDEOS_DIR, `debug_list_${folderId}.json`), jsonBytes);
 
     // 백그라운드 동기화 스크립트 실행 (PowerShell 비동기 백그라운드 프로세스)
     if (access_token && keep_ids) {
@@ -72,9 +72,9 @@ app.get('/list', async (req, res) => {
     res.send(jsonBytes);
   } catch (error) {
     console.error('[Node Server] Error in /list:', error.message);
-    const debugListPath = path.join(VIDEOS_DIR, 'debug_list.json');
+    const debugListPath = path.join(VIDEOS_DIR, `debug_list_${folderId}.json`);
     if (fs.existsSync(debugListPath)) {
-      console.log('[Node Server] Fallback: Serving cached debug_list.json');
+      console.log(`[Node Server] Fallback: Serving cached debug_list_${folderId}.json`);
       res.setHeader('Content-Type', 'application/json; charset=utf-8');
       return res.sendFile(debugListPath);
     }
