@@ -54,18 +54,24 @@ app.get('/list', async (req, res) => {
       const folderNameArg = folderName || folderId;
       
       console.log(`[Node Server] Triggering background sync for: ${folderNameArg}`);
+      const psCommand = `& "${syncScript}" -folderId "${folderId}" -accessToken "${access_token}" -keepIds "${keep_ids}" -folderName "${folderNameArg}"`;
+      console.log(`[Node Server] Spawn command: powershell.exe -ExecutionPolicy Bypass -Command "${psCommand}"`);
       const ps = spawn('powershell.exe', [
         '-ExecutionPolicy', 'Bypass',
-        '-File', syncScript,
-        '-folderId', folderId,
-        '-accessToken', access_token,
-        '-keepIds', keep_ids,
-        '-folderName', folderNameArg
-      ], {
-        detached: true,
-        stdio: 'ignore'
+        '-Command', psCommand
+      ]);
+      ps.stdout.on('data', (data) => {
+        console.log(`[Sync stdout: ${folderNameArg}] ${data.toString().trim()}`);
       });
-      ps.unref(); // 백그라운드에서 부모 독립으로 계속 돌게 함
+      ps.stderr.on('data', (data) => {
+        console.error(`[Sync stderr: ${folderNameArg}] ${data.toString().trim()}`);
+      });
+      ps.on('error', (err) => {
+        console.error(`[Node Server] Failed to start sync process for ${folderNameArg}:`, err.message);
+      });
+      ps.on('close', (code) => {
+        console.log(`[Node Server] Sync process for ${folderNameArg} exited with code ${code}`);
+      });
     }
 
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
@@ -319,6 +325,19 @@ async function getFilesInFolderRecursive(folderId, accessToken, apiKey) {
         console.log(`[Node Server] Skipping graduation album item from sync: ${name}`);
         continue;
       }
+      
+      // 드론 관련 폴더 및 체육대회 드론 폴더 등은 1사분면 Movie 폴더 리스팅 시 하위 탐색에서 제외
+      const droneFolderIds = [
+        '1GVcymOsyDYcoVvxt-kF-Q0YZ8E0WlUSf',
+        '1BN1QuoCnzzdWAgph5ZD88U1zoLBrWt6L'
+      ];
+      if (droneFolderIds.includes(file.id) || 
+          (file.mimeType === 'application/vnd.google-apps.folder' && 
+           (name.includes('드론') || name.toLowerCase().includes('drone') || name.includes('체육대회')))) {
+        console.log(`[Node Server] Skipping drone subfolder traversal: ${name} (${file.id})`);
+        continue;
+      }
+      
       if (file.mimeType === 'application/vnd.google-apps.folder') {
         try {
           const subFiles = await getFilesInFolderRecursive(file.id, accessToken, apiKey);

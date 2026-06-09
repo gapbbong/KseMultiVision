@@ -5,8 +5,20 @@ param(
     [string]$folderName
 )
 
+function Log-Message([string]$msg) {
+    $logDir = "C:\Videos"
+    if (-not (Test-Path $logDir)) {
+        New-Item -Path $logDir -ItemType Directory -Force | Out-Null
+    }
+    $logPath = Join-Path $logDir "sync_videos_script.log"
+    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    $formattedMsg = "[$timestamp] $msg"
+    Write-Output $formattedMsg
+    $formattedMsg | Out-File -FilePath $logPath -Append -Encoding utf8
+}
+
 if ([string]::IsNullOrEmpty($folderId) -or [string]::IsNullOrEmpty($accessToken)) {
-    Write-Host "Error: folderId and accessToken are required."
+    Log-Message "Error: folderId and accessToken are required."
     exit
 }
 
@@ -23,34 +35,23 @@ if (-not (Test-Path $videosDir)) {
 }
 
 try {
-    # 1. Get the list of videos in the folder (or query specific ids if keepIds is specified)
-    if (-not [string]::IsNullOrEmpty($keepIds)) {
-        $ids = $keepIds.Split(",")
-        $qParts = @()
-        foreach ($id in $ids) {
-            $qParts += "id = '$id'"
-        }
-        $q = $qParts -join " or "
-        $url = "https://www.googleapis.com/drive/v3/files?q=" + [Uri]::EscapeDataString($q) + "&fields=files(id,name)&supportsAllDrives=true&includeItemsFromAllDrives=true"
-    } else {
-        $url = "https://www.googleapis.com/drive/v3/files?q='$folderId'+in+parents+and+mimeType+contains+'video/'&fields=files(id,name)&supportsAllDrives=true&includeItemsFromAllDrives=true"
+    # 1. Load the list of files from the local debug JSON registry written by the Node server
+    $debugListPath = Join-Path "C:\Videos" "debug_list_${folderId}.json"
+    Log-Message "Loading video list from local debug registry file: $debugListPath"
+    
+    if (-not (Test-Path $debugListPath)) {
+        throw "Debug list registry file not found at $debugListPath"
     }
     
-    $wc = New-Object System.Net.WebClient
-    $wc.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
-    $wc.Headers.Add("Authorization", "Bearer $accessToken")
-    
-    Write-Host "Fetching video list for folder: $folderId / keepIds: $keepIds"
-    $jsonBytes = $wc.DownloadData($url)
-    $jsonStr = [System.Text.Encoding]::UTF8.GetString($jsonBytes)
-    
+    $jsonStr = [System.IO.File]::ReadAllText($debugListPath, [System.Text.Encoding]::UTF8)
     $data = ConvertFrom-Json $jsonStr
+    
     if ($data -and $data.files) {
         $allowedIds = @()
         if (-not [string]::IsNullOrEmpty($keepIds)) {
             $allowedIds = $keepIds.Split(",")
         } else {
-            # If keepIds is not specified, default to downloading all active files (backward compatibility)
+            # If keepIds is not specified, default to downloading all active files in the folder
             foreach ($file in $data.files) {
                 $allowedIds += $file.id
             }
@@ -70,7 +71,7 @@ try {
             $tmpPath = Join-Path $videosDir "$id.mp4.tmp"
             
             if (-not (Test-Path $localPath)) {
-                Write-Host "Downloading $name ($id) to $localPath"
+                Log-Message "Downloading $name ($id) to $localPath"
                 
                 try {
                     $dlUrl = "https://www.googleapis.com/drive/v3/files/$id`?alt=media&supportsAllDrives=true"
@@ -82,16 +83,16 @@ try {
                     
                     if (Test-Path $tmpPath) {
                         Rename-Item -Path $tmpPath -NewName "$id.mp4" -Force
-                        Write-Host "Successfully downloaded $name"
+                        Log-Message "Successfully downloaded $name"
                     }
                 } catch {
-                    Write-Host "Failed to download $name : $_"
+                    Log-Message "Failed to download $name : $_"
                     if (Test-Path $tmpPath) {
                         Remove-Item -Path $tmpPath -Force
                     }
                 }
             } else {
-                Write-Host "Already downloaded: $name"
+                Log-Message "Already downloaded: $name"
             }
         }
         
@@ -100,11 +101,11 @@ try {
         foreach ($f in $localFiles) {
             $fileId = [System.IO.Path]::GetFileNameWithoutExtension($f.Name)
             if ($allowedIds -notcontains $fileId) {
-                Write-Host "Cleaning up removed/uncached file: $($f.Name)"
+                Log-Message "Cleaning up removed/uncached file: $($f.Name)"
                 Remove-Item -Path $f.FullName -Force
             }
         }
     }
 } catch {
-    Write-Host "Error in sync_videos.ps1: $_"
+    Log-Message "Error in sync_videos.ps1: $_"
 }

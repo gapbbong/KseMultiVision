@@ -1765,6 +1765,10 @@
             // 데이터 재호출
             fetchWorkspaceMedia();
             loadNoticeBoard();
+            
+            if (typeof triggerAllFoldersBackgroundSync === 'function') {
+              triggerAllFoldersBackgroundSync().catch(err => console.warn('[AuthCallback] Sync trigger failed:', err));
+            }
           }
         },
       });
@@ -2757,11 +2761,27 @@
         droneVideo.addEventListener('waiting', () => { if (droneLoading) droneLoading.style.display = 'flex'; });
         droneVideo.addEventListener('playing', () => { if (droneLoading) droneLoading.style.display = 'none'; });
         droneVideo.addEventListener('canplay', () => { if (droneLoading) droneLoading.style.display = 'none'; });
-        droneVideo.addEventListener('ended', () => {
+        droneVideo.addEventListener('ended', async () => {
           if (isTestScreenActive && testDronePlaylist && testDronePlaylist.length > 0) {
-            testDroneIndex = (testDroneIndex + 1) % testDronePlaylist.length;
+            const isEndOfPlaylist = (testDroneIndex + 1) >= testDronePlaylist.length;
+            
+            if (isEndOfPlaylist) {
+              console.log("[Test Drone Video] Playlist completed. Re-scanning folders and updating playlist...");
+              try {
+                const newPlaylist = await getTestScreenVideoUrls(CONFIG.TEST_DRONE_FOLDER_ID, 0);
+                if (newPlaylist && newPlaylist.length > 0) {
+                  testDronePlaylist = newPlaylist;
+                }
+              } catch (e) {
+                console.warn('[Test Drone] Re-scan failed:', e);
+              }
+              testDroneIndex = 0;
+            } else {
+              testDroneIndex = testDroneIndex + 1;
+            }
+            
             const nextUrl = testDronePlaylist[testDroneIndex];
-            console.log(`[Test Drone Video] Ended. Playing next: Index ${testDroneIndex}/${testDronePlaylist.length}`);
+            console.log(`[Test Drone Video] Playing next: Index ${testDroneIndex}/${testDronePlaylist.length}`);
             droneVideo.src = nextUrl;
             droneVideo.muted = true;
             droneVideo.play().catch(e => {
@@ -2812,11 +2832,27 @@
         movieVideo.addEventListener('waiting', () => { if (movieLoading) movieLoading.style.display = 'flex'; });
         movieVideo.addEventListener('playing', () => { if (movieLoading) movieLoading.style.display = 'none'; });
         movieVideo.addEventListener('canplay', () => { if (movieLoading) movieLoading.style.display = 'none'; });
-        movieVideo.addEventListener('ended', () => {
+        movieVideo.addEventListener('ended', async () => {
           if (isTestScreenActive && testMoviePlaylist && testMoviePlaylist.length > 0) {
-            testMovieIndex = (testMovieIndex + 1) % testMoviePlaylist.length;
+            const isEndOfPlaylist = (testMovieIndex + 1) >= testMoviePlaylist.length;
+            
+            if (isEndOfPlaylist) {
+              console.log("[Test Movie Video] Playlist completed. Re-scanning folders and updating playlist...");
+              try {
+                const newPlaylist = await getTestScreenVideoUrls(CONFIG.WORKSPACE_DRIVE_FOLDER_ID, 0);
+                if (newPlaylist && newPlaylist.length > 0) {
+                  testMoviePlaylist = newPlaylist;
+                }
+              } catch (e) {
+                console.warn('[Test Movie] Re-scan failed:', e);
+              }
+              testMovieIndex = 0;
+            } else {
+              testMovieIndex = testMovieIndex + 1;
+            }
+            
             const nextUrl = testMoviePlaylist[testMovieIndex];
-            console.log(`[Test Movie Video] Ended. Playing next: Index ${testMovieIndex}/${testMoviePlaylist.length}`);
+            console.log(`[Test Movie Video] Playing next: Index ${testMovieIndex}/${testMoviePlaylist.length}`);
             movieVideo.src = nextUrl;
             // preserve muted state
             movieVideo.play().catch(e => console.warn('[Test Movie] Auto play blocked:', e));
@@ -3142,6 +3178,25 @@
       }
       
       return [];
+    }
+
+    async function triggerAllFoldersBackgroundSync() {
+      const isTokenValid = typeof googleAccessToken !== 'undefined' && googleAccessToken && typeof googleTokenExpiry !== 'undefined' && googleTokenExpiry && Date.now() < parseInt(googleTokenExpiry);
+      if (!isTokenValid) {
+        console.log('[Sync] Token is invalid or expired. Skipping automatic background sync.');
+        return;
+      }
+      console.log('[Sync] Triggering background sync for all video folders...');
+      try {
+        await getTestScreenVideoUrls(CONFIG.WORKSPACE_DRIVE_FOLDER_ID, 0);
+      } catch (e) {
+        console.warn('[Sync] Failed to trigger sync for Movie folder:', e);
+      }
+      try {
+        await getTestScreenVideoUrls(CONFIG.TEST_DRONE_FOLDER_ID, 0);
+      } catch (e) {
+        console.warn('[Sync] Failed to trigger sync for Drone folder:', e);
+      }
     }
 
     // ========================================================
@@ -4227,6 +4282,10 @@
       setInterval(updateClock, 1000);
       initGoogleAuth();
       initControlPanelState(); // 제어패널 로컬상태 초기화
+      
+      if (typeof triggerAllFoldersBackgroundSync === 'function') {
+        triggerAllFoldersBackgroundSync().catch(err => console.warn('[Init] Sync trigger failed:', err));
+      }
       
       // 다양한 사용자 상호작용(터치, 클릭, 움직임, 키, 스크롤 등) 감지 시 즉시 사운드가 켜지도록 리스너 등록
       ['click', 'touchstart', 'mousemove', 'keydown', 'scroll'].forEach(evt => {
