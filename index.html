@@ -3219,6 +3219,9 @@
         }
       }
       
+      // 파일 ID 기준 중복 제거 (동일 영상이 루트+하위폴더에 중복 수집될 경우 방지)
+      allVideos = allVideos.filter((v, i, arr) => arr.findIndex(x => x.id === v.id) === i);
+
       if (allVideos.length > 0) {
          // 2사분면 드론 영상은 랜덤 재생되게 셔플하고, 무비 폴더는 순차 재생을 위해 알파벳/숫자 순 정렬
          const isDroneFolder = folderIds.some(fid => {
