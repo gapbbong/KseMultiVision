@@ -1149,24 +1149,31 @@
         <div class="quote-author" id="quote-author" style="display: none;">- 파블로 피카소 -</div>
       </div>
     </div>
-    <!-- 종 치기 13초 전 카운트다운 오버레이 -->
-    <div id="bell-countdown-overlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(5, 5, 15, 0.93); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); z-index: 1000000; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 30px; box-sizing: border-box;">
-      <div style="font-family: var(--font-noto); font-size: 2.4rem; font-weight: 900; color: #ff007f; display: flex; align-items: center; gap: 15px; animation: pulseGlow 1.5s infinite alternate;">
-        <i class="fa-solid fa-bell fa-bounce" style="font-size: 2.8rem;"></i>
-        <span>잠시 후 종이 울립니다!</span>
+    <!-- 종 치기 13초 전 카운트다운 오버레이 (3,4사분면 파손 대응으로 1,2사분면 가로 배치) -->
+    <div id="bell-countdown-overlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 50vh; background: rgba(5, 5, 15, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); z-index: 1000000; display: none; flex-direction: row; align-items: center; justify-content: center; box-sizing: border-box; border-bottom: 3px solid #ff007f; box-shadow: 0 10px 30px rgba(255, 0, 127, 0.2);">
+      <!-- 1사분면 (좌측): 안내 텍스트 영역 -->
+      <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; height: 100%; border-right: 1px dashed rgba(255, 0, 127, 0.3); padding: 20px; box-sizing: border-box;">
+        <div style="font-family: var(--font-noto); font-size: 2.8rem; font-weight: 900; color: #ff007f; display: flex; align-items: center; gap: 15px; animation: pulseGlow 1.5s infinite alternate;">
+          <i class="fa-solid fa-bell fa-bounce" style="font-size: 3.2rem;"></i>
+          <span>잠시 후 종이 울립니다!</span>
+        </div>
+        <div style="font-family: var(--font-noto); font-size: 1.8rem; font-weight: 700; color: #f8fafc; letter-spacing: 0.5px; background: rgba(255, 255, 255, 0.05); padding: 10px 24px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1);" id="bell-target-text">
+          --교시 수업 시작 종
+        </div>
+        <div style="font-family: var(--font-noto); font-size: 1.4rem; font-weight: 600; color: #a3a3a3; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-person-running"></i>
+          <span>신속히 교실로 이동해 주세요!</span>
+        </div>
       </div>
-      <div style="font-family: var(--font-noto); font-size: 1.6rem; font-weight: 700; color: #f8fafc; letter-spacing: 0.5px;" id="bell-target-text">
-        --교시 수업 시작 종
-      </div>
-      <!-- 카운트다운 숫자 동그라미 -->
-      <div style="width: 200px; height: 200px; border-radius: 50%; border: 6px solid #ff007f; box-shadow: 0 0 35px rgba(255, 0, 127, 0.5); display: flex; align-items: center; justify-content: center; background: rgba(255, 0, 127, 0.06);">
-        <span id="bell-countdown-number" style="font-family: var(--font-outfit); font-size: 7rem; font-weight: 900; color: #ffffff; text-shadow: 0 0 15px rgba(255, 255, 255, 0.6);">13</span>
-      </div>
-      <div style="font-family: var(--font-noto); font-size: 1.35rem; font-weight: 600; color: #a3a3a3; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px;">
-        <i class="fa-solid fa-person-running"></i>
-        <span>신속히 교실로 이동해 주세요!</span>
+      
+      <!-- 2사분면 (우측): 카운트다운 숫자 영역 -->
+      <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 20px; box-sizing: border-box;">
+        <div style="width: 220px; height: 220px; border-radius: 50%; border: 8px solid #ff007f; box-shadow: 0 0 40px rgba(255, 0, 127, 0.6), inset 0 0 20px rgba(255, 0, 127, 0.3); display: flex; align-items: center; justify-content: center; background: rgba(255, 0, 127, 0.08);">
+          <span id="bell-countdown-number" style="font-family: var(--font-outfit); font-size: 8rem; font-weight: 900; color: #ffffff; text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);">13</span>
+        </div>
       </div>
     </div>
+
 
   </div><!-- /viewport-canvas -->
 
@@ -1183,6 +1190,9 @@
     </button>
     <button class="btn-toggle" id="btn-test-screen-toggle" onclick="toggleTestScreen()">
       <i class="fa-solid fa-flask"></i> 테스트 화면 모드 작동
+    </button>
+    <button class="btn-toggle" id="btn-countdown-test" onclick="triggerCountdownTest()">
+      <i class="fa-solid fa-clock-rotate-left"></i> 타종 카운트다운 테스트
     </button>
     <div class="view-info-banner">
       4사분면 파손 우회 레이아웃 및 13:20 식단 타임 시프트가 가동 중입니다.
@@ -1696,7 +1706,7 @@
           bellOverlay.style.display = 'flex';
           if (bellNumEl) bellNumEl.textContent = countdownSec;
           if (bellTextEl) bellTextEl.textContent = targetBellName;
-        } else {
+        } else if (!window.isBellTestActive) {
           bellOverlay.style.display = 'none';
         }
       }
@@ -2706,6 +2716,50 @@
         zone.style.backgroundColor = '#000000';
         zone.style.border = 'none';
       }
+    }
+
+    window.isBellTestActive = false;
+    window.bellTestInterval = null;
+
+    function triggerCountdownTest() {
+      const btn = document.getElementById('btn-countdown-test');
+      const overlay = document.getElementById('bell-countdown-overlay');
+      const numEl = document.getElementById('bell-countdown-number');
+      const textEl = document.getElementById('bell-target-text');
+
+      if (!overlay || !numEl || !textEl || !btn) return;
+
+      if (window.isBellTestActive) {
+        clearInterval(window.bellTestInterval);
+        window.isBellTestActive = false;
+        overlay.style.display = 'none';
+        btn.classList.remove('active');
+        btn.innerHTML = '<i class="fa-solid fa-clock-rotate-left"></i> 타종 카운트다운 테스트';
+        return;
+      }
+
+      window.isBellTestActive = true;
+      btn.classList.add('active');
+      overlay.style.display = 'flex';
+      
+      let testSec = 13;
+      numEl.textContent = testSec;
+      textEl.textContent = '테스트용 타종 카운트다운 (1교시 수업 시작 종)';
+
+      window.bellTestInterval = setInterval(() => {
+        testSec--;
+        if (testSec >= 0) {
+          numEl.textContent = testSec;
+        } else {
+          clearInterval(window.bellTestInterval);
+          window.isBellTestActive = false;
+          overlay.style.display = 'none';
+          btn.classList.remove('active');
+          btn.innerHTML = '<i class="fa-solid fa-clock-rotate-left"></i> 타종 카운트다운 테스트';
+        }
+      }, 1000);
+
+      btn.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> 테스트 종료';
     }
 
     function showTestDroneError(message) {
