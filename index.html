@@ -554,6 +554,11 @@
       100% { text-shadow: 0 0 35px rgba(255, 0, 127, 0.9); transform: scale(1.03); }
     }
 
+    @keyframes worshipGlow {
+      0% { text-shadow: 0 0 15px rgba(0, 245, 212, 0.5); transform: scale(0.98); }
+      100% { text-shadow: 0 0 35px rgba(0, 245, 212, 0.9); transform: scale(1.02); }
+    }
+
     /* ==========================================
        BLACKOUT DASHBOARD STYLE SYSTEM
        ========================================== */
@@ -1174,6 +1179,20 @@
       </div>
     </div>
 
+    <!-- 월요일 점심시간 예배 안내 오버레이 (1,2사분면 전체를 덮음) -->
+    <div id="worship-overlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 50vh; background: rgba(10, 10, 25, 0.96); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); z-index: 99999; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 24px; box-sizing: border-box; border-bottom: 3px solid #00f5d4; box-shadow: 0 10px 40px rgba(0, 245, 212, 0.25);">
+      <div style="font-family: var(--font-noto); font-size: 3.2rem; font-weight: 900; color: #00f5d4; display: flex; align-items: center; gap: 20px; animation: worshipGlow 1.5s infinite alternate; text-shadow: 0 0 20px rgba(0, 245, 212, 0.5);">
+        <i class="fa-solid fa-church" style="font-size: 3.6rem;"></i>
+        <span>월요 점심 예배 안내</span>
+      </div>
+      <div style="font-family: var(--font-noto); font-size: 2.2rem; font-weight: 700; color: #ffffff; text-align: center; line-height: 1.6; word-break: keep-all; padding: 0 40px; text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);" id="worship-text-content">
+      </div>
+      <div style="font-family: var(--font-noto); font-size: 1.4rem; font-weight: 600; color: #a3a3a3; letter-spacing: 0.5px; display: flex; align-items: center; gap: 10px; margin-top: 10px; background: rgba(0, 245, 212, 0.08); padding: 8px 24px; border-radius: 30px; border: 1px solid rgba(0, 245, 212, 0.25);">
+        <i class="fa-solid fa-gift" style="color: #00f5d4;"></i>
+        <span>친구와 함께 참여해 보세요!</span>
+      </div>
+    </div>
+
 
   </div><!-- /viewport-canvas -->
 
@@ -1193,6 +1212,9 @@
     </button>
     <button class="btn-toggle" id="btn-countdown-test" onclick="triggerCountdownTest()">
       <i class="fa-solid fa-clock-rotate-left"></i> 타종 카운트다운 테스트
+    </button>
+    <button class="btn-toggle" id="btn-worship-test" onclick="triggerWorshipTest()">
+      <i class="fa-solid fa-church"></i> 예배 안내 테스트
     </button>
     <div class="view-info-banner">
       4사분면 파손 우회 레이아웃 및 13:20 식단 타임 시프트가 가동 중입니다.
@@ -1527,7 +1549,17 @@
       const textEl = document.getElementById('quote-text');
       const authorEl = document.getElementById('quote-author');
 
-      if (isWorship) {
+      const worshipOverlay = document.getElementById('worship-overlay');
+      const worshipTextEl = document.getElementById('worship-text-content');
+      const isWorshipActive = isWorship || window.isWorshipTestActive;
+
+      if (isWorshipActive) {
+        if (worshipOverlay) {
+          worshipOverlay.style.display = 'flex';
+        }
+        if (worshipTextEl && worshipTextEl.innerHTML !== worshipHtml) {
+          worshipTextEl.innerHTML = worshipHtml;
+        }
         if (!isWorshipOverridden) {
           isWorshipOverridden = true;
           if (textEl) {
@@ -1552,6 +1584,9 @@
           textEl.innerHTML = worshipHtml;
         }
       } else {
+        if (worshipOverlay) {
+          worshipOverlay.style.display = 'none';
+        }
         if (isWorshipOverridden) {
           isWorshipOverridden = false;
           if (textEl) {
@@ -2760,6 +2795,27 @@
       }, 1000);
 
       btn.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> 테스트 종료';
+    }
+
+    window.isWorshipTestActive = false;
+
+    function triggerWorshipTest() {
+      const btn = document.getElementById('btn-worship-test');
+      if (!btn) return;
+
+      window.isWorshipTestActive = !window.isWorshipTestActive;
+
+      if (window.isWorshipTestActive) {
+        btn.classList.add('active');
+        btn.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> 예배 안내 테스트 종료';
+      } else {
+        btn.classList.remove('active');
+        btn.innerHTML = '<i class="fa-solid fa-church"></i> 예배 안내 테스트';
+      }
+
+      if (typeof updateClock === 'function') {
+        updateClock();
+      }
     }
 
     function showTestDroneError(message) {
