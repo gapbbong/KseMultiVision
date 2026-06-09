@@ -3162,11 +3162,13 @@
       
       const folderIds = Array.isArray(folderId) ? folderId : [folderId];
       let allVideos = [];
+      const allVideosByFolder = {};
       
       for (const fid of folderIds) {
+        const fId = getFolderId(fid);
+        const fName = getFolderName(fid);
+        allVideosByFolder[fId] = [];
         try {
-          const fId = getFolderId(fid);
-          const fName = getFolderName(fid);
           let listUrl = 'http://localhost:8080/list?folderId=' + fId + '&folderName=' + encodeURIComponent(fName);
           if (isTokenValid) listUrl += '&access_token=' + googleAccessToken;
           
@@ -3202,6 +3204,7 @@
                                       return !(name.includes('졸업') || name.includes('앨범') || name.includes('촬영') || name.includes('야외촬영'));
                                    });
                                   allVideos = allVideos.concat(subVideos);
+                                  allVideosByFolder[fId] = allVideosByFolder[fId].concat(subVideos);
                                }
                             }
                          } catch (subErr) {
@@ -3211,6 +3214,7 @@
                    }
                 } else {
                    allVideos = allVideos.concat(videos);
+                   allVideosByFolder[fId] = allVideosByFolder[fId].concat(videos);
                 }
              }
           }
@@ -3234,23 +3238,20 @@
             allVideos.sort((a, b) => a.name.localeCompare(b.name, undefined, {numeric: true, sensitivity: 'base'}));
          }
          
-         // 무비 폴더는 5개 제약 없이 전체 파일을 백그라운드에서 바로 다운로드하도록 설정
-         const isMovieFolder = folderIds.includes(CONFIG.WORKSPACE_DRIVE_FOLDER_ID);
-         const limit = isMovieFolder ? allVideos.length : 5;
-         
-         const idsToCache = [];
-         for (let i = 0; i < Math.min(limit, allVideos.length); i++) {
-            const targetIdx = (currentIndex + i) % allVideos.length;
-            idsToCache.push(allVideos[targetIdx].id);
-         }
-         
-         if (idsToCache.length > 0) {
-            const triggerFid = folderIds[0];
-            const triggerId = getFolderId(triggerFid);
-            const triggerName = getFolderName(triggerFid);
-            let syncUrl = 'http://localhost:8080/list?folderId=' + triggerId + '&folderName=' + encodeURIComponent(triggerName) + '&keep_ids=' + idsToCache.join(',');
-            if (isTokenValid) syncUrl += '&access_token=' + googleAccessToken;
-            fetch(syncUrl).catch(err => console.warn('Background sync trigger failed:', err));
+         // 각 폴더별로 독립적인 백그라운드 동기화(다운로드) 트리거 (전체 영상 다운로드)
+          for (const fid of folderIds) {
+            const fId = getFolderId(fid);
+            const fName = getFolderName(fid);
+            const folderVideos = allVideosByFolder[fId] || [];
+            const uniqueFolderVideoIds = folderVideos
+              .filter((v, i, arr) => arr.findIndex(x => x.id === v.id) === i)
+              .map(v => v.id);
+            
+            if (uniqueFolderVideoIds.length > 0) {
+              let syncUrl = 'http://localhost:8080/list?folderId=' + fId + '&folderName=' + encodeURIComponent(fName) + '&keep_ids=' + uniqueFolderVideoIds.join(',');
+              if (isTokenValid) syncUrl += '&access_token=' + googleAccessToken;
+              fetch(syncUrl).catch(err => console.warn(`Background sync trigger failed for folder ${fName}:`, err));
+            }
           }
           
           // 로컬 캐시 파일 먼저 확인 (이미 다운로드된 파일이면 네트워크 스트리밍 없이 즉시 재생)

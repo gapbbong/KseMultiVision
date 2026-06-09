@@ -264,7 +264,27 @@ async function proxyRequest(url, clientReq, clientRes, accessToken, isVideo) {
   }
 
   try {
-    const response = await fetch(url, { headers, redirect: 'follow' });
+    let currentUrl = url;
+    let response;
+    let redirectCount = 0;
+
+    // Node.js fetch(undici)는 다른 Origin으로 리다이렉트 시 Authorization 헤더를 자동으로 삭제하므로,
+    // 구글 드라이브 다운로드 서버(googleusercontent.com)로 리다이렉트될 때 헤더를 강제 유지하기 위해 수동 처리합니다.
+    while (redirectCount < 5) {
+      response = await fetch(currentUrl, { headers, redirect: 'manual' });
+      
+      if (response.status >= 300 && response.status < 400) {
+        const location = response.headers.get('location');
+        if (location) {
+          currentUrl = new URL(location, currentUrl).toString();
+          redirectCount++;
+          console.log(`[Node Proxy] Manually following redirect #${redirectCount} to: ${currentUrl}`);
+          continue;
+        }
+      }
+      break;
+    }
+
     const contentType = response.headers.get('content-type') || '';
     if (!response.ok || (isVideo && contentType.includes('text/html'))) {
       throw new Error(`Google returned status ${response.status} with content-type ${contentType}`);
