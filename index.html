@@ -1298,6 +1298,15 @@
       return configValue;
     }
 
+    function extractVideoIdFromUrl(url) {
+      if (!url) return null;
+      const localMatch = url.match(/\/local\/([a-zA-Z0-9-_]+)\.mp4/);
+      if (localMatch) return localMatch[1];
+      const proxyMatch = url.match(/[?&]id=([a-zA-Z0-9-_]+)/);
+      if (proxyMatch) return proxyMatch[1];
+      return url;
+    }
+
     let upcomingCreativeEvents = [];
     let isVpEventsLoaded = false;
 
@@ -2834,6 +2843,22 @@
       }
     }
 
+    function showTestMovieError(message) {
+      const logBox = document.getElementById('test-movie-error-log');
+      const logText = document.getElementById('test-movie-error-text');
+      if (logBox && logText) {
+        logText.textContent = message;
+        logBox.style.display = 'flex';
+      }
+    }
+
+    function hideTestMovieError() {
+      const logBox = document.getElementById('test-movie-error-log');
+      if (logBox) {
+        logBox.style.display = 'none';
+      }
+    }
+
     // 에러 리포팅을 위한 비디오 이벤트 바인딩 및 순차 재생(Playlist) 기능 바인딩
     // 에러 리포팅을 위한 비디오 이벤트 바인딩 및 순차 재생(Playlist) 기능 바인딩
     window.addEventListener('DOMContentLoaded', () => {
@@ -2922,11 +2947,20 @@
       if (movieVideo) {
         const movieTimeText = document.getElementById('test-movie-time-text');
         
+        let lastMovieSaveTime = 0;
         movieVideo.addEventListener('timeupdate', () => {
           if (movieTimeText) {
             const current = formatDroneTime(movieVideo.currentTime);
             const duration = formatDroneTime(movieVideo.duration);
             movieTimeText.textContent = `${current} / ${duration}`;
+          }
+          
+          const now = Date.now();
+          if (now - lastMovieSaveTime > 2000 && movieVideo.currentTime > 0) {
+            lastMovieSaveTime = now;
+            localStorage.setItem('lastMoviePosition', movieVideo.currentTime);
+            localStorage.setItem('lastMovieSrc', movieVideo.src);
+            localStorage.setItem('lastMovieIndex', testMovieIndex);
           }
         });
         
@@ -2940,8 +2974,14 @@
 
         movieVideo.addEventListener('loadstart', () => { if (movieLoading) movieLoading.style.display = 'flex'; });
         movieVideo.addEventListener('waiting', () => { if (movieLoading) movieLoading.style.display = 'flex'; });
-        movieVideo.addEventListener('playing', () => { if (movieLoading) movieLoading.style.display = 'none'; });
-        movieVideo.addEventListener('canplay', () => { if (movieLoading) movieLoading.style.display = 'none'; });
+        movieVideo.addEventListener('playing', () => { 
+          if (movieLoading) movieLoading.style.display = 'none'; 
+          hideTestMovieError();
+        });
+        movieVideo.addEventListener('canplay', () => { 
+          if (movieLoading) movieLoading.style.display = 'none'; 
+          hideTestMovieError();
+        });
         movieVideo.addEventListener('ended', async () => {
           if (isTestScreenActive && testMoviePlaylist && testMoviePlaylist.length > 0) {
             const isEndOfPlaylist = (testMovieIndex + 1) >= testMoviePlaylist.length;
@@ -2971,6 +3011,8 @@
         });
         movieVideo.addEventListener('error', () => {
           const err = movieVideo.error;
+          // 빈 src일 때 발생하는 오류(MEDIA_ERR_SRC_NOT_SUPPORTED, code=4)는 초기화 중 정상 발생 → 무시
+          if (!movieVideo.src || movieVideo.src === window.location.href) return;
           let msg = "동기부여 비디오 로드 에러가 발생했습니다.";
           if (err) {
             switch (err.code) {
@@ -2981,25 +3023,45 @@
             }
             msg += `\n[에러 코드: ${err.code}] 상세: ${err.message || '없음'}`;
           }
-          console.warn(msg + `\n\n[비디오 재생 실패 URL]\n${movieVideo.src}`);
+          showTestMovieError(msg + `\n\n[비디오 재생 실패 URL]\n${movieVideo.src}`);
+
+          // ★ 에러 발생 시 1.5초 후 다음 영상으로 자동 이동 (파일 삭제/없는 파일 대응)
+          if (isTestScreenActive && testMoviePlaylist && testMoviePlaylist.length > 1) {
+            setTimeout(() => {
+              if (!isTestScreenActive) return;
+              testMovieIndex = (testMovieIndex + 1) % testMoviePlaylist.length;
+              const nextUrl = testMoviePlaylist[testMovieIndex];
+              console.log(`[Test Movie Video] Error skip → 다음 영상으로 이동: Index ${testMovieIndex}/${testMoviePlaylist.length}`);
+              movieVideo.src = nextUrl;
+              movieVideo.play().catch(e => console.warn('[Test Movie] Auto play after error blocked:', e));
+            }, 1500);
+          }
         });
       }
     });
 
     let isTestScreenActive = false;
+    let lastManualTestScreenOpenTime = 0;
+    let isManualOverrideActive = false;
     let testDronePlaylist = [];
     let testDroneIndex = 0;
     let testMoviePlaylist = [];
     let testMovieIndex = 0;
     let testDroneInterval = null;
 
-    async function toggleTestScreen() {
+    async function setTestScreenActiveState(active, isManual = false) {
+      if (isTestScreenActive === active) return;
+      
       const overlay = document.getElementById('test-screen-overlay');
       const btn = document.getElementById('btn-test-screen-toggle');
       const droneVideo = document.getElementById('test-drone-video');
       const movieVideo = document.getElementById('test-movie-video');
       
-      isTestScreenActive = !isTestScreenActive;
+      isTestScreenActive = active;
+      if (isManual) {
+        isManualOverrideActive = active;
+        lastManualTestScreenOpenTime = active ? Date.now() : 0;
+      }
       
       if (isTestScreenActive) {
         // 테스트 화면 진입 시 전역 BGM 리스너 및 재생 일시 중지
@@ -3016,6 +3078,7 @@
         if (overlay) overlay.style.display = 'block';
         if (btn) btn.classList.add('active');
         hideTestDroneError(); // 기존 에러 패널 리셋
+        hideTestMovieError();
         
         // 1. 드론 비디오 동적 탐색 (CONFIG.TEST_DRONE_FOLDER_ID)
         try {
@@ -3031,10 +3094,29 @@
         // 2. 동기부여 비디오 동적 탐색 (CONFIG.WORKSPACE_DRIVE_FOLDER_ID)
         try {
           testMoviePlaylist = await getTestScreenVideoUrls(CONFIG.WORKSPACE_DRIVE_FOLDER_ID, 0);
-          testMovieIndex = 0;
+          
+          // 이전 재생 비디오 ID 기준으로 플레이리스트 인덱스 복구 시도
+          const savedSrc = localStorage.getItem('lastMovieSrc');
+          const savedId = typeof extractVideoIdFromUrl === 'function' ? extractVideoIdFromUrl(savedSrc) : null;
+          let restoredIndex = -1;
+          if (savedId && testMoviePlaylist.length > 0) {
+            restoredIndex = testMoviePlaylist.findIndex(url => (typeof extractVideoIdFromUrl === 'function' ? extractVideoIdFromUrl(url) : url) === savedId);
+          }
+          
+          if (restoredIndex !== -1) {
+            testMovieIndex = restoredIndex;
+            console.log(`[Test Movie] Restored playlist index to: ${testMovieIndex}`);
+          } else {
+            const savedIndex = localStorage.getItem('lastMovieIndex');
+            if (savedIndex !== null && parseInt(savedIndex) < testMoviePlaylist.length) {
+              testMovieIndex = parseInt(savedIndex);
+            } else {
+              testMovieIndex = 0;
+            }
+          }
         } catch (err) {
           if (!isTestScreenActive) return;
-          console.warn(`[Movie API Request Error]\n동기부여 폴더 스캔 도중 오류가 발생했습니다.\n${err.message}`);
+          showTestMovieError(`[Movie API Request Error]\n동기부여 폴더 스캔 도중 오류가 발생했습니다.\n${err.message}`);
           testMoviePlaylist = [];
           testMovieIndex = 0;
         }
@@ -3058,11 +3140,36 @@
         // 동기부여 비디오 재생
         if (movieVideo) {
           const currentUrl = testMoviePlaylist[testMovieIndex];
-          if (currentUrl) {
+          if (!currentUrl) {
+            showTestMovieError(`[Drive Sync Error] 재생할 수 있는 로컬 비디오 파일이 존재하지 않습니다. 동기화 다운로드가 완료될 때까지 기다리시거나 CONFIG.GOOGLE_API_KEY 권한을 확인해 주세요.`);
+          } else {
             movieVideo.src = currentUrl;
             movieVideo.muted = false;
+            
+            // 이전 재생 위치 복구 시도
+            const savedSrc = localStorage.getItem('lastMovieSrc');
+            const savedId = typeof extractVideoIdFromUrl === 'function' ? extractVideoIdFromUrl(savedSrc) : null;
+            const currentId = typeof extractVideoIdFromUrl === 'function' ? extractVideoIdFromUrl(currentUrl) : null;
+            const savedPos = localStorage.getItem('lastMoviePosition');
+            
+            if (savedId && savedId === currentId && savedPos) {
+              const pos = parseFloat(savedPos);
+              const setPos = () => {
+                try {
+                  movieVideo.currentTime = pos;
+                  console.log(`[Test Movie] Restored playback position to: ${pos}s`);
+                } catch (e) {
+                  console.warn('[Test Movie] Failed to set currentTime:', e);
+                }
+              };
+              setPos();
+              movieVideo.addEventListener('loadedmetadata', setPos, { once: true });
+            } else {
+              movieVideo.currentTime = 0;
+            }
+            
             movieVideo.play().catch(e => {
-              console.warn(`[Movie Playback Blocked] 자동 재생이 차단되었습니다:\n${e.message}`);
+              showTestMovieError(`[Movie Playback Blocked] 자동 재생이 차단되었습니다:\n${e.message}`);
             });
           }
         }
@@ -3106,6 +3213,7 @@
         if (overlay) overlay.style.display = 'none';
         if (btn) btn.classList.remove('active');
         hideTestDroneError();
+        hideTestMovieError();
         
         // 드론 비디오 중지
         if (droneVideo) {
@@ -3141,6 +3249,10 @@
       }
     }
 
+    async function toggleTestScreen() {
+      await setTestScreenActiveState(!isTestScreenActive, true);
+    }
+
     async function getTestScreenVideoUrls(targetFolderId = null, currentIndex = 0) {
       const folderId = targetFolderId || CONFIG.TEST_DRONE_FOLDER_ID || CONFIG.WORKSPACE_DRIVE_FOLDER_ID;
       let isTokenValid = typeof googleAccessToken !== 'undefined' && googleAccessToken && typeof googleTokenExpiry !== 'undefined' && googleTokenExpiry && Date.now() < parseInt(googleTokenExpiry);
@@ -3161,6 +3273,10 @@
       }
       
       const folderIds = Array.isArray(folderId) ? folderId : [folderId];
+      const isMovieFolder = folderIds.some(fid => {
+        const name = getFolderName(fid) || '';
+        return name.includes('Movie') || name.includes('무비') || getFolderId(fid) === getFolderId(CONFIG.WORKSPACE_DRIVE_FOLDER_ID);
+      });
       let allVideos = [];
       const allVideosByFolder = {};
       
@@ -3386,6 +3502,35 @@
     let currentBgmIndex = 0;
     let currentTrack = null;
 
+    let antiSleepAudioCtx = null;
+    let antiSleepOscillator = null;
+
+    function startAntiSleepAudio() {
+      if (antiSleepAudioCtx) return;
+      try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) return;
+        antiSleepAudioCtx = new AudioContextClass();
+        
+        // 12Hz 초저주파 (인간의 가청 영역 20Hz 미만으로 소리가 들리지 않음)
+        antiSleepOscillator = antiSleepAudioCtx.createOscillator();
+        antiSleepOscillator.type = 'sine';
+        antiSleepOscillator.frequency.value = 12; 
+        
+        // 극소 볼륨 게인 노드 (혹시 모를 하드웨어 공진 방지)
+        const gainNode = antiSleepAudioCtx.createGain();
+        gainNode.gain.value = 0.001; 
+        
+        antiSleepOscillator.connect(gainNode);
+        gainNode.connect(antiSleepAudioCtx.destination);
+        
+        antiSleepOscillator.start();
+        console.log('[Anti-Sleep Audio] Web Audio keep-alive tone (12Hz) started.');
+      } catch (e) {
+        console.warn('[Anti-Sleep Audio] Failed to initialize Web Audio keep-alive:', e);
+      }
+    }
+
     // 유튜브 API가 로드되면 자동 호출
     window.onYouTubeIframeAPIReady = function() {
       ytPlayer = new YT.Player('yt-player', {
@@ -3571,6 +3716,9 @@
     function activateSoundSystem() {
       if (isSoundActivated) return;
       isSoundActivated = true;
+      
+      // 블루투스 스피커 꺼짐 방지용 12Hz 초저주파 재생
+      startAntiSleepAudio();
       
       // 전역 리스너 제거
       ['click', 'touchstart', 'mousemove', 'keydown', 'scroll'].forEach(evt => {
@@ -3918,6 +4066,17 @@
       }
     }
 
+    function isTestScreenPeriod(timeVal, day) {
+      if (day === 0 || day === 6) return false;
+      if (timeVal >= 730 && timeVal < 830) return true;  // 아침 등교 시간 (8시 30분 전)
+      if (timeVal >= 850 && timeVal < 900) return true;  // 1교시 준비시간 (8시 50분 ~ 9시)
+      if (timeVal >= 1150 && timeVal < 1200) return true; // 3교시 후 쉬는시간
+      if (timeVal >= 1250 && timeVal < 1340) return true; // 점심시간
+      if (timeVal >= 1430 && timeVal < 1440) return true; // 5교시 후 쉬는시간
+      if ((day === 1 || day === 5) && (timeVal >= 1530 && timeVal < 1540)) return true; // 6교시 후 쉬는시간
+      return false;
+    }
+
     let wasSystemOff = false;
 
     function checkBgmSchedule() {
@@ -4015,8 +4174,26 @@
           if (!wasOff) {
             startBlackoutClock();
           }
+          // 테스트 화면 상태에서 수업시간이 되면 자동으로 테스트 화면 종료 (단, 수동 오픈 직후의 30초 유예 부여)
+          if (isTestScreenActive && (Date.now() - lastManualTestScreenOpenTime > 30000)) {
+            console.log('[Test Screen] Auto-exiting test screen during class time.');
+            setTestScreenActiveState(false, false);
+            isManualOverrideActive = false; // 수업 시간이 되면 수동 오버라이드 상태 해제
+          }
         } else {
           stopBlackoutClock();
+          
+          // 수업시간 외 (쉬는시간, 점심시간 등): 사용자가 수동 개입(isManualOverrideActive = true)한 상태가 아닐 때만 스케줄 자동 반영
+          if (!isManualOverrideActive) {
+            const shouldBeTestScreen = isTestScreenPeriod(timeVal, day);
+            if (shouldBeTestScreen && !isTestScreenActive) {
+              console.log(`[Schedule Sync] Auto-entering test screen for period: ${timeVal}`);
+              setTestScreenActiveState(true, false);
+            } else if (!shouldBeTestScreen && isTestScreenActive) {
+              console.log(`[Schedule Sync] Auto-exiting test screen for period: ${timeVal}`);
+              setTestScreenActiveState(false, false);
+            }
+          }
         }
       }
 
