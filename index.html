@@ -846,6 +846,10 @@
   </head>
 <body>
 
+  <!-- Hidden elements for webcam motion detection -->
+  <video id="webcam-video" style="display:none;" autoplay playsinline muted></video>
+  <canvas id="webcam-canvas" style="display:none;" width="80" height="60"></canvas>
+
   <!-- Sound system will activate silently via document level click listener -->
 
   <div class="viewport-canvas">
@@ -1230,6 +1234,16 @@
       <button class="btn-toggle" id="btn-monitor-status" onclick="toggleMonitorStatus()">
         <i class="fa-solid fa-screwdriver-wrench"></i> 모니터 수리 완료 처리
       </button>
+    </div>
+    <div style="border-top: 1px solid rgba(0,245,212,0.15); padding-top: 10px; margin-top: 4px; display: flex; flex-direction: column; gap: 6px;">
+      <div style="font-size: 0.7rem; font-weight: 800; color: var(--color-zone-a); text-transform: uppercase; letter-spacing: 1px;">📹 웹캠 모션 감지</div>
+      <button class="btn-toggle" id="btn-webcam-toggle" onclick="toggleWebcamDetection()">
+        <i class="fa-solid fa-camera"></i> 모션 감지 활성화
+      </button>
+      <div id="webcam-status-banner" style="font-size: 0.75rem; font-weight: 700; color: var(--color-text-secondary); background: rgba(15, 23, 42, 0.6); padding: 6px 10px; border-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.05); display: flex; align-items: center; gap: 6px;">
+        <span id="webcam-status-indicator" style="display: inline-block; width: 8px; height: 8px; background: #94a3b8; border-radius: 50%;"></span>
+        <span id="webcam-status-text">대기 중 (사용자 상호작용 필요)</span>
+      </div>
     </div>
     <div style="border-top: 1px solid rgba(255,0,127,0.15); padding-top: 10px; margin-top: 4px; display: flex; flex-direction: column; gap: 6px;">
       <div style="font-size: 0.7rem; font-weight: 800; color: var(--color-zone-c); text-transform: uppercase; letter-spacing: 1px;">📻 BGM 일과 시뮬레이터</div>
@@ -3049,6 +3063,20 @@
     let testMovieIndex = 0;
     let testDroneInterval = null;
 
+    // Webcam & Motion Detection states
+    let isWebcamDetectionEnabled = true;
+    if (localStorage.getItem('isWebcamDetectionEnabled') !== null) {
+      isWebcamDetectionEnabled = localStorage.getItem('isWebcamDetectionEnabled') === 'true';
+    }
+    let isPersonDetected = false;
+    let isMotionOverridden = false;
+    let lastMotionTime = 0;
+    let webcamStream = null;
+    let prevFrameData = null;
+    let webcamCheckInterval = null;
+    let webcamRetryTimeout = null;
+    const noMotionRevertTimeout = 20000; // 20 seconds
+
     async function setTestScreenActiveState(active, isManual = false) {
       if (isTestScreenActive === active) return;
       
@@ -3144,7 +3172,7 @@
             showTestMovieError(`[Drive Sync Error] 재생할 수 있는 로컬 비디오 파일이 존재하지 않습니다. 동기화 다운로드가 완료될 때까지 기다리시거나 CONFIG.GOOGLE_API_KEY 권한을 확인해 주세요.`);
           } else {
             movieVideo.src = currentUrl;
-            movieVideo.muted = false;
+            movieVideo.muted = true;
             
             // 이전 재생 위치 복구 시도
             const savedSrc = localStorage.getItem('lastMovieSrc');
@@ -3719,6 +3747,11 @@
       
       // 블루투스 스피커 꺼짐 방지용 12Hz 초저주파 재생
       startAntiSleepAudio();
+      
+      // 웹캠 모션 감지 초기화
+      if (isWebcamDetectionEnabled) {
+        initWebcam();
+      }
       
       // 전역 리스너 제거
       ['click', 'touchstart', 'mousemove', 'keydown', 'scroll'].forEach(evt => {
@@ -4464,6 +4497,278 @@
       updateMonitorLayout();
     }
 
+    // ========================================================
+    // Webcam Motion Detection Logic
+    // ========================================================
+    function toggleWebcamDetection() {
+      isWebcamDetectionEnabled = !isWebcamDetectionEnabled;
+      localStorage.setItem('isWebcamDetectionEnabled', isWebcamDetectionEnabled);
+      updateWebcamUI();
+      if (isWebcamDetectionEnabled) {
+        if (isSoundActivated && !webcamStream) {
+          initWebcam();
+        }
+      } else {
+        stopWebcamStream();
+      }
+    }
+
+    function updateWebcamUI() {
+      const btn = document.getElementById('btn-webcam-toggle');
+      const indicator = document.getElementById('webcam-status-indicator');
+      const text = document.getElementById('webcam-status-text');
+      
+      if (!btn) return;
+      
+      if (!isWebcamDetectionEnabled) {
+        btn.classList.remove('active');
+        btn.innerHTML = '<i class="fa-solid fa-camera-slash"></i> 모션 감지 비활성화됨';
+        if (indicator) indicator.style.background = '#ef4444';
+        if (text) text.textContent = '모션 감지 기능 꺼짐';
+        return;
+      }
+      
+      btn.classList.add('active');
+      btn.innerHTML = '<i class="fa-solid fa-camera"></i> 모션 감지 활성화됨';
+      
+      if (!isSoundActivated) {
+        if (indicator) {
+          indicator.style.background = '#94a3b8';
+          indicator.style.animation = 'none';
+        }
+        if (text) text.textContent = '대기 중 (사용자 상호작용 필요)';
+      } else if (!webcamStream) {
+        if (indicator) {
+          indicator.style.background = '#eab308';
+          indicator.style.animation = 'alertBlink 1.5s infinite';
+        }
+        if (text) text.textContent = '카메라 연결 시도 중...';
+      } else if (isPersonDetected) {
+        if (indicator) {
+          indicator.style.background = '#22c55e';
+          indicator.style.animation = 'alertBlink 0.5s infinite';
+        }
+        if (text) text.textContent = '사람 감지됨! (테스트 화면)';
+      } else {
+        if (indicator) {
+          indicator.style.background = '#06b6d4';
+          indicator.style.animation = 'none';
+        }
+        if (text) text.textContent = '감지 대기 중 (주변 스캔 중)';
+      }
+    }
+
+    async function initWebcam() {
+      if (!isWebcamDetectionEnabled) return;
+      if (webcamStream) return;
+      
+      console.log('[Webcam] Initializing webcam stream...');
+      updateWebcamUI();
+      
+      const video = document.getElementById('webcam-video');
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { width: 320, height: 240, frameRate: { ideal: 10, max: 15 } },
+          audio: false
+        });
+        webcamStream = stream;
+        if (video) {
+          video.srcObject = stream;
+          video.onloadedmetadata = () => {
+            video.play().catch(e => console.warn('[Webcam] Play failed:', e));
+          };
+        }
+        console.log('[Webcam] Stream acquired successfully.');
+        
+        // Start motion detection loop
+        if (webcamCheckInterval) clearInterval(webcamCheckInterval);
+        webcamCheckInterval = setInterval(detectMotion, 200); // 200ms intervals
+        
+        updateWebcamUI();
+      } catch (err) {
+        console.error('[Webcam] Failed to get user media:', err);
+        const text = document.getElementById('webcam-status-text');
+        const indicator = document.getElementById('webcam-status-indicator');
+        if (text) text.textContent = '카메라 권한 오류 또는 연결 실패';
+        if (indicator) indicator.style.background = '#ef4444';
+        
+        // Retry in 10 seconds
+        if (webcamRetryTimeout) clearTimeout(webcamRetryTimeout);
+        webcamRetryTimeout = setTimeout(() => {
+          if (isWebcamDetectionEnabled && !webcamStream) {
+            initWebcam();
+          }
+        }, 10000);
+      }
+    }
+
+    function stopWebcamStream() {
+      if (webcamCheckInterval) {
+        clearInterval(webcamCheckInterval);
+        webcamCheckInterval = null;
+      }
+      if (webcamRetryTimeout) {
+        clearTimeout(webcamRetryTimeout);
+        webcamRetryTimeout = null;
+      }
+      if (webcamStream) {
+        webcamStream.getTracks().forEach(track => track.stop());
+        webcamStream = null;
+      }
+      const video = document.getElementById('webcam-video');
+      if (video) {
+        video.srcObject = null;
+      }
+      prevFrameData = null;
+      isPersonDetected = false;
+      isMotionOverridden = false;
+      updateWebcamUI();
+    }
+
+    function detectMotion() {
+      if (!isWebcamDetectionEnabled || !webcamStream) return;
+      
+      const video = document.getElementById('webcam-video');
+      const canvas = document.getElementById('webcam-canvas');
+      if (!video || !canvas) return;
+      
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+      
+      try {
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      } catch (e) {
+        return; // Prevent canvas draw error on unready video frame
+      }
+      
+      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imgData.data;
+      
+      if (!prevFrameData) {
+        prevFrameData = new Uint8ClampedArray(data);
+        return;
+      }
+      
+      let changedPixels = 0;
+      const totalPixels = canvas.width * canvas.height;
+      const pixelDiffThreshold = 25; // rgb diff threshold (0-255)
+      
+      for (let i = 0; i < data.length; i += 4) {
+        const rDiff = Math.abs(data[i] - prevFrameData[i]);
+        const gDiff = Math.abs(data[i+1] - prevFrameData[i+1]);
+        const bDiff = Math.abs(data[i+2] - prevFrameData[i+2]);
+        
+        const avgDiff = (rDiff + gDiff + bDiff) / 3;
+        if (avgDiff > pixelDiffThreshold) {
+          changedPixels++;
+        }
+      }
+      
+      prevFrameData.set(data);
+      
+      const changeRatio = changedPixels / totalPixels;
+      const motionRatioThreshold = 0.08; // 8% frame change area threshold
+      const isMotionNow = changeRatio > motionRatioThreshold;
+      
+      handleMotionDetected(isMotionNow);
+    }
+
+    function handleMotionDetected(isMotionNow) {
+      const nowMs = Date.now();
+      
+      const now = new Date();
+      const day = (bgmMockTime !== null) ? 1 : now.getDay();
+      const eff = getEffectiveTime();
+      const timeVal = eff.hour * 100 + eff.min;
+      
+      // Determine if screen/audio is scheduled off (class time, night, weekend)
+      let isOff = (day === 0 || day === 6);
+      if (typeof is1MinIntervalTest !== 'undefined' && is1MinIntervalTest) {
+        isOff = (eff.min % 2 === 0);
+      } else if (!isOff) {
+        if (timeVal >= 830 && timeVal < 850) isOff = true;
+        else if (timeVal >= 900 && timeVal < 950) isOff = true;
+        else if (timeVal >= 1000 && timeVal < 1050) isOff = true;
+        else if (timeVal >= 1100 && timeVal < 1150) isOff = true;
+        else if (timeVal >= 1200 && timeVal < 1250) isOff = true;
+        else if (timeVal >= 1340 && timeVal < 1430) isOff = true;
+        else if (timeVal >= 1440 && timeVal < 1530) isOff = true;
+        else if ((day === 1 || day === 5) && (timeVal >= 1540 && timeVal < 1630)) isOff = true;
+      }
+      
+      // Completely ignore motion detection during class blackout time
+      if (isOff) {
+        if (isPersonDetected) {
+          isPersonDetected = false;
+          isMotionOverridden = false;
+          updateWebcamUI();
+        }
+        return;
+      }
+      
+      // 1st period break: 09:50 ~ 10:00, 2nd period break: 10:50 ~ 11:00
+      const isFirstOrSecondBreak = (timeVal >= 950 && timeVal < 1000) || (timeVal >= 1050 && timeVal < 1100);
+      
+      if (isFirstOrSecondBreak) {
+        // Do not transition to test screen during 1st and 2nd break times
+        if (isPersonDetected) {
+          isPersonDetected = false;
+          if (isMotionOverridden) {
+            console.log('[Webcam] Entering 1st/2nd Break. Reverting test screen override.');
+            setTestScreenActiveState(false, false);
+            isMotionOverridden = false;
+          }
+          updateWebcamUI();
+        }
+        return;
+      }
+      
+      // Active period motion handling
+      if (isMotionNow) {
+        lastMotionTime = nowMs;
+        
+        if (!isPersonDetected) {
+          isPersonDetected = true;
+          console.log('[Webcam] Person detected! Transitioning/unmuting...');
+          updateWebcamUI();
+          
+          const isScheduledTest = isTestScreenPeriod(timeVal, day);
+          if (!isScheduledTest && !isTestScreenActive) {
+            console.log('[Webcam] Switch to Test Screen via motion detection.');
+            setTestScreenActiveState(true, false);
+            isMotionOverridden = true;
+          }
+          
+          const movieVideo = document.getElementById('test-movie-video');
+          if (movieVideo) {
+            movieVideo.muted = false;
+            movieVideo.volume = 0.4;
+            showVolumeHud(movieVideo.volume, movieVideo.muted);
+            console.log('[Webcam] Test movie sound unmuted.');
+          }
+        }
+      } else {
+        if (isPersonDetected && (nowMs - lastMotionTime > noMotionRevertTimeout)) {
+          isPersonDetected = false;
+          console.log('[Webcam] No motion detected for 20 seconds. Reverting...');
+          updateWebcamUI();
+          
+          if (isMotionOverridden) {
+            console.log('[Webcam] Reverting to Main Screen.');
+            setTestScreenActiveState(false, false);
+            isMotionOverridden = false;
+          } else {
+            const movieVideo = document.getElementById('test-movie-video');
+            if (movieVideo) {
+              movieVideo.muted = true;
+              showVolumeHud(movieVideo.volume, movieVideo.muted);
+              console.log('[Webcam] Scheduled test period, muting sound.');
+            }
+          }
+        }
+      }
+    }
+
     window.addEventListener('keydown', (e) => {
       // 포커스가 입력 필드(인풋/텍스트에어리어)에 있을 때는 단축키 기능 방지
       if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) {
@@ -4573,6 +4878,7 @@
       setInterval(updateClock, 1000);
       initGoogleAuth();
       initControlPanelState(); // 제어패널 로컬상태 초기화
+      updateWebcamUI(); // 웹캠 UI 초기화
       
       if (typeof triggerAllFoldersBackgroundSync === 'function') {
         triggerAllFoldersBackgroundSync().catch(err => console.warn('[Init] Sync trigger failed:', err));
