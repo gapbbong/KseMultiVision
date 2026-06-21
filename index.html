@@ -938,18 +938,33 @@
         </div>
       </div>
       
-      <!-- 하단 50vh 영역: 테스트 대시보드 및 복귀 버튼 -->
-      <div style="position: absolute; left: 0; top: 50vh; width: 100vw; height: 50vh; background: linear-gradient(180deg, #090d22 0%, #020617 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; box-shadow: 0 -10px 40px rgba(0,0,0,0.5);">
+      <!-- 3사분면 (좌하단 50vw, 50vh) - 카메라 프리뷰 화면 -->
+      <div id="test-quad-3" style="position: absolute; left: 0; top: 50vh; width: 50vw; height: 50vh; background: #000; overflow: hidden; border-top: 2px solid rgba(0, 245, 212, 0.3); border-right: 1px solid rgba(0, 245, 212, 0.3); box-sizing: border-box;">
+        <video id="webcam-preview-visible" style="width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1);" autoplay playsinline muted></video>
+        <div style="position: absolute; top: 16px; left: 16px; background: rgba(13,27,42,0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: var(--color-zone-a); padding: 8px 16px; border-radius: 8px; font-size: 0.9rem; font-weight: 800; border: 1px solid rgba(0,245,212,0.3); font-family: var(--font-noto); display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(0,245,212,0.25);">
+          <i class="fa-solid fa-camera"></i>
+          <span>3사분면: 실시간 카메라 화면 (모션 감지)</span>
+        </div>
+      </div>
+      
+      <!-- 4사분면 (우하단 50vw, 50vh) - 테스트 대시보드 및 복귀 버튼 -->
+      <div id="test-quad-4" style="position: absolute; left: 50vw; top: 50vh; width: 50vw; height: 50vh; background: linear-gradient(180deg, #090d22 0%, #020617 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; border-top: 2px solid rgba(0, 245, 212, 0.3); border-left: 1px solid rgba(0, 245, 212, 0.3); box-sizing: border-box; box-shadow: 0 -10px 40px rgba(0,0,0,0.5);">
         <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
-          <div style="font-size: 1.8rem; font-weight: 900; color: #ea580c; display: flex; align-items: center; gap: 12px; text-shadow: 0 0 15px rgba(234,88,12,0.4);">
+          <div style="font-size: 1.6rem; font-weight: 900; color: #ea580c; display: flex; align-items: center; gap: 12px; text-shadow: 0 0 15px rgba(234,88,12,0.4);">
             <i class="fa-solid fa-triangle-exclamation fa-fade"></i>
             <span>멀티비전 모니터 연동 테스트 작동 중</span>
           </div>
-          <p style="color: var(--color-text-secondary); font-size: 0.95rem; font-weight: 500; max-width: 600px; line-height: 1.5; word-break: keep-all; padding: 0 20px;">
+          <p style="color: var(--color-text-secondary); font-size: 0.85rem; font-weight: 500; max-width: 420px; line-height: 1.5; word-break: keep-all; padding: 0 20px;">
             본 화면은 1사분면(좌측 모니터 영역)의 구글 드라이브 동기부여 영상 및 2사분면(우측 상단 모니터 영역)의 구글 드라이브 드론 영상을 검증하기 위한 테스트 모드입니다.
           </p>
         </div>
-        <button onclick="toggleTestScreen()" style="background: linear-gradient(135deg, #ea580c 0%, #ff7a00 100%); border: none; color: #ffffff; padding: 12px 32px; border-radius: 8px; cursor: pointer; font-size: 1.05rem; font-weight: 800; transition: all 0.3s; box-shadow: 0 4px 20px rgba(234,88,12,0.4); display: flex; align-items: center; gap: 8px; outline: none;">
+        
+        <label style="display: flex; align-items: center; gap: 8px; color: var(--color-text-secondary); font-size: 0.85rem; font-weight: 700; cursor: pointer; user-select: none; margin-top: 5px; margin-bottom: 5px;">
+          <input type="checkbox" id="chk-adjust-sound-on-motion-test" onchange="toggleAdjustSoundOnMotion(this.checked)" style="accent-color: var(--color-zone-a); cursor: pointer; width: 16px; height: 16px;" checked>
+          <span>움직임 감지 시 소리 자동 켬/끔</span>
+        </label>
+        
+        <button onclick="toggleTestScreen()" style="background: linear-gradient(135deg, #ea580c 0%, #ff7a00 100%); border: none; color: #ffffff; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-size: 0.95rem; font-weight: 800; transition: all 0.3s; box-shadow: 0 4px 20px rgba(234,88,12,0.4); display: flex; align-items: center; gap: 8px; outline: none;">
           <i class="fa-solid fa-circle-xmark"></i>
           테스트 모드 종료 (메인 화면으로 복귀)
         </button>
@@ -1244,6 +1259,10 @@
         <span id="webcam-status-indicator" style="display: inline-block; width: 8px; height: 8px; background: #94a3b8; border-radius: 50%;"></span>
         <span id="webcam-status-text">대기 중 (사용자 상호작용 필요)</span>
       </div>
+      <label style="display: flex; align-items: center; gap: 8px; color: var(--color-text-secondary); font-size: 0.75rem; font-weight: 700; cursor: pointer; padding: 4px 2px 2px 2px; user-select: none;">
+        <input type="checkbox" id="chk-adjust-sound-on-motion" onchange="toggleAdjustSoundOnMotion(this.checked)" style="accent-color: var(--color-zone-a); cursor: pointer; width: 14px; height: 14px;" checked>
+        <span>움직임 감지 시 소리 자동 켬/끔</span>
+      </label>
     </div>
     <div style="border-top: 1px solid rgba(255,0,127,0.15); padding-top: 10px; margin-top: 4px; display: flex; flex-direction: column; gap: 6px;">
       <div style="font-size: 0.7rem; font-weight: 800; color: var(--color-zone-c); text-transform: uppercase; letter-spacing: 1px;">📻 BGM 일과 시뮬레이터</div>
@@ -3076,6 +3095,10 @@
     let webcamCheckInterval = null;
     let webcamRetryTimeout = null;
     const noMotionRevertTimeout = 20000; // 20 seconds
+    let isAdjustSoundOnMotion = true;
+    if (localStorage.getItem('isAdjustSoundOnMotion') !== null) {
+      isAdjustSoundOnMotion = localStorage.getItem('isAdjustSoundOnMotion') === 'true';
+    }
 
     async function setTestScreenActiveState(active, isManual = false) {
       if (isTestScreenActive === active) return;
@@ -3105,6 +3128,15 @@
 
         if (overlay) overlay.style.display = 'block';
         if (btn) btn.classList.add('active');
+        
+        // Bind webcam stream to the visible preview if webcam is active
+        const visiblePreview = document.getElementById('webcam-preview-visible');
+        if (visiblePreview && webcamStream) {
+          visiblePreview.srcObject = webcamStream;
+          visiblePreview.play().catch(e => console.warn('[Webcam Visible] Play on active failed:', e));
+        }
+        const chkTest = document.getElementById('chk-adjust-sound-on-motion-test');
+        if (chkTest) chkTest.checked = isAdjustSoundOnMotion;
         hideTestDroneError(); // 기존 에러 패널 리셋
         hideTestMovieError();
         
@@ -3252,6 +3284,12 @@
         if (movieVideo) {
           movieVideo.pause();
           movieVideo.src = "";
+        }
+        
+        const visiblePreview = document.getElementById('webcam-preview-visible');
+        if (visiblePreview) {
+          visiblePreview.pause();
+          visiblePreview.srcObject = null;
         }
         
         const droneLoading = document.getElementById('test-drone-loading');
@@ -4500,6 +4538,23 @@
     // ========================================================
     // Webcam Motion Detection Logic
     // ========================================================
+    function toggleAdjustSoundOnMotion(checkedVal) {
+      if (checkedVal !== undefined) {
+        isAdjustSoundOnMotion = checkedVal;
+      } else {
+        isAdjustSoundOnMotion = !isAdjustSoundOnMotion;
+      }
+      localStorage.setItem('isAdjustSoundOnMotion', isAdjustSoundOnMotion);
+      
+      // Sync checkboxes
+      const chk1 = document.getElementById('chk-adjust-sound-on-motion');
+      const chk2 = document.getElementById('chk-adjust-sound-on-motion-test');
+      if (chk1) chk1.checked = isAdjustSoundOnMotion;
+      if (chk2) chk2.checked = isAdjustSoundOnMotion;
+      
+      console.log(`[Webcam] Adjust sound on motion toggled: ${isAdjustSoundOnMotion}`);
+    }
+
     function toggleWebcamDetection() {
       isWebcamDetectionEnabled = !isWebcamDetectionEnabled;
       localStorage.setItem('isWebcamDetectionEnabled', isWebcamDetectionEnabled);
@@ -4579,6 +4634,13 @@
           };
         }
         console.log('[Webcam] Stream acquired successfully.');
+        
+        // Bind to visible preview element if present
+        const visiblePreview = document.getElementById('webcam-preview-visible');
+        if (visiblePreview) {
+          visiblePreview.srcObject = stream;
+          visiblePreview.play().catch(e => console.warn('[Webcam Visible] Play failed:', e));
+        }
         
         // Start motion detection loop
         if (webcamCheckInterval) clearInterval(webcamCheckInterval);
@@ -4739,12 +4801,14 @@
             isMotionOverridden = true;
           }
           
-          const movieVideo = document.getElementById('test-movie-video');
-          if (movieVideo) {
-            movieVideo.muted = false;
-            movieVideo.volume = 0.4;
-            showVolumeHud(movieVideo.volume, movieVideo.muted);
-            console.log('[Webcam] Test movie sound unmuted.');
+          if (isAdjustSoundOnMotion) {
+            const movieVideo = document.getElementById('test-movie-video');
+            if (movieVideo) {
+              movieVideo.muted = false;
+              movieVideo.volume = 0.4;
+              showVolumeHud(movieVideo.volume, movieVideo.muted);
+              console.log('[Webcam] Test movie sound unmuted.');
+            }
           }
         }
       } else {
@@ -4758,11 +4822,13 @@
             setTestScreenActiveState(false, false);
             isMotionOverridden = false;
           } else {
-            const movieVideo = document.getElementById('test-movie-video');
-            if (movieVideo) {
-              movieVideo.muted = true;
-              showVolumeHud(movieVideo.volume, movieVideo.muted);
-              console.log('[Webcam] Scheduled test period, muting sound.');
+            if (isAdjustSoundOnMotion) {
+              const movieVideo = document.getElementById('test-movie-video');
+              if (movieVideo) {
+                movieVideo.muted = true;
+                showVolumeHud(movieVideo.volume, movieVideo.muted);
+                console.log('[Webcam] Scheduled test period, muting sound.');
+              }
             }
           }
         }
