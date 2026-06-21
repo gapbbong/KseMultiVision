@@ -948,26 +948,77 @@
       </div>
       
       <!-- 4사분면 (우하단 50vw, 50vh) - 테스트 대시보드 및 복귀 버튼 -->
-      <div id="test-quad-4" style="position: absolute; left: 50vw; top: 50vh; width: 50vw; height: 50vh; background: linear-gradient(180deg, #090d22 0%, #020617 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; border-top: 2px solid rgba(0, 245, 212, 0.3); border-left: 1px solid rgba(0, 245, 212, 0.3); box-sizing: border-box; box-shadow: 0 -10px 40px rgba(0,0,0,0.5);">
-        <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;">
-          <div style="font-size: 1.6rem; font-weight: 900; color: #ea580c; display: flex; align-items: center; gap: 12px; text-shadow: 0 0 15px rgba(234,88,12,0.4);">
-            <i class="fa-solid fa-triangle-exclamation fa-fade"></i>
-            <span>멀티비전 모니터 연동 테스트 작동 중</span>
+      <!-- 4사분면 (우하단 50vw, 50vh) - 테스트 대시보드 및 모든 제어 메뉴 -->
+      <div id="test-quad-4" style="position: absolute; left: 50vw; top: 50vh; width: 50vw; height: 50vh; background: linear-gradient(180deg, #090d22 0%, #020617 100%); display: flex; flex-direction: column; padding: 20px; box-sizing: border-box; border-top: 2px solid rgba(0, 245, 212, 0.3); border-left: 1px solid rgba(0, 245, 212, 0.3); box-sizing: border-box; box-shadow: 0 -10px 40px rgba(0,0,0,0.5); overflow-y: auto;">
+        
+        <!-- 상단 헤더 및 종료 버튼 -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid rgba(0, 245, 212, 0.2); padding-bottom: 6px;">
+          <div style="font-size: 1.15rem; font-weight: 900; color: #ea580c; display: flex; align-items: center; gap: 8px; text-shadow: 0 0 10px rgba(234,88,12,0.4);">
+            <i class="fa-solid fa-screwdriver-wrench"></i>
+            <span>멀티비전 통합 제어 대시보드</span>
           </div>
-          <p style="color: var(--color-text-secondary); font-size: 0.85rem; font-weight: 500; max-width: 420px; line-height: 1.5; word-break: keep-all; padding: 0 20px;">
-            본 화면은 1사분면(좌측 모니터 영역)의 구글 드라이브 동기부여 영상 및 2사분면(우측 상단 모니터 영역)의 구글 드라이브 드론 영상을 검증하기 위한 테스트 모드입니다.
-          </p>
+          <button onclick="toggleTestScreen()" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); border: none; color: #ffffff; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 800; transition: all 0.2s; display: flex; align-items: center; gap: 4px; outline: none; box-shadow: 0 3px 8px rgba(239,68,68,0.25);">
+            <i class="fa-solid fa-circle-xmark"></i>
+            테스트 종료
+          </button>
         </div>
-        
-        <label style="display: flex; align-items: center; gap: 8px; color: var(--color-text-secondary); font-size: 0.85rem; font-weight: 700; cursor: pointer; user-select: none; margin-top: 5px; margin-bottom: 5px;">
-          <input type="checkbox" id="chk-adjust-sound-on-motion-test" onchange="toggleAdjustSoundOnMotion(this.checked)" style="accent-color: var(--color-zone-a); cursor: pointer; width: 16px; height: 16px;" checked>
-          <span>움직임 감지 시 소리 자동 켬/끔</span>
-        </label>
-        
-        <button onclick="toggleTestScreen()" style="background: linear-gradient(135deg, #ea580c 0%, #ff7a00 100%); border: none; color: #ffffff; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-size: 0.95rem; font-weight: 800; transition: all 0.3s; box-shadow: 0 4px 20px rgba(234,88,12,0.4); display: flex; align-items: center; gap: 8px; outline: none;">
-          <i class="fa-solid fa-circle-xmark"></i>
-          테스트 모드 종료 (메인 화면으로 복귀)
-        </button>
+
+        <!-- 메인 제어 그리드 (2열 레이아웃) -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; flex: 1;">
+          
+          <!-- 좌측 열: 시스템 제어 및 모션 감지 -->
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="font-size: 0.7rem; font-weight: 800; color: var(--color-zone-a); letter-spacing: 0.5px;">⚙️ 시스템 기본 제어</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
+              <button class="btn-toggle" id="btn-grid-toggle-test" onclick="togglePhysicalGrid()" style="padding: 5px; font-size: 0.65rem; justify-content: flex-start; height: 28px;">
+                <i class="fa-solid fa-border-none"></i> 물리 경계선
+              </button>
+              <button class="btn-toggle" id="btn-blackout-toggle-test" onclick="toggleBlackoutVisual()" style="padding: 5px; font-size: 0.65rem; justify-content: flex-start; height: 28px;">
+                <i class="fa-solid fa-eye-slash"></i> 음영 제거
+              </button>
+              <button class="btn-toggle" id="btn-countdown-test-test" onclick="triggerCountdownTest()" style="padding: 5px; font-size: 0.65rem; justify-content: flex-start; height: 28px;">
+                <i class="fa-solid fa-clock-rotate-left"></i> 타종 테스트
+              </button>
+              <button class="btn-toggle" id="btn-worship-test-test" onclick="triggerWorshipTest()" style="padding: 5px; font-size: 0.65rem; justify-content: flex-start; height: 28px;">
+                <i class="fa-solid fa-church"></i> 예배 테스트
+              </button>
+            </div>
+            
+            <div style="border-top: 1px solid rgba(255,255,255,0.08); margin-top: 2px; padding-top: 6px; display: flex; flex-direction: column; gap: 5px;">
+              <div style="font-size: 0.7rem; font-weight: 800; color: var(--color-zone-a); letter-spacing: 0.5px;">📹 웹캠 모션 감지 설정</div>
+              <button class="btn-toggle" id="btn-webcam-toggle-test" onclick="toggleWebcamDetection()" style="padding: 5px; font-size: 0.65rem; justify-content: flex-start; height: 28px;">
+                <i class="fa-solid fa-camera"></i> 모션 감지 활성화
+              </button>
+              <label style="display: flex; align-items: center; gap: 6px; color: var(--color-text-secondary); font-size: 0.7rem; font-weight: 700; cursor: pointer; user-select: none; padding-left: 2px; margin-top: 2px;">
+                <input type="checkbox" id="chk-adjust-sound-on-motion-test" onchange="toggleAdjustSoundOnMotion(this.checked)" style="accent-color: var(--color-zone-a); cursor: pointer; width: 13px; height: 13px;" checked>
+                <span>움직임 감지 시 소리 자동 켬/끔</span>
+              </label>
+            </div>
+          </div>
+          
+          <!-- 우측 열: 시뮬레이터 및 기타 기능 -->
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="font-size: 0.7rem; font-weight: 800; color: var(--color-zone-c); letter-spacing: 0.5px;">📻 BGM 일과 시뮬레이터</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
+              <button class="btn-toggle btn-sim-class" id="btn-sim-welcome-test" onclick="setBgmSimTime(8, 30, this)" style="padding: 5px; font-size: 0.65rem; justify-content: center; height: 28px;">등교 (08:30)</button>
+              <button class="btn-toggle btn-sim-class" id="btn-sim-break-test" onclick="setBgmSimTime(10, 50, this)" style="padding: 5px; font-size: 0.65rem; justify-content: center; height: 28px;">쉬는시간 (10:50)</button>
+              <button class="btn-toggle btn-sim-class" id="btn-sim-class-test" onclick="setBgmSimTime(9, 20, this)" style="padding: 5px; font-size: 0.65rem; justify-content: center; height: 28px;">수업중 (09:20)</button>
+              <button class="btn-toggle btn-sim-class" id="btn-sim-worship-test" onclick="setBgmSimTime(13, 0, this)" style="padding: 5px; font-size: 0.65rem; justify-content: center; height: 28px;">점심시간 (13:00)</button>
+              <button class="btn-toggle btn-sim-class active" id="btn-sim-real-test" onclick="resetBgmSimTime(this)" style="grid-column: span 2; padding: 5px; font-size: 0.65rem; justify-content: center; height: 28px;">실시간 가동</button>
+            </div>
+            
+            <div style="border-top: 1px solid rgba(255,255,255,0.08); margin-top: 2px; padding-top: 6px; display: flex; flex-direction: column; gap: 5px;">
+              <div style="font-size: 0.7rem; font-weight: 800; color: var(--color-zone-a); letter-spacing: 0.5px;">🔧 기타 관리 도구</div>
+              <button class="btn-toggle" id="btn-monitor-status-test" onclick="toggleMonitorStatus()" style="padding: 5px; font-size: 0.65rem; justify-content: flex-start; height: 28px;">
+                <i class="fa-solid fa-screwdriver-wrench"></i> 모니터 수리 모드
+              </button>
+              <button class="btn-toggle" id="btn-google-login-test" onclick="requestGoogleAuth()" style="padding: 5px; font-size: 0.65rem; justify-content: flex-start; height: 28px;">
+                <i class="fa-solid fa-lock"></i> 구글 계정 인증
+              </button>
+            </div>
+          </div>
+
+        </div>
       </div>
     </div>
 
@@ -2772,24 +2823,27 @@
     let isGridActive = false, isBlackoutDebugActive = false;
 
     function togglePhysicalGrid() {
-      const btn = document.getElementById('btn-grid-toggle');
       isGridActive = !isGridActive;
       ['guide-x','guide-y','label-horizontal','label-vertical'].forEach(id => {
         document.getElementById(id).style.display = isGridActive ? 'block' : 'none';
       });
-      btn.classList.toggle('active', isGridActive);
+      document.querySelectorAll('#btn-grid-toggle, #btn-grid-toggle-test').forEach(el => {
+        el.classList.toggle('active', isGridActive);
+      });
     }
 
     function toggleBlackoutVisual() {
-      const btn = document.getElementById('btn-blackout-toggle');
       const zone = document.getElementById('blackout-zone');
       isBlackoutDebugActive = !isBlackoutDebugActive;
+      
+      document.querySelectorAll('#btn-blackout-toggle, #btn-blackout-toggle-test').forEach(el => {
+        el.classList.toggle('active', isBlackoutDebugActive);
+      });
+
       if (isBlackoutDebugActive) {
-        btn.classList.add('active');
         zone.style.backgroundColor = 'rgba(255,0,127,0.2)';
         zone.style.border = '2px dashed var(--color-zone-c)';
       } else {
-        btn.classList.remove('active');
         zone.style.backgroundColor = '#000000';
         zone.style.border = 'none';
       }
@@ -2799,24 +2853,29 @@
     window.bellTestInterval = null;
 
     function triggerCountdownTest() {
-      const btn = document.getElementById('btn-countdown-test');
       const overlay = document.getElementById('bell-countdown-overlay');
       const numEl = document.getElementById('bell-countdown-number');
       const textEl = document.getElementById('bell-target-text');
 
-      if (!overlay || !numEl || !textEl || !btn) return;
+      if (!overlay || !numEl || !textEl) return;
+
+      const updateCountdownBtn = (active, text) => {
+        document.querySelectorAll('#btn-countdown-test, #btn-countdown-test-test').forEach(el => {
+          el.classList.toggle('active', active);
+          el.innerHTML = text;
+        });
+      };
 
       if (window.isBellTestActive) {
         clearInterval(window.bellTestInterval);
         window.isBellTestActive = false;
         overlay.style.display = 'none';
-        btn.classList.remove('active');
-        btn.innerHTML = '<i class="fa-solid fa-clock-rotate-left"></i> 타종 카운트다운 테스트';
+        updateCountdownBtn(false, '<i class="fa-solid fa-clock-rotate-left"></i> 타종 카운트다운 테스트');
         return;
       }
 
       window.isBellTestActive = true;
-      btn.classList.add('active');
+      updateCountdownBtn(true, '<i class="fa-solid fa-circle-xmark"></i> 테스트 종료');
       overlay.style.display = 'flex';
       
       let testSec = 13;
@@ -2831,29 +2890,24 @@
           clearInterval(window.bellTestInterval);
           window.isBellTestActive = false;
           overlay.style.display = 'none';
-          btn.classList.remove('active');
-          btn.innerHTML = '<i class="fa-solid fa-clock-rotate-left"></i> 타종 카운트다운 테스트';
+          updateCountdownBtn(false, '<i class="fa-solid fa-clock-rotate-left"></i> 타종 카운트다운 테스트');
         }
       }, 1000);
-
-      btn.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> 테스트 종료';
     }
 
     window.isWorshipTestActive = false;
 
     function triggerWorshipTest() {
-      const btn = document.getElementById('btn-worship-test');
-      if (!btn) return;
-
       window.isWorshipTestActive = !window.isWorshipTestActive;
 
-      if (window.isWorshipTestActive) {
-        btn.classList.add('active');
-        btn.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> 예배 안내 테스트 종료';
-      } else {
-        btn.classList.remove('active');
-        btn.innerHTML = '<i class="fa-solid fa-church"></i> 예배 안내 테스트';
-      }
+      document.querySelectorAll('#btn-worship-test, #btn-worship-test-test').forEach(el => {
+        el.classList.toggle('active', window.isWorshipTestActive);
+        if (window.isWorshipTestActive) {
+          el.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> 예배 안내 테스트 종료';
+        } else {
+          el.innerHTML = '<i class="fa-solid fa-church"></i> 예배 안내 테스트';
+        }
+      });
 
       if (typeof updateClock === 'function') {
         updateClock();
@@ -3094,7 +3148,7 @@
     let prevFrameData = null;
     let webcamCheckInterval = null;
     let webcamRetryTimeout = null;
-    const noMotionRevertTimeout = 20000; // 20 seconds
+    const noMotionRevertTimeout = 1500; // 1.5 seconds
     let isAdjustSoundOnMotion = true;
     if (localStorage.getItem('isAdjustSoundOnMotion') !== null) {
       isAdjustSoundOnMotion = localStorage.getItem('isAdjustSoundOnMotion') === 'true';
@@ -3137,6 +3191,61 @@
         }
         const chkTest = document.getElementById('chk-adjust-sound-on-motion-test');
         if (chkTest) chkTest.checked = isAdjustSoundOnMotion;
+
+        // Sync simulator button active states
+        document.querySelectorAll('.btn-sim-class').forEach(btnEl => {
+          const id = btnEl.id;
+          if (id && id.endsWith('-test')) {
+            const mainId = id.substring(0, id.length - 5);
+            const mainBtn = document.getElementById(mainId);
+            if (mainBtn) {
+              btnEl.classList.toggle('active', mainBtn.classList.contains('active'));
+            }
+          }
+        });
+
+        // Sync other toggle buttons
+        const gridBtnTest = document.getElementById('btn-grid-toggle-test');
+        if (gridBtnTest) gridBtnTest.classList.toggle('active', isGridActive);
+
+        const blackoutBtnTest = document.getElementById('btn-blackout-toggle-test');
+        if (blackoutBtnTest) blackoutBtnTest.classList.toggle('active', isBlackoutDebugActive);
+
+        const countdownBtnTest = document.getElementById('btn-countdown-test-test');
+        if (countdownBtnTest) {
+          countdownBtnTest.classList.toggle('active', window.isBellTestActive);
+          countdownBtnTest.innerHTML = window.isBellTestActive ? 
+            '<i class="fa-solid fa-circle-xmark"></i> 테스트 종료' : 
+            '<i class="fa-solid fa-clock-rotate-left"></i> 타종 테스트';
+        }
+
+        const worshipBtnTest = document.getElementById('btn-worship-test-test');
+        if (worshipBtnTest) {
+          worshipBtnTest.classList.toggle('active', window.isWorshipTestActive);
+          worshipBtnTest.innerHTML = window.isWorshipTestActive ? 
+            '<i class="fa-solid fa-circle-xmark"></i> 예배 안내 테스트 종료' : 
+            '<i class="fa-solid fa-church"></i> 예배 테스트';
+        }
+
+        const statusBtnTest = document.getElementById('btn-monitor-status-test');
+        if (statusBtnTest) {
+          if (damageMode) {
+            statusBtnTest.innerHTML = '<i class="fa-solid fa-screwdriver-wrench"></i> 모니터 수리 모드';
+            statusBtnTest.classList.remove('active');
+          } else {
+            statusBtnTest.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> 모니터 파손 모드 전환';
+            statusBtnTest.classList.add('active');
+          }
+        }
+
+        const webcamBtnTest = document.getElementById('btn-webcam-toggle-test');
+        if (webcamBtnTest) {
+          webcamBtnTest.classList.toggle('active', isWebcamDetectionEnabled);
+          webcamBtnTest.innerHTML = isWebcamDetectionEnabled ? 
+            '<i class="fa-solid fa-camera"></i> 모션 감지 활성화됨' : 
+            '<i class="fa-solid fa-camera-slash"></i> 모션 감지 비활성화됨';
+        }
+
         hideTestDroneError(); // 기존 에러 패널 리셋
         hideTestMovieError();
         
@@ -4403,12 +4512,22 @@
       }
     }
 
+    function syncSimulatorButtons(type) {
+      document.querySelectorAll('.btn-sim-class').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll(`#btn-sim-${type}, #btn-sim-${type}-test`).forEach(btn => btn.classList.add('active'));
+    }
+
     // 가상 시뮬레이터 시간 제어 함수
     function setBgmSimTime(hour, min, btnElement) {
       bgmMockTime = { hour, min };
       
-      document.querySelectorAll('.btn-sim-class').forEach(btn => btn.classList.remove('active'));
-      btnElement.classList.add('active');
+      let type = 'class';
+      if (hour === 8 && min === 30) type = 'welcome';
+      else if (hour === 10 && min === 50) type = 'break';
+      else if (hour === 9 && min === 20) type = 'class';
+      else if (hour === 13 && min === 0) type = 'worship';
+      
+      syncSimulatorButtons(type);
       
       updateClock();
       refreshAllData();
@@ -4417,9 +4536,7 @@
 
     function resetBgmSimTime(btnElement) {
       bgmMockTime = null;
-      
-      document.querySelectorAll('.btn-sim-class').forEach(btn => btn.classList.remove('active'));
-      btnElement.classList.add('active');
+      syncSimulatorButtons('real');
       
       updateClock();
       refreshAllData();
@@ -4469,23 +4586,24 @@
     function updateMonitorLayout() {
       const blackoutOverlay = document.getElementById('damage-blackout-overlay');
       const statusBar = document.getElementById('damage-status-bar');
-      const statusBtn = document.getElementById('btn-monitor-status');
 
       if (damageMode) {
         if (blackoutOverlay) blackoutOverlay.style.display = 'block';
         if (statusBar) statusBar.style.display = 'flex';
-        if (statusBtn) {
-          statusBtn.innerHTML = '<i class="fa-solid fa-screwdriver-wrench"></i> 모니터 수리 완료 처리';
-          statusBtn.classList.remove('active');
-        }
       } else {
         if (blackoutOverlay) blackoutOverlay.style.display = 'none';
         if (statusBar) statusBar.style.display = 'none';
-        if (statusBtn) {
-          statusBtn.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> 모니터 파손 모드 전환';
-          statusBtn.classList.add('active');
-        }
       }
+
+      document.querySelectorAll('#btn-monitor-status, #btn-monitor-status-test').forEach(btn => {
+        if (damageMode) {
+          btn.innerHTML = '<i class="fa-solid fa-screwdriver-wrench"></i> 모니터 수리 완료 처리';
+          btn.classList.remove('active');
+        } else {
+          btn.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> 모니터 파손 모드 전환';
+          btn.classList.add('active');
+        }
+      });
     }
 
     let volumeHudTimeout = null;
@@ -4569,22 +4687,35 @@
     }
 
     function updateWebcamUI() {
-      const btn = document.getElementById('btn-webcam-toggle');
+      const btn1 = document.getElementById('btn-webcam-toggle');
+      const btn2 = document.getElementById('btn-webcam-toggle-test');
       const indicator = document.getElementById('webcam-status-indicator');
       const text = document.getElementById('webcam-status-text');
       
-      if (!btn) return;
+      const updateBtn = (btn) => {
+        if (!btn) return;
+        if (!isWebcamDetectionEnabled) {
+          btn.classList.remove('active');
+          btn.innerHTML = '<i class="fa-solid fa-camera-slash"></i> 모션 감지 비활성화됨';
+        } else {
+          btn.classList.add('active');
+          btn.innerHTML = '<i class="fa-solid fa-camera"></i> 모션 감지 활성화됨';
+        }
+      };
+
+      updateBtn(btn1);
+      updateBtn(btn2);
+
+      const chk1 = document.getElementById('chk-adjust-sound-on-motion');
+      const chk2 = document.getElementById('chk-adjust-sound-on-motion-test');
+      if (chk1) chk1.checked = isAdjustSoundOnMotion;
+      if (chk2) chk2.checked = isAdjustSoundOnMotion;
       
       if (!isWebcamDetectionEnabled) {
-        btn.classList.remove('active');
-        btn.innerHTML = '<i class="fa-solid fa-camera-slash"></i> 모션 감지 비활성화됨';
         if (indicator) indicator.style.background = '#ef4444';
         if (text) text.textContent = '모션 감지 기능 꺼짐';
         return;
       }
-      
-      btn.classList.add('active');
-      btn.innerHTML = '<i class="fa-solid fa-camera"></i> 모션 감지 활성화됨';
       
       if (!isSoundActivated) {
         if (indicator) {
